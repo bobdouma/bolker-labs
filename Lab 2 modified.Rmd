@@ -227,12 +227,12 @@ levels(f2)
 For more complicated operations with `factor()`, use the `recode()` function
 in the `car` package.
 **Exercise 1.3** : Illustrate the effects of the levels command by plotting the
-`factor f=factor(c(3,3,5,6,7,8,10))` as created with and without intermediate
+factor `f=factor(c(3,3,5,6,7,8,10))` as created with and without intermediate
 levels. For an extra challenge, draw them as two side-by-side subplots. (Use
 `par(mfrow=c(1,1))` to restore a full plot window.)
 
 **Dates** Dates and times can be tricky in `R`, but you can (and should) handle
-your dates as type `Date` within `R rather than messing around with Julian days (i.e., days since the beginning of the year) or maintaining separate variables for
+your dates as type `Date` within `R` rather than messing around with Julian days (i.e., days since the beginning of the year) or maintaining separate variables for
 day/month/year.
 
 You can use `colClasses="Date"` within `read.table()` to read in dates directly
@@ -266,7 +266,7 @@ date = as.Date(datestr)
 date
 ```
 
-When you want to split a date to month, year and day, you can use 'strsplit':
+When you want to split a date to month, year and day, you can use `strsplit`:
 
 ```{r}
 date.c = as.character(date)
@@ -278,9 +278,9 @@ Which you subsequently can turn in to multiple colums through `matrix`:
 dat.mat = matrix(unlist(date.char), ncol=3, byrow=TRUE)
 ```
 
-Although `R` prints the dates in `date` out so they look like a vector of character strings, they are really dates: `class(date)` will give you the answer `"Date"`. Note that when using the dat.mat these are characters.
+Although `R` prints the dates in `date` out so they look like a vector of character strings, they are really dates: `class(date)` will give you the answer `"Date"`. Note that when using the `dat.mat` these are characters.
 
-**Potential trap:** quotation marks in character variables: if you have character strings in your data set with apostrophes or quotation marks embedded in them, you have to get `R` to ignore them. I used a data set recently that contained
+**Potential trap:** quotation marks in character variables: if you have character strings in your dataset with apostrophes or quotation marks embedded in them, you have to get `R` to ignore them. I used a data set recently that contained
 lines like this:
 `Western Canyon|valley|Santa Cruz|313120N|1103145WO'Donnell Canyon`
 
@@ -291,7 +291,7 @@ data = read.table("datafile", sep = "|", quote = "")
 to tell `R` that | was the separator between fields and that it should ignore all apostrophes/single quotations/double quotations in the data set and just read them as part of a string.
 
 ##1.4 Accessing data
-**Data** To access individual variables within your data set use `mydata$varname` or `mydata[,n]` or `mydata[,"varname"]` where `n` is the column number and `varname` is the variable name you want. You can also use `attach(mydata)` to set things up so that you can refer to the variable names alone (e.g. varname rather than mydata$varname). However, **beware**: if you then modify a variable, you can end up with two copies of it: one (modified) is a local variable called `varname`, the other (original) is a column in the data frame called `varname`: **it's probably better not to attach a data set, or only until after you've finished cleaning and modifying it**. Furthermore, if you have already created a variable called varname, `R` will find it before it finds the version of `varname` that is part of your data set. Attaching multiple copies of a data set is a good way to get confused: try to remember to `detach(mydata)` when you're done.
+**Data** To access individual variables within your data set use `mydata$varname` or `mydata[,n]` or `mydata[,"varname"]` where `n` is the column number and `varname` is the variable name you want. You can also use `attach(mydata)` to set things up so that you can refer to the variable names alone (e.g. varname rather than `mydata$varname`). However, **beware**: if you then modify a variable, you can end up with two copies of it: one (modified) is a local variable called `varname`, the other (original) is a column in the data frame called `varname`: **it's probably better not to attach a data set, or only until after you've finished cleaning and modifying it**. Furthermore, if you have already created a variable called `varname`, `R` will find it before it finds the version of `varname` that is part of your data set. Attaching multiple copies of a data set is a good way to get confused: try to remember to `detach(mydata)` when you're done.
 
 I'll start by attaching the data set (so we can refer to `Species` instead of
 `data$Species` and so on).
@@ -312,7 +312,7 @@ data(dataset)
 (`data()` by itself will list all available data sets.)
 
 #2. Exploratory graphics
-Below we will show you a diversity of possible (specialized) graphs that you can produce in R. Those graphs come from a number of packages (including `plotrix` and the `base` package). In addition, we will show you the use of the `ggplot2` package. This package is very popular as it creates nice graphs without much effort. Note that the 'grammar' to produce a graph is  different from how the other graphs in `R` are constructed. Graphics are really important to explore the data that you collected and want to analyse. A good data exploration improves the efficiency of your statistical analysis as you will have expectations how relations between varialbes look like.
+Below we will show you a diversity of possible (specialized) graphs that you can produce in R. Those graphs come from a number of packages (including `plotrix`, `ggplot2`, `lattice ` and the `base` package). In addition, we will show you the use of the `ggplot2` package. This package is very popular as it creates nice graphs without much effort. Note that the 'grammar' to produce a graph is  different from how the other graphs in `R` are constructed. Graphics are really important to explore the data that you collected and want to analyse. A good data exploration improves the efficiency of your statistical analysis as you will have expectations how relations between varialbes look like.
 
 ##2.1 Bubble plot
 ```{r}
@@ -327,7 +327,7 @@ I used
 t1 = table(data$available, data$taken)
 ```
 
-to cross-tabulate the data, and then used the `text()` command to add the numbers to the plot. There's a little bit more trickery involved in putting the numbers in the right place on the plot. `row(x)` gives a matrix with the row numbers corresponding to the elements of x; `col(x)` does the same for column numbers. Subtracting 1 `(col(x)-1)` accounts for the fact that columns 1 through 6 of our table refer to 0 through 5  seeds actually taken. When `R` plots, it simply matches up each of the `x` values, each of the `y` values, and each of the text values (which in this case are the numbers in the table) and plots them, even though the numbers are arranged in matrices rather than vectors. I also limit the plotting to positive values (using [t1>0]), although this is just cosmetic.
+to cross-tabulate the data, and then used the `text()` command to add the numbers to the plot. There's a little bit more trickery involved in putting the numbers in the right place on the plot. `row(x)` gives a matrix with the row numbers corresponding to the elements of x; `col(x)` does the same for column numbers. Subtracting 1 `(col(x)-1)` accounts for the fact that columns 1 through 6 of our table refer to 0 through 5  seeds actually taken. When `R` plots, it simply matches up each of the `x` values, each of the `y` values, and each of the text values (which in this case are the numbers in the table) and plots them, even though the numbers are arranged in matrices rather than vectors. I also limit the plotting to positive values (using `[t1>0]`), although this is just cosmetic.
 
 ```{r,eval=F}
 r = row(t1)
@@ -359,7 +359,8 @@ par(op)
 Alternatively through `ggplot`
 ```{r}
 ggplot(data=t2)+
-  geom_bar(aes(x=available,y=log10(value+1),fill=as.factor(taken)),stat="identity",position=position_dodge())
+  geom_bar(aes(x=available,y=log10(value+1),fill=as.factor(taken)),
+           stat="identity",position=position_dodge())
 ```
 Again through `aes` we specify what is on the `x` and `y`. Through `fill` we subdivide the bars by the values in `taken`. `stat=identity` expresses that the values assigned to `y` will be used (compare `stat="count"`). Through specifying `position_dodge()` bars are printed side by side instead of stacked bars (`position_fill()`).
 
@@ -384,25 +385,27 @@ Take the old tabular data (`t1`), `log(1+x)`-transform them, and use `as.numeric
 
 Redo the plot with the data sorted in increasing order; make sure the colors and point types match the data properly. Does this way of plotting the data show anything the bubbleplot didn't? Can you think of other ways of plotting these data?
 
-You can use `barchart()` in the `lattice` package to produce these graphics, although it seems impossible to turn the graph so the bars are vertical. Try the following (`stack=FALSE` is equivalent to `beside=TRUE` for `barplot())`:
+You can use `barchart()` in the `lattice` package to produce these graphics, although it seems impossible to turn the graph so the bars are vertical. Try the following (`stack=FALSE` is equivalent to `beside=TRUE` for `barplot()`):
 ```{r}
 library(lattice)
-barchart(log10(1 + table(data$available, data$taken)), stack = FALSE, auto.key = TRUE)
+barchart(log10(1 + table(data$available, data$taken)), stack = FALSE, 
+         auto.key = TRUE)
 ```
 
 More impressively, the lattice package can automatically plot a barplot of a three-way cross-tabulation, in small multiples (I had to experiment a bit to get the factors in the right order in the `table()` command): try
 ```{r}
-barchart(log10(1 + table(data$available, data$species, data$taken)), stack = FALSE, auto.key = TRUE)
+barchart(log10(1 + table(data$available, data$species, data$taken)), 
+         stack = FALSE, auto.key = TRUE)
 ```
 
-**Exercise 2.2***: Restricting your analysis to only the observations with 5 seeds available, create a barplot showing the distribution of number of seeds taken broken down by species. Hints: you can create a new data set that includes only the appropriate rows by using row indexing, then attach() it. Choose whether you do this with geom_bar ggplot2 or through another function.
+**Exercise 2.2***: Restricting your analysis to only the observations with 5 seeds available, create a barplot showing the distribution of number of seeds taken broken down by species. Hints: you can create a new data set that includes only the appropriate rows by using row indexing, then `attach()` it. Choose the function (`barplot`, `ggplot`, `barchart`) you want to use.
 
 #2.3 Barplots with error bars
 Computing the fraction taken:
 ```{r}
 data$frac_taken = data$taken/data$available
 ```
-Computing the mean fraction taken for each number of seeds available, using the `tapply()` function: `tapply()` ("table apply", pronounced "t apply"), is an extension of the `table()` function; it splits a specified vector into groups according to the factors provided, then applies a function (e.g. `mean()` or `sd()`) to each group. This idea of applying a function to a set of objects is a very general, very powerful idea in data manipulation with `R`; in due course we'll learn about `apply()` (apply a function to rows and columns of matrices), `lapply()` (apply a function to lists), `sapply()` (apply a function to lists and simplify), and `mapply()` (apply a function to multiple lists). For the present, though,
+Computing the mean fraction taken for each number of seeds available, using the `tapply()` function: `tapply()` ("**t**able **apply**", pronounced "t apply"), is an extension of the `table()` function; it splits a specified vector into groups according to the factors provided, then applies a function (e.g. `mean()` or `sd()`) to each group. This idea of applying a function to a set of objects is a very general, very powerful idea in data manipulation with `R`; in due course we'll learn about `apply()` (apply a function to rows and columns of matrices), `lapply()` (apply a function to lists), `sapply()` (apply a function to lists and simplify), and `mapply()` (apply a function to multiple lists). For the present, though,
 ```{r}
 mean_frac_by_avail = tapply(data$frac_taken, data$available, mean)
 ```
@@ -420,7 +423,7 @@ upper_lim = mean_frac_by_avail + se_by_avail
 b = barplot2(mean_frac_by_avail, plot.ci = TRUE, ci.l = lower_lim,
 ci.u = upper_lim, xlab = "Number available", ylab = "Mean number taken")
 ```
-I specified that I wanted error bars plotted (plot.ci=TRUE) and the lower (ci.l) and upper (ci.u) limits.
+I specified that I wanted error bars plotted (`plot.ci=TRUE`) and the lower (`ci.l`) and upper (`ci.u`) limits.
 
 With `ggplot2` this is possible through the following syntax. Note that there is a convenient function, called `summarySE` in the `Rmisc` package to compute the means and se:
 ```{r}
@@ -458,7 +461,7 @@ ggplot(data=data,aes(x=frac_taken))+
 **Time permitting**
 It's possible to do this with base graphics, too, but you have to rearrange your data yourself: essentially, you have to split the data up by species, tell `R` to break the plotting area up into subplots, and then tell `R` to draw a histogram in each subplot.
 
-* To reorganize the data appropriately and draw the plot, I first use split(), which cuts a vector into a list according to the levels of a factor - in this case giving us a list of the fraction-taken data separated by species:
+* To reorganize the data appropriately and draw the plot, I first use `split()`, which cuts a vector into a list according to the levels of a factor - in this case giving us a list of the fraction-taken data separated by species:
 ```{r}
 splitdat = split(data$frac_taken, data$species)
 ```
@@ -486,7 +489,7 @@ Data manipulation: `dcast()`,`melt`,`table()`, `split()`, `lapply()`,`sapply()`
 
 #3. Measles Data
 
-I'm going to clear the workspace (`rm(list=ls()`) lists all the objects in the workspace with `ls()` and then uses `rm()` to remove them. It is recommend to have this code at the top of your script, so every time you start working on the script you are sure the memory is cleared. You can also Clear workspace from the menu (in Rstudio the little brush in the topright panel)) and read in the measles data, which are space separated and have a header:
+I'm going to clear the workspace (`rm(list=ls()`) lists all the objects in the workspace with `ls()` and then uses `rm()` to remove them. It is recommend to have this code at the top of your script, so every time you start working on the script you are sure the memory is cleared. You can also clear workspace from the menu (in Rstudio the little brush in the topright panel)) and read in the measles data, which are space separated and have a header:
 ```{r}
 detach(data)
 rm(list = ls())
@@ -552,27 +555,28 @@ ggplot()+
 #3.3 Scaling data
 Scaling the incidence in each city by the population size, or by the mean or maximum incidence in that city, begins to get us into some non-trivial data manipulation. This process may actually be easier in the wide format. Several useful commands:
 * `rowMeans()`, `rowSums()`, `colMeans()`, and `colSums()` will compute the means or sums of columns efficiently. In this case we would do something like `colMeans(data[,4:10]`) to get the mean incidence for each city.
-* `apply()` is the more general command for running some command on each of a set of rows or columns. When you look at the help for apply() you'll see an argument called MARGIN, which specifies whether you want to operate on rows (1) or columns (2). For example, apply(data[,4:10],1,mean) is the equivalent of rowMeans(data[,4:10]), but we can also easily say (e.g.) apply(data[,4:10],1,max) to get the maxima instead. Later, when you've gotten practice defining your own functions, you can apply any function - not just R's built-in functions.
-* `scale()` is a function for subtracting and dividing specified amounts out of the columns of a matrix. It is fairly flexible: scale(x,center=TRUE,scale=TRUE) will center by subtracting the means and then scale by dividing by the standard errors of the columns. Fairly obviously, setting either to FALSE will turn off that part of the operation. You can also specify a vector for either center or scale, in which case scale() will subtract or divide the columns by those vectors instead. 
+* `apply()` is the more general command for running some command on each of a set of rows or columns. When you look at the help for apply() you'll see an argument called MARGIN, which specifies whether you want to operate on rows (1) or columns (2). For example, `apply(data[,4:10],1,mean)` is the equivalent of `rowMeans(data[,4:10])`, but we can also easily say (e.g.) `apply(data[,4:10],1,max)` to get the maxima instead. Later, when you've gotten practice defining your own functions, you can apply any function - not just R's built-in functions.
+* `scale()` is a function for subtracting and dividing specified amounts out of the columns of a matrix. It is fairly flexible: `scale(x,center=TRUE,scale=TRUE)` will center by subtracting the means and then scale by dividing by the standard errors of the columns. Fairly obviously, setting either to `FALSE` will turn off that part of the operation. You can also specify a vector for either center or scale, in which case `scale()` will subtract or divide the columns by those vectors instead. 
 
-**Exercise 3.1***: figure out how to use apply() and scale() to scale all columns so they have a minimum
+**Exercise 3.1**: figure out how to use `apply()` and `scale()` to scale all columns so they have a minimum
 of 0 and a maximum of 1 (hint: subtract the minimum and divide by (max-min)). 
 * `sweep()` is more general than scale; it will operate on either rows or columns (depending on the MARGIN argument), and it will use any operator (typically "-", "/", etc. - arithmetic symbols must be in quotes) rather than just subtracting or dividing. For example, `sweep(x,1,rowSums(x),"/")` will divide the rows (1) of x by their sums. **Note Bob: I never use this command**
 
-**Exercise 3.2***: figure out how to use a call to sweep() to do the same thing as scale(x,center=TRUE,scale=FALSE). **Note Bob: I never use this command**
+**Exercise 3.2** *: figure out how to use a call to sweep() to do the same thing as scale(x,center=TRUE,scale=FALSE). **Note Bob: I never use this command**
 
-So, if you are using the short format, and I want to divide each city's incidence by its mean (allowing for adding 1) and take logs:
+So, if you are using the wide format, and I want to divide each city's incidence by its mean (allowing for adding 1) and take logs:
 ```{r}
 logscaledat = as.data.frame(
-    log10(
-      scale(1 + data[, 4:10], center = FALSE, scale = colMeans(1 + data[, 4:10], na.rm = TRUE))))
+    log10(scale(1 + data[, 4:10], center = FALSE, 
+                scale = colMeans(1 + data[, 4:10], na.rm = TRUE))))
 ```
 
 The easier approach is when you are using the long format, but you have to think about it differently. Use `tapply()` to compute the mean incidence in each city, ignoring NA values, and adding 1 to all values:
 ```{r,eval=F}
-city_means <- tapply((1 + data_long$incidence), data_long$city, mean, na.rm = TRUE)
+city_means <- tapply((1 + data_long$incidence), data_long$city, mean, 
+                     na.rm = TRUE)
 ```
-Now you can use vector indexing to scale each incidence value by the appropriate mean value -  `city_means[data_long$city]` does the trick. (Why?)
+Now you can use vector indexing to scale each incidence value by the appropriate mean value - `city_means[data_long$city]` does the trick. (Why?)
 ```{r,eval=F}
 city_means[data_long$city]
 
@@ -624,5 +628,5 @@ splom(quakes, pch = ".")
 ```
 (`pch="."` marks the data with a single-pixel point, which is handy if you are fortunate enough to have a really big data set). 
 
-**Exercise 4.1***: generate three new plots based on one of the data sets in
+**Exercise 4.1** *: generate three new plots based on one of the data sets in
 this lab, or on your own data.
