@@ -6,17 +6,10 @@ geometry: margin=4cm
 fontsize: 11pt
 output: pdf_document
 ---
-```{r,echo=F}
-setwd("D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/tutorials/repos/bolker-labs")
-```
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, eval=T}
-library(emdbook)
-```
 
 # 1. Reading data
 This lab will cover many if not all of the details you actually need to know about R to read in data and produce the figures shown in Chapter 2, and more. The exercises, which will be considerably more difficult than those in Lab 1, will typically involve variations on the figures shown in the text. You will work through reading in the different data sets and constructing the figures shown, or variants of them. It would be even better to work through reading in and
@@ -45,7 +38,7 @@ it means it can't find your file, probably because it isn't looking in the right
 Depending on how you have gotten your data files onto your system (e.g. by downloading them from the web), Windows will sometimes hide or otherwise screw up the extension of your file (e.g. adding .txt to a file called `mydata.dat`). `R` needs to know the full name of the file, including the extension.
 
 For example to set a working directory::
-```{r}
+```{r, eval = F}
 setwd("D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/tutorials/")
 ```
 
@@ -474,7 +467,7 @@ splitdat = split(data$frac_taken, data$species)
 ```{r}
 op = par(mfrow = c(3, 3), mar = c(2, 2, 1, 1))
 ```
-to specify a 3 × 3 array of mini-plots (`mfrow=c(3,3)`) and to reduce the margin spacing to 2 lines on the bottom and left sides and 1 line on the top and right (`mar=c(2,2,1,1)`).
+to specify a $3 \times 3$ array of mini-plots (`mfrow=c(3,3)`) and to reduce the margin spacing to 2 lines on the bottom and left sides and 1 line on the top and right (`mar=c(2,2,1,1)`).
 ```{r}
 
 ```
