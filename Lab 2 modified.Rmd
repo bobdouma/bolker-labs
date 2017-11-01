@@ -21,7 +21,6 @@ Find the file called 'seedpred.dat': it's in the right format (plain text, long 
 data = read.table("seedpred.dat", header = TRUE)
 ```
 
-(remember not to copy the > if you are cutting and pasting from this document).
 Add the variable available to the data frame by combining taken and
 remaining (using the $ symbol):
 
