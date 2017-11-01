@@ -97,7 +97,7 @@ misclassify. Use `na.strings` in your `read.table()` command:
 mydata <- read.table("mydata.dat", na.strings = "*")
 ```
 
-(you can specify more than one value with (e.g.) na.strings=c("*","***","bad","-9999")).
+(you can specify more than one value with (e.g.) `na.strings=c("*","***","bad","-9999")`).
 
 **Exercise 1.1**: Try out `head()`, `summary()` and `str()` on data; make sure
 you understand the results.
