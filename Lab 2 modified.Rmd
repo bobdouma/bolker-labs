@@ -511,7 +511,7 @@ Later on it will be useful to have the data in long format. It's easiest to do u
 ```{r}
 library(reshape2)
 data= cbind(data,date)
-data_long = melt(data[,4:11],id.vars=8,variable.name = "city")
+data_long = melt(data[,4:11],id.vars=8,variable.name = "city",value.var="incidence")
 ```
 
 ##3.1 Multiple-line plots
