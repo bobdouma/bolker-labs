@@ -38,7 +38,7 @@ Depending on how you have gotten your data files onto your system (e.g. by downl
 
 For example to set a working directory::
 ```{r, eval = F}
-setwd("D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/tutorials/")
+setwd("D:/BobDouma/Education/CSA-34306/tutorials/")
 ```
 
 *Pitfall #2: checking number of fields* The next potential problem is that
@@ -70,7 +70,11 @@ which(cf!=cf[1])
 
 to get the line numbers with numbers of fields different from the first line.
 By default `R` will try to fill in what it sees as missing fields with `NA` ("not
-available") values; this can be useful but can also hide errors. You can try
+available") values; this can be useful but can also hide errors. 
+
+If your file is a comma separated file, you can also use `read.csv`. `read.csv` has set some arguments to default, e.g. the seperator is a comma in this case (`sep=","`)
+
+You can try
 
 ```{r,eval=F}
 mydata <- read.csv("myfile.dat", fill = FALSE)
@@ -79,7 +83,6 @@ mydata <- read.csv("myfile.dat", fill = FALSE)
 to turn off this behavior; if you don't have any missing fields at the end of lines
 in your data this should work.
 
-If your file is a comma separated file, you can also use `read.csv`. `read.csv` has set some arguments to default, e.g. the seperator is a comma in this case (`sep=","`)
 
 ##1.1. Checking data
 Here's the quickest way to check that all your variables have been classified
@@ -156,8 +159,8 @@ one column). You can also use the `colClasses="character"` argument to
 character -
 
 ```{r,eval=F}
-data2 = read.table("seedpred.dat", header = TRUE, colClasses = c("character",
-+ rep("numeric", 4)))
+data2 = read.table("seedpred.dat", header = TRUE, colClasses = 
+                     c("character",rep("numeric", 4)))
 ```
 
 again has the same results as the commands above. To convert factors back to strings *after* you have read them into `R`, use
@@ -176,8 +179,8 @@ sapply(data2, class)
 **Factors instead of numeric values** In contrast, sometimes you have numeric labels for data that are really categorical values - for example if your sites or species have integer codes (often data sets will have redundant information in them, e.g. both a species name and a species code number). It's best to specify appropriate data types, so use colClasses to force R to treat the data as a factor. For example, if we wanted to make tcum a factor instead of a numeric variable:
 
 ```{r,eval=F}
-data2 = read.table("seedpred.dat", header = TRUE, colClasses = c(rep("factor",
-+ 2), rep("numeric", 3)))
+data2 = read.table("seedpred.dat", header = TRUE, 
+                   colClasses = c(rep("factor",2), rep("numeric", 3)))
 sapply(data2, class)
 ```
 
@@ -211,16 +214,16 @@ Sometimes your data contain a subset of integer values in a range, but you want 
 ```{r}
 f = factor(c(3, 3, 5, 6, 7, 8, 10), levels = 3:10)
 ```
-Finally, you may want to get rid of levels that were included in a previous factor but are no longer relevant:
+Finally, you may want to get rid of levels that were included in a previous factor but are no longer relevant
 
 ```{r}
 f = factor(c("a", "b", "c", "d"))
 f2 = f[1:2]
 levels(f2)
 ```
-
+through droplevels
 ```{r}
-f2 = factor(as.character(f2))
+f2 = droplevels(f2)
 levels(f2)
 ```
 
@@ -251,7 +254,8 @@ as.Date(c("1jan1960", "2jan1960", "31mar1960", "30jul1960"),
 ```
 
 ```{r}
-as.Date(c("02/27/92", "02/27/92", "01/14/92", "02/28/92", "02/01/92"), 
+as.Date(c("02/27/92", "02/27/92", "01/14/92", "02/28/92", 
+          "02/01/92"), 
         format = "%m/%d/%y")
 ```
 
@@ -317,7 +321,8 @@ Below we will show you a diversity of possible (specialized) graphs that you can
 ##2.1 Bubble plot
 ```{r}
 library(plotrix)
-sizeplot(data$available, data$taken, xlab = "Available", ylab = "Taken")
+sizeplot(data$available, data$taken, xlab = "Available", 
+         ylab = "Taken")
 ```
 will give you approximately the same basic graph shown in the chapter, although I also played around with the x- and y-limits (using xlim and ylim) and the axes. (The basic procedure for showing custom axes in `R` is to turn off the
 default axes by specifying `axes=FALSE` and then to specify the axes one at a time with the `axis()` command.)
@@ -350,8 +355,8 @@ In `ggplot2` you need to specify the dataset the variables come from. You do thi
 
 The command to produce the barplot (Figure 3) was:
 ```{r}
-barplot(t(log10(t1 + 1)), beside = TRUE, legend = TRUE, xlab = "Available",
- ylab = "log10(1+# observations)")
+barplot(t(log10(t1 + 1)), beside = TRUE, legend = TRUE, 
+        xlab = "Available",ylab = "log10(1+# observations)")
 op = par(xpd = TRUE)
 text(34.5, 3.05, "Number taken")
 par(op)
@@ -511,7 +516,8 @@ Later on it will be useful to have the data in long format. It's easiest to do u
 ```{r}
 library(reshape2)
 data= cbind(data,date)
-data_long = melt(data[,4:11],id.vars=8,variable.name = "city",value.var="incidence")
+data_long = melt(data[,4:11],id.vars=8,variable.name = "city",
+                 value.var="incidence")
 ```
 
 ##3.1 Multiple-line plots
@@ -554,8 +560,11 @@ ggplot()+
 ```
 #3.3 Scaling data
 Scaling the incidence in each city by the population size, or by the mean or maximum incidence in that city, begins to get us into some non-trivial data manipulation. This process may actually be easier in the wide format. Several useful commands:
+
 * `rowMeans()`, `rowSums()`, `colMeans()`, and `colSums()` will compute the means or sums of columns efficiently. In this case we would do something like `colMeans(data[,4:10]`) to get the mean incidence for each city.
+
 * `apply()` is the more general command for running some command on each of a set of rows or columns. When you look at the help for apply() you'll see an argument called MARGIN, which specifies whether you want to operate on rows (1) or columns (2). For example, `apply(data[,4:10],1,mean)` is the equivalent of `rowMeans(data[,4:10])`, but we can also easily say (e.g.) `apply(data[,4:10],1,max)` to get the maxima instead. Later, when you've gotten practice defining your own functions, you can apply any function - not just R's built-in functions.
+
 * `scale()` is a function for subtracting and dividing specified amounts out of the columns of a matrix. It is fairly flexible: `scale(x,center=TRUE,scale=TRUE)` will center by subtracting the means and then scale by dividing by the standard errors of the columns. Fairly obviously, setting either to `FALSE` will turn off that part of the operation. You can also specify a vector for either center or scale, in which case `scale()` will subtract or divide the columns by those vectors instead. 
 
 **Exercise 3.1**: figure out how to use `apply()` and `scale()` to scale all columns so they have a minimum

@@ -1,0 +1,97 @@
+---
+title: "Lab 3 additional exercises"
+author: "Ben Bolker, modified by Bob Douma"
+date: "3 November 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 4. Getting familiar with a bestiary of functions
+
+The models that we will be fitting to data are composed of a deterministic component and a stochastic component. The deterministic component describes the expected pattern in absence of any randomness. You are not restricted to linear functions (as in linear regression) but you can choose among different functions. 
+
+In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (or more) appropriate functions for each dataset. Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Next, by eyeballing you will choose appropriate parameter values so you get a reasonable fit between the data and the choosen function.
+
+
+A pseudocode that implements this idea:
+
+1. Read the dataset (`shapes.csv`)
+
+2. Plot the datasets in different graphs (_hint_: use subsetting, `par(mfrow=c(..,..)`, and `plot`))
+
+3. For each plot, choose (at least) two appropriate functions based on the type of data or the shape of the data.
+
+  _hint 1_: dataset 1 describes a light response curve of a number of plants
+  _hint 2_: dataset 2 describes the intake rate of the predator as a function of prey density
+  _hint 3_: dataset 3 the data describe an allometric relationship
+  _hint 4_: dataset 4 represents measurements of population growth
+  _hint 5_: **optional** dataset 6 a species response curve (use google)
+  
+4. Plot those curves in seperate plots (_hint_: use `curve()`)
+
+5. Choose appropriate parameter values so that the chosen curves matches the data
+  _hint_: based on the characteristics of the function and the data, so you can choose your values smartly     (e.g. look at the value of the asymptote etc.)
+
+```{r, eval=T, echo=F}
+# Dataset 1: Light response curve
+# Non-rectangular parabola, fourth bullet point (p.98) 
+x = rep(seq(0,1000,100),each=5)
+theta = 0.7; a = 0.23; pmax = 25
+P = 1/(2*theta)*(a*I+pmax-sqrt((a*I+pmax)^2-(4*theta*a*I*pmax))) - 1
+y = rnorm(55,P,2)
+photo = data.frame(x,y)
+photo$dat = 1
+
+# Dataset 2: Intake rate of the predator as a function of prey density
+x = runif(50,min=0,max=200)
+# Type II functional response//Michaelis menten
+a = 20; b = 10
+ymean = (a*x)/(b+x)
+theta=0.1;k=ymean/theta
+y = rgamma(length(x),shape=k,scale=theta)
+plot(y~x)
+predprey = data.frame(x,y)
+predprey$dat = 2
+
+# Dataset 3: Allometric relationship between tree size and number of cones produced
+library(emdbook)
+x= FirDBHFec$DBH
+y =FirDBHFec$TOTCONES
+plot(y~x)
+allometric = data.frame(x,y)
+allometric$dat = 3
+
+# Dataset 4:Population growth
+x = runif(25,0,100)
+# Gompertz growth function
+a = 5; b = .1; d = 200
+ymean = exp(-a*exp(-b*x))*d
+plot(ymean~x)
+y = rpois(length(x),ymean)
+plot(y~ x)
+population = data.frame(x,y)
+population$dat = 4
+
+# Dataset 5: Negative exponential
+x = rep(seq(0,10,length.out = 20),each= 20)
+a = 2 ; b = 0.5
+ymean = a*exp(-b*x)
+y = rnbinom(length(x),mu=ymean,size=3)
+plot(y~(jitter(x)))
+countprocess = data.frame(x,y)
+countprocess$dat = 5
+
+# dataset 6: species occurence along an environmental gradient with binomial distribution
+x = runif(50,3,8)
+c = 1; u=5; t=1
+p = c*exp(-0.5*(x-u)^2/t^2)
+y = rbinom(50,p,size=1)
+plot(y~ x)
+speciesoccurence = data.frame(x,y)
+speciesoccurence$dat = 6
+
+all = rbind(photo,predprey,allometric,population,countprocess,speciesoccurence)
+write.csv(all,"shapes.csv",row.names=F)
