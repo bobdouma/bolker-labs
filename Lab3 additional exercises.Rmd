@@ -1,6 +1,6 @@
 ---
 title: "Lab 3 additional exercises"
-author: "Ben Bolker, modified by Bob Douma"
+author: "Bob Douma"
 date: "3 November 2017"
 output: pdf_document
 ---
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 The models that we will be fitting to data are composed of a deterministic component and a stochastic component. The deterministic component describes the expected pattern in absence of any randomness. You are not restricted to linear functions (as in linear regression) but you can choose among different functions. 
 
-In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (or more) appropriate functions for each dataset. Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Next, by eyeballing you will choose appropriate parameter values so you get a reasonable fit between the data and the choosen function.
+In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (preferably more) appropriate functions for each dataset. Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Next, by eyeballing you will choose appropriate parameter values so you get a reasonable fit between the data and the choosen function.
 
 
 A pseudocode that implements this idea:
@@ -24,18 +24,25 @@ A pseudocode that implements this idea:
 
 3. For each plot, choose (at least) two appropriate functions based on the type of data or the shape of the data.
 
-  _hint 1_: dataset 1 describes a light response curve of a number of plants
-  _hint 2_: dataset 2 describes the intake rate of the predator as a function of prey density
-  _hint 3_: dataset 3 the data describe an allometric relationship
-  _hint 4_: dataset 4 represents measurements of population growth
-  _hint 5_: **optional** dataset 6 a species response curve (use google)
+  + _hint 1_: dataset 1 describes a light response curve of a number of plants
+  + _hint 2_: dataset 2 describes the intake rate of a predator as a function of prey density
+  + _hint 3_: dataset 3 the data describe an allometric relationship
+  + _hint 4_: dataset 4 contains measurements of population size over time
+  + _hint 5_: no hint for dataset 5
+  + _hint 5_: **optional** dataset 6 a species response curve (use google)
   
-4. Plot those curves in seperate plots (_hint_: use `curve()`)
+4. Plot curves of the chosen functions in the seperate plots (_hint_: use `curve()`)
 
 5. Choose appropriate parameter values so that the chosen curves matches the data
-  _hint_: based on the characteristics of the function and the data, so you can choose your values smartly     (e.g. look at the value of the asymptote etc.)
+  
+  + _hint_: You can save time by choosing your values smartly (e.g. look at the value of the asymptote etc.)
 
-```{r, eval=T, echo=F}
+
+
+```{r, eval=F, echo=F}
+
+# code to generate the data of the six datasets
+
 # Dataset 1: Light response curve
 # Non-rectangular parabola, fourth bullet point (p.98) 
 x = rep(seq(0,1000,100),each=5)
@@ -69,7 +76,6 @@ x = runif(25,0,100)
 # Gompertz growth function
 a = 5; b = .1; d = 200
 ymean = exp(-a*exp(-b*x))*d
-plot(ymean~x)
 y = rpois(length(x),ymean)
 plot(y~ x)
 population = data.frame(x,y)
@@ -95,3 +101,19 @@ speciesoccurence$dat = 6
 
 all = rbind(photo,predprey,allometric,population,countprocess,speciesoccurence)
 write.csv(all,"shapes.csv",row.names=F)
+```
+
+
+```{r,eval=F, echo=F}
+# code to plot the datasets
+shapes = read.csv("shapes.csv")
+
+par(mfrow=c(3,2),oma=c(0,0,0,0),mar=c(4,4,0.1,0.1))
+for (i in 1:6){
+  shapes.subset = shapes[shapes$dat == i,]
+  plot(shapes.subset$y~shapes.subset$x)
+#add curve here
+}
+
+
+```
