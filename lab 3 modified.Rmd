@@ -78,7 +78,7 @@ However, there may be situations where you really cannot avoid a for loop. For e
 datasets and need to perform the same analysis on each dataset, you could store your datasets in a list and use a for
 loop to iterate over the different datasets.
 
-**Exercise 1.1** *: Calculate the logarithm of the sequence 1:10, using first a for loop and then without a for loop.
+**Exercise 1.1**: Calculate the logarithm of the sequence 1:10, using first a for loop and then without a for loop.
 
 # 2 Missing values (NA)
 
@@ -132,7 +132,7 @@ By the way, you should not confuse `NA` with `NaN` which stands for "**N**ot **A
 is the result of either an expression with indeterminate form (e.g. `0/0` or `Inf/Inf`) or when a function 
 is evaluated outside of its valid domain (e.g. `sqrt(-1)` or `log(-1)`).
 
-**Exercise 2.1** *: Given some data created from the following code `c(25,1,10,89, NA, NA)`, 
+**Exercise 2.1**: Given some data created from the following code `c(25,1,10,89, NA, NA)`, 
 calculate the mean value and the standard error of this mean ($s.e.m. = \sigma/\sqrt{n}$, where $\sigma$ is the standard deviation and $n$ is the amount of data) by ignoring missing values.
 
 # 3 How to make a function
@@ -194,7 +194,7 @@ naive_mean(x, na.rm = TRUE)
 For convenience, default parameters are specified by name rather than position. However we could have also said `naive_mean(x,TRUE)` or even `naive_mean(x = x, na.rm = TRUE)`. All these forms of calling functions are OK, whether you
 choose one style or another is a matter of taste.
 
-**Exercise 3.1** *: Build a function to calculate the standard deviation ($\sigma = \sqrt{\frac{\sum_{i = 1}^n\left(x_i - \bar x\right)^2}{n - 1}}$). Test your function with some data that includes missing values.
+**Exercise 3.1**: Build a function to calculate the standard deviation ($\sigma = \sqrt{\frac{\sum_{i = 1}^n\left(x_i - \bar x\right)^2}{n - 1}}$). Test your function with some data that includes missing values.
 
 # 4. Numerical experimentation: plotting curves
 
