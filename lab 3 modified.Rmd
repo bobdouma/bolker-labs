@@ -82,6 +82,18 @@ loop to iterate over the different datasets.
 
 # 2 Missing values (NA)
 
+Missing values in data collection and analysis deserve special attention. You can get missing values during you data collection for various reasons, e.g. you missed the opportunity to take a measurement, you lose one of the replicates due to contamination, you wrote down a wrong value, or you even lost some of your data.
+
+The most important thing you need to understand, is that in almost all cases of a missing value, you should **not represent a missing value with a zero (0)**. This will throw your analysis out of balance and give erroneous results. A common way of representing missing data when you are performing data input, would be with a character like an asterisk (\*) or a hyphen (-).
+
+Many of the functions that read data in `R` have a parameter (otherwise called an argument) that allows you to select how you have represented a missing-value in your data. As an example the function **read.csv** (which reads a comma-delimited data file) would be used like this to read from a file named "your-data-file":
+
+```{r}
+myData <- read.csv("you-data-file", na.strings=c("*","-") )
+```
+
+In this case we instructed `R`, with the argument **na.strings=c("\*","\_")** to read our file, and substitute any occurence of an asterisk (\*) or a hyphen(-) with an `NA` symbol.
+
 The `R` languages has a special way of representing missing values in a dataset. A missing
 value is denoted with the symbol `NA` which stands for "**N**ot **A**vailable". By default, 
 missing values will "propagate" throughout the calculations. For example, given two vectors of
