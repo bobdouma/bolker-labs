@@ -1,0 +1,799 @@
+\documentclass{article}
+\usepackage[american]{babel}
+\usepackage{graphicx}
+\usepackage{alltt}
+\usepackage{url}
+\usepackage{amsmath}
+\newcommand{\codef}[1]{{\tt #1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcounter{exercise}
+%\numberwithin{exercise}{section}
+\newcommand{\exnumber}{\addtocounter{exercise}{1} \theexercise \thinspace}
+\newcommand{\lik}{L}
+\usepackage{sober}
+
+\newcommand{\R}{{\sf R}}
+\title{Lab 4: probability distributions, averaging, and Jensen's inequality}
+\author{\copyright 2005 Ben Bolker}
+\begin{document}
+\bibliographystyle{plain}
+\maketitle
+
+\section{Random distributions in \R}
+\R\ knows about lots of probability distributions.  For each, it
+can generate random numbers drawn from the distribution
+(``deviates'');
+compute the cumulative distribution function and the probability
+distribution
+function; and compute the quantile function, which gives the
+$x$ value such that $\int_0^x P(x) \, dx$ (area under the curve from 0
+to $x$) is a specified value, such as 0.95 (think about ``tail areas''
+from standard statistics).
+
+%\includegraphics[width=4in]{dpqr}
+\begin{figure}
+<<echo=FALSE,fig=TRUE,width=12>>=
+sh = 4
+op=par(mfrow=c(1,2),mar=c(5.1,9.1,0,0.5))
+curve(dgamma(x,shape=sh),from=0,to=20,ylab="",lwd=2,axes=FALSE)
+axis(side=1,labels=FALSE)
+axis(side=2,labels=FALSE)
+box()
+xvec = seq(0,5,length=100)
+polygon(c(xvec,rev(xvec)),c(rep(0,length(xvec)),dgamma(rev(xvec),shape=sh)),col="gray",border=NA)
+curve(dgamma(x,shape=sh),from=0,to=20,lwd=2,add=TRUE)
+abline(v=5,lty=3)
+mtext(side=1,line=1.8,at=5,expression(x[0]),cex=2)
+abline(h=dgamma(5,shape=sh),lty=2,lwd=2)
+mtext(side=2,at=dgamma(5,shape=sh),las=1,expression(ddist(x[0])),
+      line=1.8,cex=2)
+text(10,0.1,expression(pdist(x[0])),cex=2,col="darkgray")
+mtext(side=2,at=0.0,adj=0,"Probability density",cex=2,line=3.5)
+set.seed(1001)
+points(rgamma(10,shape=sh),rep(0,10),cex=1.5)
+text(11.7,0.03,"rdist(10)",adj=0,cex=2)
+arrows(10.8,0.023,6.6,0.008,lwd=2)
+curve(pgamma(x,shape=sh),from=0,to=20,ylab="",lwd=2,axes=FALSE)
+axis(side=1,labels=FALSE)
+axis(side=2,labels=FALSE)
+box()
+abline(v=5,lty=3)
+mtext(side=1,line=1.8,at=5,expression(x[0]),cex=2)
+abline(h=pgamma(5,shape=sh),lty=2,lwd=2)
+mtext(side=2,at=pgamma(5,shape=sh),las=1,expression(pdist(x[0])),
+      line=1.8,cex=2)
+abline(v=qgamma(0.95,shape=sh),lty=4,lwd=2)
+mtext(side=2,at=0.95,las=1,0.95,
+      line=par("mgp")[2],cex=2)
+segments(par("usr")[1],0.95,qgamma(0.95,shape=sh),0.95,lty=4,lwd=2)
+mtext(side=1,at=qgamma(0.95,shape=sh),text="qdist(0.95)",line=1.8,
+      cex=2,adj=0.1)
+mtext(side=2,at=-0.05,adj=0,"Cumulative distribution",cex=2,line=3.5)
+@
+\caption{\R\ functions for an arbitrary distribution
+\code{dist}, showing density function (\code{ddist}),
+cumulative distribution function (\code{pdist}),
+quantile function (\code{qdist}), and
+random-deviate function (\code{rdist}).}
+\label{fig:dpqr} 
+\end{figure}
+
+Let's take the binomial distribution (yet again) as an example.
+\begin{itemize}
+\item{{\tt rbinom(n,size,prob)} gives {\tt n} random draws from the binomial
+distribution with parameters {\tt size} (total number of draws) and
+{\tt p} (probability of success on each draw).  
+You can give different parameters for each draw.
+For example:
+<<>>=
+rbinom(10,size=8,prob=0.5)
+rbinom(3,size=8,prob=c(0.2,0.4,0.6))
+@ 
+Figure~\ref{fig:rbinom} shows the result of drawing 200 values
+from a binomial distribution with $N=12$ and $p=0.1$ and
+plotting the results as a \code{factor} (with 200 draws
+we don't have to worry about any of the 13 possible outcomes
+getting missed and excluded from the plot):
+<<eval=FALSE>>=
+plot(factor(rbinom(200,size=12,prob=0.1)),xlab="# of successes",ylab="# of trials out of 200")
+@ 
+\begin{figure}
+<<fig=TRUE,echo=FALSE>>=
+plot(factor(rbinom(200,size=12,prob=0.1)),xlab="# of successes",ylab="# of trials out of 200")
+@ 
+\caption{Results of \code{rbinom}}
+\label{fig:rbinom}
+\end{figure}
+}
+\item{{\tt dbinom(x,size,prob)} gives the value of the probability
+distribution
+function (pdf) at {\tt x} (for a continous distribution,
+the analogous function would compute the probability density
+function). Since the binomial is discrete, {\tt x}
+has to be an integer, and the pdf is just the probability of getting
+that many successes; if you try {\tt dbinom} with a non-integer {\tt x}, you'll get zero and a warning.
+}
+\item{{\tt pbinom(q,size,prob)} gives the value of the cumulative
+distribution
+function (cdf) at {\tt q} (e.g. \verb+pbinom(7,size=10,prob=0.4)+);
+}
+\item{{\tt qbinom(p,size,prob)} gives the quantile function $x=q(p)$,
+where {\tt p} is a number between 0 and 1 (an area under the pdf, or
+value of the cdf) and $x$ is the value such that 
+$P(X \le x)=p$.
+The \emph{quantile function} $Q$ is the inverse of the cumulative distribution
+function $C$: if $Q(p)=q$ then $C(q)=p$.
+Example: \verb+qbinom(0.95,size=10,prob=0.4)+.
+}
+\end{itemize}
+
+These four functions exist for each of the distributions \R\ has built
+in: e.g. for the normal distribution they're
+{\tt rnorm()}, {\tt pnorm()}, {\tt dnorm()}, {\tt qnorm()}.
+Each distribution has its own set of parameters (so e.g. {\tt pnorm()}
+is {\tt pnorm(x,mean=0,sd=1)}).
+
+\textbf{Exercise \exnumber}:
+For the binomial distribution with 10 trials and a success probability
+of 0.2:
+\begin{itemize}
+\item{
+<<echo=FALSE,eval=FALSE>>=
+set.seed(1001); rbinom(8,size=10,prob=0.2)
+@ 
+Pick 8 random values and sort them into increasing order
+(if you \code{set.seed(1001)} beforehand, you should get $X=0$
+(twice), $X=2$ (4~times), and $X=4$ and $X=5$ (once each)).}
+\item{Calculate the probabilities of getting 3, 4, or 5
+successes. Answer: 
+<<echo=FALSE>>=
+dbinom(3:5,size=10,prob=0.2)
+@ 
+}
+\item{Calculate the probability of getting 5 or more
+successes.
+Answer: 
+<<echo=FALSE>>=
+pbinom(4,size=10,prob=0.2,lower.tail=FALSE)
+@ 
+}
+\item{What tail values would you use to test against the (two-sided)
+null hypothesis that \code{prob}$=0.2$ at the 95\% level? (Use \code{qbinom()} to get the answer,
+and use \code{pbinom(0:10,size=10,prob=0.2)} 
+and \code{pbinom(0:10,size=10,prob=0.2,lower.tail=FALSE)} to check that your
+answer makes sense.}
+\end{itemize}
+
+You can use the \R\ functions to test your understanding of
+a distribution and make sure that random draws match up
+with the theoretical distributions as they should.
+This procedure is particularly valuable when you're developing new
+probability distributions by combining simpler ones,
+e.g. by zero-inflating or compounding distributions.
+
+The results of a large number of random draws should have
+the correct moments (mean and variance), and a histogram
+of those random draws (with \code{freq=FALSE} or \code{prob=TRUE})
+should match up with the theoretical distribution.
+For example, draws from a binomial distribution with
+$p=0.2$ and $N=20$ should have a mean of approximately $Np=4$
+and a variance of $Np(1-p)=3.2$:
+<<>>=
+set.seed(1001)
+N=20; p=0.2
+x = rbinom(10000,prob=p,size=N)
+c(mean(x),var(x))
+@ 
+
+The mean is very close, the variance
+is a little bit farther off.
+Just for the heck of it, we can use the
+\code{replicate()} function to re-do this
+command many times and see how close we get:
+<<>>=
+var_dist = replicate(1000,var(rbinom(10000,prob=p,size=N)))
+@ 
+(this may take a little while; if it takes too long,
+lower the number of replicates to 100).
+
+Looking at the summary statistics and
+at the 2.5\% and 97.5\% quantiles of the
+distribution of variances:
+<<>>=
+summary(var_dist)
+quantile(var_dist,c(0.025,0.975))
+@ 
+(Try a histogram too.)
+Even though there's some variation (of
+the variance) around the theoretical value,
+we seem to be doing the right thing since
+the 95\% confidence limits include the theoretical
+value.
+(Lab 5 will go into more detail on running
+simulations to check the expected variation
+of different measurement as a function
+of parameters and sample size.)
+
+Finally, Figure~\ref{fig:binomchk} shows
+the entire simulated frequency distribution
+along with the theoretical values.
+The steps in \R\ are:
+\begin{enumerate}
+\item{pick 10,000 random deviates:
+<<eval=FALSE>>=
+x = rbinom(10000,prob=p,size=N)
+@ 
+}
+\item{
+Tabulate the values, and divide
+by the number of samples to get
+a probability distribution:
+<<eval=FALSE>>=
+tx = table(factor(x,levels=0:12))/10000
+@ 
+(The \code{levels}
+command is necessary in this case
+because the probability of
+$x=12$ with $p=0.2$ and $N=12$
+is actually so low ($\approx 4\times 10^{-9}$)
+that it's very unlikely that
+a sample of 10,000 won't include any
+samples with 12 successes.)
+}
+\item{
+Draw a barplot of the values, extending
+the $y$-limits a bit to make room for
+the theoretical values and saving the
+$x$ locations at which the bars are drawn:
+<<eval=FALSE>>=
+b1 = barplot(tx,ylim=c(0,0.23),ylab="Probability")
+@ 
+}
+\item{
+Add the theoretical values, plotting them
+at the same $x$-locations as the centers
+of the bars:
+<<eval=FALSE>>=
+points(b1,dbinom(0:12,prob=p,size=N),pch=16)
+@
+(\code{barplot()} doesn't put the bars
+at $x$ locations corresponding to their
+numerical values, so you have to save
+those values as \code{b1} and re-use
+them to make sure the theoretical
+values end up in the right place.)
+}
+\end{enumerate}
+A few alternative ways to do this plot would be:
+\begin{enumerate}
+\item{
+<<eval=FALSE>>=
+plot(factor(x)); points(b1,10000*dbinom(0:12,prob=p,size=N))
+@ 
+(plots the number of observations without rescaling and
+scales the probability distribution to match);
+}
+\item{
+<<eval=FALSE>>=
+plot(table(x)/10000); points(0:12,dbinom(0:12,prob=p,size=N))
+@ 
+Plotting a table does a plot with \code{type="h"} (high
+density), which plots a vertical line for each value.
+I think it's not quite as pretty as the barplot, but
+it works.
+Unlike factors, tables can be scaled numerically,
+and the lines end up at the right numerical locations,
+so we can just use \code{0:12} as the $x$ locations
+for the theoretical values.
+}
+\item{You could also draw a histogram:
+since histograms were really designed
+continuous data you have to make sure the
+breaks occur in the right place (halfway
+between counts):
+<<eval=FALSE>>=
+h= hist(x,breaks=seq(-0.5,12.5,by=1),col="gray",
+     prob=TRUE)
+points(0:12,dbinom(0:12,prob=p,size=N))
+@
+} 
+\end{enumerate}
+\begin{figure}
+<<fig=TRUE,echo=FALSE>>=
+x = rbinom(10000,prob=p,size=N)
+tx = table(factor(x,levels=0:12))/10000
+b1 = barplot(tx,ylim=c(0,0.23),ylab="Probability")
+points(b1,dbinom(0:12,prob=p,size=N),pch=16)
+@ 
+\caption{Checking binomial deviates against
+theoretical values.}
+\label{fig:binomchk}
+\end{figure}
+
+Doing the equivalent plot for continuous distributions
+is actually somewhat easier, since you don't have
+to deal with the complications of a discrete distribution:
+just use \code{hist(...,prob=TRUE)} to show the
+sampled distribution (possibly with \code{ylim}
+adjusted for the maximum of the theoretical
+density distribution) and
+\code{ddist(x,[parameters],add=TRUE)} to add the
+theoretical curve
+(e.g.: \code{curve(dgamma(x,shape=2,scale=1,add=FALSE))}).
+
+\textbf{Exercise\exnumber *}:
+Pick 10,000 negative binomial
+deviates with $\mu=2$, $k=0.5$
+(using \code{rnbinom()}).
+Pick one of the ways above to draw
+the distribution.  
+Check that the mean and variance
+agree reasonably well with the theoretical values.
+Add points representing
+the theoretical distribution to the plot.
+Now translate the $\mu$ and $k$
+parameters into their $p$ and $nn$
+equivalents (the coin-flipping derivation
+of the negative binomial), and add
+those points to the plot [use a different
+plotting symbol to make sure you can see
+that they overlap with the theoretical
+values based on the $\mu$, k parameterization].
+
+\section{Averaging across discrete and continuous distributions}
+
+Suppose we have a (tiny) data set;
+we can organize it in two different ways,
+in standard long format or in tabular form:
+<<>>=
+dat = c(5,6,5,7,5,8); dat
+tabdat=table(dat); tabdat
+@ 
+To get the (sample) probability distribution of the data,
+just scale by the total sample size:
+<<>>=
+prob=tabdat/length(dat); prob
+@ 
+(dividing by \code{sum(tabdat)} would
+be equivalent).
+
+In the long format, we can take
+the mean with \code{mean(dat)}
+or, replicating the formula $\sum x_i/N$
+exactly, \code{sum(dat)/length(dat)}.
+
+In the tabular format, we
+can calculate the mean 
+with the formula $\sum P(x) x$,
+which in \R\ would be
+\code{sum(prob*5:8)} or
+more generally
+<<>>=
+vals = as.numeric(names(prob))
+sum(prob*vals)
+@ 
+(you could also get the values
+by \code{as.numeric(levels(prob))},
+or by \code{sort(unique(dat))}).
+
+However, \code{mean(prob)}
+or \code{mean(tabdat)} is just plain wrong
+(at least, I can't think of a situation where
+you would want to calculate this value).
+
+\textbf{Exercise \exnumber:} figure out
+what it means that
+\code{mean(tabdat)} equals \Sexpr{mean(tabdat)}.
+
+Going back the other way, from a table to raw values, we can use
+the \texttt{rep()} function to repeat values an appropriate number of times.
+In its simplest form, \texttt{rep(x,n)} just creates
+a vector repeats \texttt{x} (which
+may be either a single value or a vector) \texttt{n} times, but
+\textbf{if n is a vector as well} then each element of \texttt{x}
+is repeated the corresponding number of times: for example,
+<<>>=
+rep(c(1,2,3),c(2,1,5))
+@ 
+gives two copies of 1, one copy of 2, and five copies of 3.
+
+Therefore,
+<<>>=
+rep(vals,tabdat)
+@ 
+will recover our original data (although not in the original
+order) by repeating each element of \code{vals}
+the correct number of times.
+
+\subsection{Jensen's inequality}
+
+Looking at Schmitt et al's data, the density of
+settlers
+nearly fits an exponential distribution with 
+a mean of 24.5 (so $\lambda=1/24.5$).
+Schmitt et al. also say that recruitment ($R$)
+as a function of settlement ($S$) is $R = aS/(1+(a/b)S)$,
+with $a = 0.696$ (initial slope, recruits per 0.1 m$^2$ patch reef per settler)
+and $b = 9.79$ (asymptote, recruits per 0.1 m$^2$ patch reef at high settlement density).
+
+% suppose fecundity is a hyperbolic function of density ($g(x) =
+% 3/(1+x)$)
+% [max fecundity=3, fecundity drops below replacement at densities
+% greater than 2],
+% and density is exponentially distributed ($p(x) = 2
+% \exp(-2 x)$) [average density 1/2].
+% Then average fecundity is $\int p(x) g(x) \, dx$.
+% This integral is too hard to do analytically.
+% (I was able to do this problem in {\tt Mathematica}, which told me
+% that the answer was an exponential integral
+% function. This function is so horribly
+% complicated that it really gives me no
+% more insight into the problem --- it just gives
+% me a more efficient way to compute it
+% numerically.)
+
+% we can integrate this with {\tt Mathematica} or {\tt Maple}:
+% it would look something like this ---
+% \begin{verbatim}
+% Mathematica 4.0 for Linux
+% Copyright 1988-1999 Wolfram Research, Inc.
+%  -- Motif graphics initialized -- 
+
+% In[1]:= Integrate[3/(1+x)*2*Exp[-2*x],{x,0,Infinity}]
+
+%             2
+% Out[1]= -6 E  ExpIntegralEi[-2]
+
+% In[2]:= N[%]
+
+% Out[2]= 2.16797
+% \end{verbatim}
+% (it turns out that this is actually a really nasty integral --- but Mathematica
+% can compute its value numerically).
+
+%% doing it with pgamma():
+%% NR says Ei(x) = int(-infty,x) e^t/t = -int(-x,infty) e^(-t)/t
+%% pgamma is int[0,x] 1/(s^a Gamma(a)) t^(a-1) e^(-t/s) dt
+%% so -6 E^2 ExpIntegralEi[-2] = 6*exp(2)*int(2,Inf) e^(-t)/t = 
+%% can't figure this out right now ...
+
+Let's see how strong Jensen's inequality is for this population.
+We'll figure out the average by approximating an integral
+by a sum: $E[R] = \int_0^\infty f(S) P(S) \, dS \approx \sum f(S_i) P(S_i) \Delta S$,
+where $f(S)$ is the density of recruits as a function
+of settlers and $P(S) \, dS$ is the probability of a particular
+number of settlers.
+We need to set the range big enough to get most of the probability
+of the distribution, and the $\Delta S$ small enough to get most
+of the variation in the distribution; we'll try 0--200 in steps of 0.1.
+(If I set the range too small or the $\Delta S$ too big, I'll miss
+a piece of the distribution or the function.  If I try to be too
+precise, I'll waste time computing.)
+
+In \R:
+<<>>=
+a = 0.696; b=9.79
+dS = 0.1
+S = seq(0,200,by=dS)
+pS =  dexp(S,rate=1/24.5)
+fS = a*S/(1+(a/b)*S)
+sum(pS*fS*dS)
+@ 
+
+\R\ also knows how to integrate functions numerically:
+it can even approximate an integral from 0 to $\infty$.
+First we have to define a (vectorizable) function:
+<<>>=
+tmpf = function(S) { dexp(S,rate=1/24.5)*a*S/(1+(a/b)*S) }
+@ 
+
+Then we can just ask \R\ to integrate it:
+<<>>=
+i1 = integrate(tmpf,lower=0,upper=Inf); i1
+@ 
+(Use \code{adapt()}, in the \code{adapt} package,
+if you need to do multidimensional integrals.)
+
+This integral shows that we were pretty close
+with our first approximation.
+However, numerical integration will always
+imply some level of approximation; be
+careful with functions with sharp spikes,
+because it can be easy to miss important parts 
+of the function.
+
+Now to try out the delta function approximation
+(as discussed in Chapter~4),
+which is that
+($E[f(x)] \approx f(\bar x)+(\sigma^2 f''(\bar x)/2)$)
+<<>>=
+d1 = D(expression(a*x/(1+(a/b)*x)),"x")
+d2 = D(d1,"x")
+@ 
+
+As stated above,
+the mean value of the distribution is about 24.5.
+The variance of the exponential distribution is
+equal to the mean squared, or 600.25.
+<<>>=
+Smean = 24.5
+Svar = Smean^2
+d2_num = eval(d2,list(a=0.696,b=9.79,x=Smean))
+mval = a*Smean/(1+(a/b)*Smean)
+dapprox = mval + 1/2*Svar*d2_num
+merr = (mval-i1$value)/i1$value; merr
+err = (dapprox-i1$value)/i1$value; err
+@ 
+The answer from the delta method 
+is only about 5\% below
+the true value, as 
+opposed to the naive answer ($f(\bar x)$) which is about
+25\% high.  (We have to say \verb+i1$value+
+to extract the actual value of the integral
+from the variable \code{i1}; try \code{str(i1)}
+if you want to see all the information that
+\R\ is storing about the integral.)
+
+\textbf{Exercise \exnumber *}:
+try the above exercise again, but this time
+with a gamma distribution instead of an exponential.
+Keep the mean equal to 24.5 and change the
+variance to 100, 25, and 1 (use the information
+that the mean of the gamma distribution is \code{shape*scale}
+and the variance is \verb+shape*scale^2+).
+Including the results for the exponential
+(which is a gamma with shape=1), make a table
+showing how the (1) true value of
+mean recruitment [calculated by
+numerical integration in \R\ either
+using \code{integrate()} or summing
+over small $\Delta S$] (2) value of
+recruitment at the mean settlement 
+(3) delta-method approximation
+(4,5) proportional error in \#2 and \#3
+change with the variance.
+
+\section{The method of moments: reparameterizing distributions}
+
+In the chapter, I showed how to use the \emph{method of moments}
+to estimate the parameters of a distribution by setting the
+sample mean and variance ($\bar x$, $s^2$) equal to the theoretical
+mean and variance of a distribution and solving for the parameters.
+For the negative binomial, in particular, I found $\mu=\bar x$
+and $k=(\bar x)/(s^2/\bar x -1)$.
+
+You can also define your own functions that use
+your own parameterizations: call them \verb+my_function+
+rather than just replacing the standard \R\ functions
+(which will lead to insanity in the long run).
+
+For example, defining
+<<>>=
+my_dnbinom = function(x,mean,var,...) {
+  mu = mean
+  k = mean/(var/mean-1)
+  dnbinom(x,mu=mu,size=k,...)
+}
+
+my_rnbinom = function(n,mean,var,...) {
+  mu = mean
+  k = mean/(var/mean-1)
+  rnbinom(n,mu=mu,size=k,...)
+}
+@ 
+(the \code{...} in the function takes any other arguments
+you give to \verb+my_dnbinom+ and just passes them through,
+unchanged, to \code{dnbinom}).
+
+Defining your own functions can be handy if you need
+to work on a regular basis with a distribution that
+uses a different parameterization than the one built
+into the standard \R\ function.
+
+You can use the kinds of histograms shown above to test your
+results (remembering that the method of moments estimates
+may be slightly biased especially for small samples --- but
+they shouldn't cause errors as large as those caused by 
+typical algebra mistakes).
+
+<<>>=
+x = my_rnbinom(100000,mean=1,var=4)
+mean(x)
+var(x)
+@ 
+
+<<fig=TRUE>>=
+tx = table(factor(x,levels=0:max(x)))/100000
+b1 = barplot(tx,ylab="Probability")
+points(b1,my_dnbinom(0:max(x),mean=1,var=4),pch=16)
+abline(v=1)
+@ 
+
+\textbf{Exercise \exnumber *}:
+Morris (1997) gives a definition of the beta function that
+is different from the standard statistical parameterization.
+The standard parameterization is
+$$
+\mbox{Beta}(x|a,b) = \frac{\Gamma(a+b)}{\Gamma(a)\Gamma(b)} x^{a-1}(1-x)^{b-1}
+$$
+whereas Morris uses
+$$
+\mbox{Beta}(x|P,\theta) = \frac{\Gamma(\theta)}{\Gamma(\theta P)\Gamma(\theta (1-P))} x^{\theta P-1} (1-x)^{\theta(1-P)-1}.
+$$
+Find expressions for $P$ and $\theta$ in terms of $a$ and $b$
+and vice versa.  Explain why you might prefer Morris's
+parameterization.
+Define a new set of functions that generate random
+deviates from the beta distribution (\verb+my_rbeta+)
+and calculate the density function (\verb+my_dbeta+)
+in terms of $P$ and $\theta$.
+Generate a histogram from this distribution
+and draw a vertical line showing the mean of the distribution.
+
+\section{Creating new distributions}
+
+\subsection{Zero-inflated distributions}
+The general formula for the probability distribution of
+a zero-inflated distribution, with an underlying
+distribution $P(x)$ and a zero-inflation probability
+of $p_z$, is:
+\begin{eqnarray*}
+\mbox{Prob}(0) & = & p_z + (1-p_z) P(0) \\
+\mbox{Prob}(x>0) & = & (1-p_z) P(x)
+\end{eqnarray*}
+So, for example, we could define a probability distribution
+for a zero-inflated negative binomial as follows:
+<<>>=
+dzinbinom = function(x,mu,size,zprob) {
+  ifelse(x==0,
+         zprob+(1-zprob)*dnbinom(0,mu=mu,size=size),
+         (1-zprob)*dnbinom(x,mu=mu,size=size))
+}
+@ 
+(the name, \code{dzinbinom}, follows the \R\ convention
+for a probability distribution function: a \code{d}
+followed by the abbreviated name of the distribution,
+in this case \code{zinbinom} for
+``\textbf{z}ero-\textbf{i}nflated \textbf{n}egative
+\textbf{binom}ial'').
+
+The \code{ifelse()} command checks every element of
+\code{x} to see whether it is zero or not and fills
+in the appropriate value depending on the answer.
+
+A random deviate generator would look like this:
+<<>>=
+rzinbinom = function(n,mu,size,zprob) {
+  ifelse(runif(n)<zprob,
+         0,
+         rnbinom(n,mu=mu,size=size))
+}
+@ 
+The command \code{runif(n)} picks \code{n}
+random values between 0 and 1; the \code{ifelse}
+command compares them with the value of
+\code{zprob}.  If an individual value is
+less than \code{zprob} (which happens with probability
+\code{zprob}=$p_z$), then the corresponding
+random number is zero; otherwise it is a value
+picked out of the appropriate negative binomial
+distribution.
+
+\textbf{Exercise \exnumber}:
+check graphically that these functions actually
+work. For an extra challenge, calculate the mean
+and variance of the zero-inflated negative binomial
+and compare it to the results of
+\code{rzinbinom(10000,mu=4,size=0.5,zprob=0.2)}.
+
+\section{Compounding distributions}
+
+The key to compounding distributions in \R\ is
+that the functions that generate random deviates
+can all take a vector of different parameters
+rather than a single parameter.  For example,
+if you were simulating the number of hatchlings
+surviving (with individual probability 0.8)
+from a series of 8 clutches, all of size
+10, you would say
+<<>>=
+rbinom(8,size=10,prob=0.8)
+@ 
+but if you had a series of clutches
+of different sizes, you could still
+pick all the random values at the same time:
+<<>>=
+clutch_size = c(10,9,9,12,10,10,8,11)
+rbinom(8,size=clutch_size,prob=0.8)
+@ 
+
+Taking this a step farther, the clutch size
+itself could be a random variable:
+<<>>=
+clutch_size = rpois(8,lambda=10)
+rbinom(8,size=clutch_size,prob=0.8)
+@ 
+We've just generated a Poisson-binomial
+random deviate \ldots
+
+As a second example, I'll 
+follow Clark \emph{et al.} in constructing
+a distribution that is a compounding
+of normal distributions, with 1/variance of each sample drawn from
+a gamma distribution.
+
+First pick the variances as the reciprocals of 10,000 values
+from a gamma distribution with shape 5 (setting the scale equal
+to 1/5 so the mean will be 1):
+<<>>=
+var_vals=1/rgamma(10000,shape=5,scale=1/5)
+@ 
+
+Take the square root, since \code{dnorm} uses
+the standard deviation and not the variance
+as a parameter:
+<<>>=
+sd_vals = sqrt(var_vals)
+@
+
+Generate 10,000 normal deviates using this
+range of standard deviations:
+<<>>=
+x = rnorm(10000,mean=0,sd=sd_vals)
+@ 
+
+Figure~\ref{fig:dt} shows a histogram of the
+following commands:
+<<eval=FALSE>>=
+hist(x,prob=TRUE,breaks=100,col="gray")
+curve(dt(x,df=11),add=TRUE,lwd=2)
+@ 
+The superimposed curve is a $t$ distribution
+with 11 degrees of freedom; it turns out that
+if the underlying gamma distribution has 
+shape parameter $p$, the resulting $t$ distribution
+has $df=2p+1$.
+(Figuring out the analytical form of the compounded
+probability distribution or density function, or
+its equivalence to some existing distribution,
+is the hard part; for the most part, though,
+you can find these answers in the ecological
+and statistical literature if you search hard
+enough.
+
+\begin{figure}
+<<fig=TRUE>>=
+hist(x,prob=TRUE,breaks=100,col="gray")
+curve(dt(x,df=11),add=TRUE,lwd=2)
+@ 
+\caption{Clark model: inverse gamma compounded with normal,
+equivalent to the Student $t$ distribution}
+\label{fig:dt}
+\end{figure}
+
+\textbf{Exercise \exnumber*}:
+generate 10,000 values from
+a gamma-Poisson compounded distribution
+with parameters shape=$k=0.5$, scale=$\mu/k=4/0.5=8$
+and demonstrate that it's equivalent to a
+negative binomial with the appropriate
+$\mu$ and $k$ parameters.
+
+\emph{Extra credit}: generate 10,000
+values from a lognormal-Poisson distribution
+with the same expected mean and variance
+(the variance of the lognormal should
+equal the variance of the gamma distribution
+you used as a compounding distribution;
+you will have to do some algebra
+to figure out the values of \code{meanlog}
+and \code{sdlog} needed to produce a lognormal
+with a specified mean and variance.
+Plot the distribution and superimpose
+the theoretical distribution of the
+negative binomial with the same mean
+and variance
+to see how different the shapes of the distributions
+are.
+
+\end{document}

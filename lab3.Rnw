@@ -1,0 +1,389 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\newcommand{\R}{{\sf R}}
+\newcommand{\code}[1]{\texttt{#1}}
+\title{Analyzing functions: lab 3}
+\author{\copyright 2005 Ben Bolker}
+\newcounter{exercise}
+%\numberwithin{exercise}{section}
+\newcommand{\exnumber}{\addtocounter{exercise}{1} \theexercise \thinspace}
+
+\begin{document}
+\maketitle
+
+This lab will be somewhat shorter in terms of ``\R\ stuff''
+than the previous labs, because more of the new material
+is algebra and calculus than \R\ commands.
+Try to do a reasonable amount of the work with paper
+and pencil before resorting to messing around in \R.
+
+derivatives
+ifelse for thresholds
+
+\section{Numerical experimentation: plotting curves}
+
+Here are the \R\ commands used to generate Figure~1.  They
+just use \code{curve()}, with \code{add=FALSE} (the default,
+which draws a new plot) and \code{add=TRUE} (adds the curve
+to an existing plot), particular 
+values of \code{from} and \code{to}, and various graphical parameters
+(\code{ylim}, \code{ylab}, \code{lty}).
+
+<<eval=FALSE>>=
+curve(2*exp(-x/2),from=0,to=7,ylim=c(0,2),ylab="")
+curve(2*exp(-x),add=TRUE,lty=4)
+curve(x*exp(-x/2),add=TRUE,lty=2)
+curve(2*x*exp(-x/2),add=TRUE,lty=3)
+text(0.4,1.9,expression(paste("exponential: ",2*e^(-x/2))),adj=0)
+text(4,.5,expression(paste("Ricker: ",x*e^(-x/2))))
+text(4,1,expression(paste("Ricker: ",2*x*e^(-x/2))),adj=0)
+text(2.8,0,expression(paste("exponential: ",2*e^(-x))))
+@ 
+
+The only new thing in this figure is the
+use of \code{expression()} to add a mathematical
+formula to an \R\ graphic.  \verb+text(x,y,"x^2")+
+puts \verb+x^2+ on the graph at position $(x,y)$;
+\verb+text(x,y,expression(x^2))+ (no quotation marks)
+puts $x^2$ on the graph.  See \code{?plotmath} or
+\code{?demo(plotmath)} for (much) more information.
+
+An alternate way of plotting the exponential parts of this
+curve:
+<<>>=
+xvec = seq(0,7,length=100)
+exp1_vec = 2*exp(-xvec/2)
+exp2_vec = 2*exp(-xvec)
+plot(xvec,exp1_vec,type="l",ylim=c(0,2),ylab="")
+lines(xvec,exp2_vec,lty=4)
+@ 
+or, since both exponential vectors are the
+same length, we could \code{cbind()} them
+together and use \code{matplot()}:
+<<eval=FALSE>>=
+matplot(xvec,cbind(exp1_vec,exp2_vec),type="l",
+        ylab="")
+@ 
+Finally, if you needed to use \code{sapply()}
+you could say:
+<<>>=
+expfun = function(x,a=1,b=1) {
+   a*exp(-b*x)
+ }
+exp1_vec = sapply(xvec,expfun,a=2,b=1/2)
+exp2_vec = sapply(xvec,expfun,a=2,b=1)
+@ 
+
+The advantage of \code{curve()} is that you 
+don't have to define any vectors: the advantage
+of doing things the other way arises when
+you want to keep the vectors around to do
+other calculations with them.
+
+\textbf{Exercise\exnumber *}: Construct a curve
+that has a maximum at ($x=5$, $y=1$).  Write the
+equation, draw the curve in \R, and explain
+how you got there.
+
+\subsection{A quick digression: \code{ifelse()} for piecewise functions}
+
+The \code{ifelse()} command in \R\ is useful for constructing
+piecewise functions.  Its basic syntax is
+\verb+ifelse(condition,value_if_true,value_if_false)+,
+where \code{condition} is a logical vector
+(e.g. \code{x>0}), \verb+value_if_true+ is a vector
+of alternatives to use if \code{condition} is
+\code{TRUE}, and \verb+value_if_false+ is a vector
+of alternatives to use if \code{condition} is
+\code{FALSE}.  If you specify just one value, it
+will be expanded (\emph{recycled} in \R\ jargon)
+to be the right length.
+A simple example:
+<<>>=
+x=c(-25,-16,-9,-4,-1,0,1,4,9,16,25)
+ifelse(x<0,0,sqrt(x))
+@ 
+These commands produce a warning message, but it's OK
+to ignore it since you know you've taken care of the
+problem (if you said \code{sqrt(ifelse(x<0,0,x))} instead
+you wouldn't get a warning: why not?)
+
+Here are some examples of using \code{ifelse()} to generate
+(1) a simple threshold; (2) a Holling type~I or
+``hockey stick''; (3) a more complicated piecewise model
+that grows exponentially and then decreases linearly;
+(4) a double-threshold model.
+<<fig=TRUE>>=
+op=par(mfrow=c(2,2),mgp=c(2,1,0),mar=c(4.2,3,1,1))
+curve(ifelse(x<2,1,3),from=0,to=5)
+curve(ifelse(x<2,2*x,4),from=0,to=5)
+curve(ifelse(x<2,exp(x),exp(2)-3*(x-2)),from=0,to=5)
+curve(ifelse(x<2,1,ifelse(x<4,3,5)),from=0,to=5)
+@ 
+
+The double-threshold example (nested
+\code{ifelse()} commands) probably needs
+more explanation.  In words, this command would
+go ``if $x$ is less than 2, set $y$ to 1; otherwise
+($x \ge 2$), if $x$ is less than 4 (i.e. $2 \le x<4$), set $y$ to 3;
+otherwise ($x \ge 4$), set $y$ to 5''.
+
+\section{Evaluating derivatives in \R}
+\R\ can evaluate derivatives, but it is not
+very good at simplifying them.
+In order for \R\ to know that you really
+mean (e.g) \verb+x^2+ to be a mathematical
+expression and not a calculation for \R\ to
+try to do (and either fill in the current
+value of \code{x} or give an error that
+\code{x} is undefined), you have to specify
+it as \verb+expression(x^2)+; you 
+also have to tell \R\ (in quotation marks)
+what variable you want to differentiate
+with respect to:
+<<>>=
+d1 = D(expression(x^2),"x"); d1
+@ 
+
+Use \code{eval()} to fill in 
+a list of particular
+values for which you want a numeric answer:
+<<>>=
+eval(d1,list(x=2))
+@ 
+
+Taking the second derivative:
+<<>>=
+D(d1,"x")
+@ 
+
+(As of version 2.0.1,) \R\ knows how
+to take the derivatives of expressions including
+all the basic arithmetic operators;
+exponentials and logarithms; trigonometric
+inverse trig, and hyperbolic trig functions;
+square roots; and normal (Gaussian)
+density and cumulative density functions;
+and gamma and log-gamma functions.
+You're on your own for anything else
+(consider using a symbolic algebra package
+like Mathematica or Maple, at least to check
+your answers, if your problem is very complicated).
+\code{deriv()} is a slightly more complicated
+version of \code{D()} that is useful for incorporating
+the results of differentiation into functions:
+see the help page.
+
+\section{Figuring out the logistic curve}
+
+The last part of this exercise is an example of figuring out a
+function --- Chapter 3 did this for the exponential,
+Ricker, and Michaelis-Menten functions
+The population-dynamics form of the logistic
+equation is 
+\begin{equation}
+n(t) = \frac{K}{1+ \left(\frac{K}{n(0)}-1\right) \exp(-r t)}
+\label{eq:pop-logist}
+\end{equation}
+where $K$ is carrying
+capacity, $r$ is intrinsic population growth rate, and $n(0)$ is
+initial density.
+
+At $t=0$, $e^{-rt}=1$ and this reduces to $n(0)$
+(as it had better!)
+
+Finding the derivative with respect to time is pretty ugly,
+but it will to reduce to something you may already know.
+Writing the equation as 
+$n(t) = K \cdot (\mbox{stuff})^{-1}$
+and using the chain rule we get
+$n'(t) = K \cdot (\mbox{stuff})^{-2} \cdot d(\mbox{stuff})/dt$
+($\mbox{stuff}=1+(K/n(0)-1)\exp(-rt)$).
+The derivative $d(\mbox{stuff})/dt$
+is $(K/n(0)-1) \cdot -r \exp(-rt)$.
+At $t=0$, $\mbox{stuff}=K/n(0)$,
+and $d(\mbox{stuff})/dt=-r(K/n(0)-1)$.
+So this all comes out to
+$$
+K \cdot (K/n(0))^{-2} \cdot -r (K/(n0)-1) 
+= -r n(0)^2/K \cdot (K/(n0)-1)
+= r n(0) (1-n(0)/K)
+$$
+which should be reminiscent of intro. ecology:
+we have rediscovered, by working backwards
+from the time-dependent solution, that the
+logistic equation arises from a linearly
+decreasing \emph{per capita} growth rate.
+
+If $n(0)$ is small we can do better than
+just getting the intercept and slope.
+
+\textbf{Exercise\exnumber *}: show that
+if $n(0)$ is very small (and $t$ is not too big), 
+$n(t) \approx n(0) \exp(r t)$. (Start by showing that 
+$K/n(0) e^{-rt}$ dominates all
+the other terms in the denominator.)
+
+If $t$ is small, this reduces (because
+$e^{rt} \approx 1+rt$) to
+$n(t) \approx n(0) + r n(0) t$,
+a linear increase with slope $rn(0)$.
+Convince yourself that this matches
+the expression we got for the derivative
+when $n(0)$ is small.
+
+For large $t$, convince yourself tha
+the value of the
+function approaches $K$ and
+(by revisiting
+the expressions for the derivative above)
+that the slope approaches zero.
+
+The half-maximum of the logistic curve occurs when the 
+denominator (which I 
+was calling ``stuff'' on the previous page, after eq. 1) is 2; we can solve $\mbox{stuff}=2$ for $t$
+(getting to $(K/n(0)-1) \exp(-rt) = 1$
+and taking logarithms on both sides)
+to get $t=\log(K/n(0)-1)/r$.
+
+We have (roughly) three options:
+
+\begin{enumerate}
+\item {Use \code{curve()}:
+<<>>=
+r = 1
+K = 1
+n0 = 0.1  # what happens if you set n0 to 0???
+curve(K/(1+(K/n0-1)*exp(-r*x)),from=0,to=10)
+@ 
+(note that we have to use \code{x} and
+not \code{t} in the expression for the logistic).
+}
+\item{Construct the time vector by hand
+and compute a vector of population values
+using vectorized operations:
+<<>>=
+t_vec = seq(0,10,length=100)
+logist_vec = K/(1+(K/n0-1)*exp(-r*t_vec))    
+plot(t_vec,logist_vec,type="l")
+@ 
+}
+\item{write our own function for the logistic
+and use \code{sapply()}:
+<<>>=
+logistfun = function(t,r=1,n0=0.1,K=1) {
+  K/(1+(K/n0-1)*exp(-r*t))
+}
+logist_vec = sapply(t_vec,logistfun)
+@ 
+(Setting e.g. \code{r=1} sets 1 as the default
+value for the parameter; if I omit some
+of the parameters when I call this
+function, \R\ will fill in the default values.)
+\textbf{When we use this
+function, it will no longer matter how
+\code{r}, \code{n0} and \code{K} are
+defined in the workspace: the
+values that \R\ uses in \code{logistfun()}
+are those that we define in the 
+call to the function.}
+<<>>=
+r=17
+logistfun(1,r=2)
+r=0
+logistfun(1,r=2)
+@ 
+}
+\end{enumerate}
+
+We can do more with this plot: let's see if our
+conjectures are right.  
+Using \code{abline()}
+and \code{curve()} to add horizontal lines to a plot
+to test our estimates of starting value and ending value,
+vertical and horizontal lines that intersect at the half-maximum,
+a line with the intercept and initial linear slope, and
+a curve corresponding to the initial exponential increase:
+<<fig=TRUE>>=
+curve(logistfun(x),from=0,to=10,lwd=2)
+abline(h=n0,lty=2)
+abline(h=K,lty=2)
+abline(h=K/2,lty=3)
+abline(v=-log(n0/(K-n0))/r,lty=4)
+r=1
+abline(a=n0,b=r*n0*(1-n0/K),lty=5)
+curve(n0*exp(r*x),from=0,lty=6,add=TRUE)
+@ 
+
+\textbf{Exercise \exnumber *}:
+Plot and analyze the Shepherd function $G(N)=\frac{RN}{(1+aN)^b}$, 
+which is
+a generalization of the Michaelis-Menten function.
+What are the effects of the $R$ and $a$ parameters
+on the curve?
+For what parameter
+values does this function become equivalent to
+the Michaelis-Menten function?
+What is the behavior (value, initial slope) at $N=0$?
+What is the behavior (asymptote [if any], slope) for large $N$,
+for $b=0$, $0<b<1$, $b=1$, $b>1$?
+Define an \R\ function for the Shepherd function (call it
+\code{shep}).  Draw a plot or plots
+showing the behavior for the ranges above, including lines that
+show the initial slope.
+Extra credit: when does the function have a maximum between 0 and
+$\infty$?  What is the height of the
+maximum when it occurs?
+(Hint: when you're figuring out whether a fraction is zero
+or not, you don't have to think about the denominator at all.)
+The calculus isn't that hard, but you may also use the
+\texttt{D()} function in \R.
+Draw horizontal and vertical lines onto the graph to test your
+answer.
+
+\textbf{Exercise \exnumber *}:
+The Holling type~III functional response
+($f(x)=ax^2/(1+bx^2)$) is useful when
+(e.g.) the predation rate initially
+accelerates with prey density, but then
+saturates.  However, the parameters $a$
+(curvature at low prey density)
+and $b$ (the reciprocal of the half-maximum
+squared) aren't easy to read off a graph.
+Reparameterize the Holling type~III
+function in terms of its asymptote and half-maximum.
+
+\textbf{Exercise \exnumber *}:
+Figure out the correspondence between the
+population-dynamic parameterization of the
+logistic function (eq. \ref{eq:pop-logist}:
+parameters $r$, $n(0)$, $K$) 
+and the statistical parameterization
+($f(x)=\exp(a+bx)/(1+\exp(a+bx))$:
+parameters $a$, $b$).
+Convince yourself you got the right answer
+by plotting the logistic with $a=-5$, $b=2$
+(with lines), figuring out the equivalent
+values of $K$, $r$, and $n(0)$, and then plotting the
+curve with both equations to make sure it overlaps.
+Plot the statistical version with lines
+(\code{plot(...,type="l")} or \code{curve(...)}
+and then add the population-dynamic version with 
+points (\code{points()} or \code{curve(...,type="p",add=TRUE)}).
+
+\emph{Small hint:} the population-dynamic version
+has an extra parameter, so one of $r$, $n(0)$, and
+$K$ will be set to a constant when you translate
+to the statistical version.
+
+\emph{Big hint:} Multiply the
+numerator and denominator of the statistical form
+by $\exp(-a)$ and the numerator and denominator
+of the population-dynamic form by $\exp(rt)$,
+then compare the forms of the equations.
+
+\end{document}

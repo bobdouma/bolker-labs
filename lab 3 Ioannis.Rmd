@@ -1,0 +1,218 @@
+---
+title: 'Analyzing functions: lab 3'
+author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales 2017
+date: "November 3, 2017"
+geometry: margin=4cm
+fontsize: 11pt
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# 3 Figuring out the logistic curve
+
+The last part of this exercise is an example of figuring out a
+function --- Chapter 3 did this for the exponential,
+Ricker, and Michaelis-Menten functions
+The population-dynamics form of the logistic
+equation is 
+\begin{equation}
+n(t) = \frac{K}{1+ \left(\frac{K}{n(0)}-1\right) \exp(-r t)}
+\label{eq:pop-logist}
+\end{equation}
+where $K$ is carrying
+capacity, $r$ is intrinsic population growth rate, and $n(0)$ is
+initial density.
+
+At $t=0$, $e^{-rt}=1$ and this reduces to $n(0)$
+(as it had better!)
+
+Finding the derivative with respect to time is pretty ugly,
+but it will to reduce to something you may already know.
+Writing the equation as 
+$n(t) = K \cdot (\mbox{stuff})^{-1}$
+and using the chain rule we get
+$n'(t) = K \cdot (\mbox{stuff})^{-2} \cdot d(\mbox{stuff})/dt$
+($\mbox{stuff}=1+(K/n(0)-1)\exp(-rt)$).
+The derivative $d(\mbox{stuff})/dt$
+is $(K/n(0)-1) \cdot -r \exp(-rt)$.
+At $t=0$, $\mbox{stuff}=K/n(0)$,
+and $d(\mbox{stuff})/dt=-r(K/n(0)-1)$.
+So this all comes out to
+$$
+K \cdot (K/n(0))^{-2} \cdot -r (K/(n0)-1) 
+= -r n(0)^2/K \cdot (K/(n0)-1)
+= r n(0) (1-n(0)/K)
+$$
+which should be reminiscent of intro. ecology:
+we have rediscovered, by working backwards
+from the time-dependent solution, that the
+logistic equation arises from a linearly
+decreasing _per capita_ growth rate.
+
+If $n(0)$ is small we can do better than
+just getting the intercept and slope.
+
+**Exercise 2* **: show that
+if $n(0)$ is very small (and $t$ is not too big), 
+$n(t) \approx n(0) \exp(r t)$. (Start by showing that 
+$K/n(0) e^{-rt}$ dominates all
+the other terms in the denominator.)
+
+If $t$ is small, this reduces (because
+$e^{rt} \approx 1+rt$) to
+$n(t) \approx n(0) + r n(0) t$,
+a linear increase with slope $rn(0)$.
+Convince yourself that this matches
+the expression we got for the derivative
+when $n(0)$ is small.
+
+For large $t$, convince yourself tha
+the value of the
+function approaches $K$ and
+(by revisiting
+the expressions for the derivative above)
+that the slope approaches zero.
+
+The half-maximum of the logistic curve occurs when the 
+denominator (which I 
+was calling ``stuff'' on the previous page, after eq. 1) is 2; we can solve $\mbox{stuff}=2$ for $t$
+(getting to $(K/n(0)-1) \exp(-rt) = 1$
+and taking logarithms on both sides)
+to get $t=\log(K/n(0)-1)/r$.
+
+We have (roughly) three options:
+
+
+1. Use `curve()`:
+```{r}
+r = 1
+K = 1
+n0 = 0.1  # what happens if you set n0 to 0???
+curve(K/(1+(K/n0-1)*exp(-r*x)),from=0,to=10)
+```
+  (note that we have to use `x` and
+not `t` in the expression for the logistic).
+
+2. Construct the time vector by hand
+and compute a vector of population values
+using vectorized operations:
+```{r}
+t_vec = seq(0,10,length=100)
+logist_vec = K/(1+(K/n0-1)*exp(-r*t_vec))    
+plot(t_vec,logist_vec,type="l")
+```
+
+3. write our own function for the logistic
+and use `sapply()`:
+```{r}
+logistfun = function(t,r=1,n0=0.1,K=1) {
+  K/(1+(K/n0-1)*exp(-r*t))
+}
+logist_vec = sapply(t_vec,logistfun)
+
+```
+
+(Setting e.g. `r=1` sets 1 as the default
+value for the parameter; if I omit some
+of the parameters when I call this
+function, `R` will fill in the default values.)
+
+**When we use this function, it will no longer matter how `r`, `n0` and `K` are defined in the workspace: the values that `R` uses in `logistfun()` are those that we define in the call to the function. **
+
+```{r}
+r=17
+logistfun(1,r=2)
+r=0
+logistfun(1,r=2)
+```
+
+
+We can do more with this plot: let's see if our
+conjectures are right.  
+Using `abline()`
+and `curve()` to add horizontal lines to a plot
+to test our estimates of starting value and ending value,
+vertical and horizontal lines that intersect at the half-maximum,
+a line with the intercept and initial linear slope, and
+a curve corresponding to the initial exponential increase:
+```{r}
+curve(logistfun(x),from=0,to=10,lwd=2)
+abline(h=n0,lty=2)
+abline(h=K,lty=2)
+abline(h=K/2,lty=3)
+abline(v=-log(n0/(K-n0))/r,lty=4)
+r=1
+abline(a=n0,b=r*n0*(1-n0/K),lty=5)
+curve(n0*exp(r*x),from=0,lty=6,add=TRUE)
+```
+
+**Exercise 3* **:
+Plot and analyze the Shepherd function $G(N)=\frac{RN}{(1+aN)^b}$, 
+which is
+a generalization of the Michaelis-Menten function.
+What are the effects of the $R$ and $a$ parameters
+on the curve?
+For what parameter
+values does this function become equivalent to
+the Michaelis-Menten function?
+What is the behavior (value, initial slope) at $N=0$?
+What is the behavior (asymptote [if any], slope) for large $N$,
+for $b=0$, $0<b<1$, $b=1$, $b>1$?
+Define an `R` function for the Shepherd function (call it
+`shep`).  Draw a plot or plots
+showing the behavior for the ranges above, including lines that
+show the initial slope.
+Extra credit: when does the function have a maximum between 0 and
+$\infty$?  What is the height of the
+maximum when it occurs?
+(Hint: when you're figuring out whether a fraction is zero
+or not, you don't have to think about the denominator at all.)
+The calculus isn't that hard, but you may also use the
+`D()` function in `R`.
+Draw horizontal and vertical lines onto the graph to test your
+answer.
+
+**Exercise 4 * **:
+The Holling type~III functional response
+($f(x)=ax^2/(1+bx^2)$) is useful when
+(e.g.) the predation rate initially
+accelerates with prey density, but then
+saturates.  However, the parameters $a$
+(curvature at low prey density)
+and $b$ (the reciprocal of the half-maximum
+squared) aren't easy to read off a graph.
+Reparameterize the Holling type~III
+function in terms of its asymptote and half-maximum.
+
+**Exercise 5* **:
+Figure out the correspondence between the
+population-dynamic parameterization of the
+logistic function (eq. \ref{eq:pop-logist}:
+parameters $r$, $n(0)$, $K$) 
+and the statistical parameterization
+($f(x)=\exp(a+bx)/(1+\exp(a+bx))$:
+parameters $a$, $b$).
+Convince yourself you got the right answer
+by plotting the logistic with $a=-5$, $b=2$
+(with lines), figuring out the equivalent
+values of $K$, $r$, and $n(0)$, and then plotting the
+curve with both equations to make sure it overlaps.
+Plot the statistical version with lines
+(`plot(...,type="l")} or `curve(...)}
+and then add the population-dynamic version with 
+points (`points()} or `curve(...,type="p",add=TRUE)}).
+
+_Small hint:_ the population-dynamic version
+has an extra parameter, so one of $r$, $n(0)$, and
+$K$ will be set to a constant when you translate
+to the statistical version.
+
+_Big hint:_ Multiply the
+numerator and denominator of the statistical form
+by $\exp(-a)$ and the numerator and denominator
+of the population-dynamic form by $\exp(rt)$,
+then compare the forms of the equations.
