@@ -85,6 +85,7 @@ in your data this should work.
 
 
 ##1.1. Checking data
+The 
 Here's the quickest way to check that all your variables have been classified
 correctly:
 ```{r}
@@ -93,7 +94,7 @@ sapply(data, class)
 
 (this applies the `class()` command, which identifies the type of a variable, to
 each column in your data).
-Non-numeric missing-variable strings (such as a star, *) will also make `R`
+Non-numeric missing-variable strings (such as a star, `*`) will also make `R`
 misclassify. Use `na.strings` in your `read.table()` command:
 
 ```{r, eval=F}

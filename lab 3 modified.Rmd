@@ -88,7 +88,7 @@ The most important thing you need to understand, is that in almost all cases of 
 
 Many of the functions that read data in `R` have a parameter (otherwise called an argument) that allows you to select how you have represented a missing-value in your data. As an example the function **read.csv** (which reads a comma-delimited data file) would be used like this to read from a file named "your-data-file":
 
-```{r}
+```{r, eval=F}
 myData <- read.csv("you-data-file", na.strings=c("*","-") )
 ```
 
@@ -149,7 +149,7 @@ calculate the mean value and the standard error of this mean ($s.e.m. = \sigma/\
 
 # 3 How to make a function
 
-When you want to repeated some calculations for different data, it is best
+When you want to repeat some calculations for different data, it is best
 to put the data inside a function. A function is defined by 4 elements
 
 1. The name of the function. For example, in `R` there is a function that calculates
@@ -160,7 +160,7 @@ and that it conveys its meaning.
 2. The arguments of the function. These are the variables that you need to pass to the function
 (i.e., inputs). The arguments are defined by a position and a name. Also, some arguments may have
 default values which means that you do not need to specify them every time you call the function.
-FOr example, the function `mean`, contains three arguments (`x`, `trim` and `na.rm`) but the last
+For example, the function `mean`, contains three arguments (`x`, `trim` and `na.rm`) but the last
 two have default values.
 
 3. The body of the function. This is the actual code that the function will execute. The real `mean`
@@ -177,7 +177,7 @@ The `R` language specifies a particular syntax on how to build a function. For e
 ```{r}
 naive_mean = function(x, na.rm = TRUE) {
   total = sum(x, na.rm = na.rm)
-  n = length(!is.na(x))
+  n = length(x[!is.na(x)])
   result = total/n
   return(result)
 }
@@ -208,9 +208,9 @@ choose one style or another is a matter of taste.
 
 **Exercise 3.1**: Build a function to calculate the standard deviation ($\sigma = \sqrt{\frac{\sum_{i = 1}^n\left(x_i - \bar x\right)^2}{n - 1}}$). Test your function with some data that includes missing values.
 
-# 4. Numerical experimentation: plotting curves
+# 4. Numerical explorations: plotting curves
 
-Here are the `R` commands used to generate Figure 1.  They
+Here are the `R` commands used to generate Figure 3.2 in the book (p 74).  They
 just use `curve()`, with `add=FALSE` (the default,
 which draws a new plot) and `add=TRUE` (adds the curve
 to an existing plot), particular 
@@ -255,7 +255,9 @@ together and use `matplot()`:
 matplot(xvec,cbind(exp1_vec,exp2_vec),type="l",
         ylab="")
 ``` 
-Finally, if you needed to use `sapply()`
+Finally, if you have a more complicated function
+you could use `sapply()` to call this function
+along with appropriate parameter values.
 you could say:
 ```{r}
 expfun = function(x,a=1,b=1) {
@@ -292,18 +294,22 @@ to be the right length.
 A simple example:
 ```{r}
 x=c(-25,-16,-9,-4,-1,0,1,4,9,16,25)
-ifelse(x<0,0,sqrt(x))
+sqrt(ifelse(x<0,0,x))
 ``` 
-These commands produce a warning message, but it's OK
-to ignore it since you know you've taken care of the
-problem (if you said `sqrt(ifelse(x<0,0,x))` instead
-you wouldn't get a warning: why not?)
+
+if you said `ifelse(x<0,0,sqrt(x)))` 
+you would get a warning: why)
 
 Here are some examples of using `ifelse()` to generate
 (1) a simple threshold; (2) a Holling type I or
 "hockey stick"; (3) a more complicated piecewise model
 that grows exponentially and then decreases linearly;
-(4) a double-threshold model.
+(4) a double-threshold model. When plotting functions 
+with abrubt changes with the function `curve`, beware 
+that curve draws a line by evaluating a functions at 
+several locations along the specified interval (`from`, `to`). 
+You can increase these number of points by specifying `n`. 
+The default value for `n` is 101.
 ```{r, fig=TRUE, fig.height = 7}
 op=par(mfrow=c(2,2),mgp=c(2,1,0),mar=c(4.2,3,1,1))
 curve(ifelse(x<2,1,3),from=0,to=5)
@@ -365,208 +371,31 @@ version of `D()` that is useful for incorporating
 the results of differentiation into functions:
 see the help page.
 
-# 6 Figuring out the logistic curve
+# 6 Getting familiar with a bestiary of functions
 
-The last part of this exercise is an example of figuring out a
-function --- Chapter 3 did this for the exponential,
-Ricker, and Michaelis-Menten functions
-The population-dynamics form of the logistic
-equation is 
-\begin{equation}
-n(t) = \frac{K}{1+ \left(\frac{K}{n(0)}-1\right) \exp(-r t)}
-\label{eq:pop-logist}
-\end{equation}
-where $K$ is carrying
-capacity, $r$ is intrinsic population growth rate, and $n(0)$ is
-initial density.
+The models that we will be fitting to data are composed of a deterministic component and a stochastic component. The deterministic component describes the expected pattern in absence of any randomness. You are not restricted to linear functions (as in linear regression) but you can choose among different functions. 
 
-At $t=0$, $e^{-rt}=1$ and this reduces to $n(0)$
-(as it had better!)
-
-Finding the derivative with respect to time is pretty ugly,
-but it will to reduce to something you may already know.
-Writing the equation as 
-$n(t) = K \cdot (\mbox{stuff})^{-1}$
-and using the chain rule we get
-$n'(t) = K \cdot (\mbox{stuff})^{-2} \cdot d(\mbox{stuff})/dt$
-($\mbox{stuff}=1+(K/n(0)-1)\exp(-rt)$).
-The derivative $d(\mbox{stuff})/dt$
-is $(K/n(0)-1) \cdot -r \exp(-rt)$.
-At $t=0$, $\mbox{stuff}=K/n(0)$,
-and $d(\mbox{stuff})/dt=-r(K/n(0)-1)$.
-So this all comes out to
-$$
-K \cdot (K/n(0))^{-2} \cdot -r (K/(n0)-1) 
-= -r n(0)^2/K \cdot (K/(n0)-1)
-= r n(0) (1-n(0)/K)
-$$
-which should be reminiscent of intro. ecology:
-we have rediscovered, by working backwards
-from the time-dependent solution, that the
-logistic equation arises from a linearly
-decreasing _per capita_ growth rate.
-
-If $n(0)$ is small we can do better than
-just getting the intercept and slope.
-
-**Exercise 6.1* **: show that
-if $n(0)$ is very small (and $t$ is not too big), 
-$n(t) \approx n(0) \exp(r t)$. (Start by showing that 
-$K/n(0) e^{-rt}$ dominates all
-the other terms in the denominator.)
-
-If $t$ is small, this reduces (because
-$e^{rt} \approx 1+rt$) to
-$n(t) \approx n(0) + r n(0) t$,
-a linear increase with slope $rn(0)$.
-Convince yourself that this matches
-the expression we got for the derivative
-when $n(0)$ is small.
-
-For large $t$, convince yourself tha
-the value of the
-function approaches $K$ and
-(by revisiting
-the expressions for the derivative above)
-that the slope approaches zero.
-
-The half-maximum of the logistic curve occurs when the 
-denominator (which I 
-was calling ``stuff'' on the previous page, after eq. 1) is 2; we can solve $\mbox{stuff}=2$ for $t$
-(getting to $(K/n(0)-1) \exp(-rt) = 1$
-and taking logarithms on both sides)
-to get $t=\log(K/n(0)-1)/r$.
-
-We have (roughly) three options:
+In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (preferably more) appropriate functions for each dataset. Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Next, by eyeballing you will choose appropriate parameter values so you get a reasonable fit between the data and the choosen function.
 
 
-1. Use `curve()`:
-```{r, fig.show='hide'}
-r = 1
-K = 1
-n0 = 0.1  # what happens if you set n0 to 0???
-curve(K/(1+(K/n0-1)*exp(-r*x)),from=0,to=10)
-```
-  (note that we have to use `x` and
-not `t` in the expression for the logistic).
+A pseudocode that implements this idea:
 
-2. Construct the time vector by hand
-and compute a vector of population values
-using vectorized operations:
+1. Read the datasets that are in `shapes.xlsx`. Save each sheet as `.csv` file and read it in.
 
-```{r, fig.show='hide'}
-t_vec = seq(0,10,length=100)
-logist_vec = K/(1+(K/n0-1)*exp(-r*t_vec))
-plot(t_vec,logist_vec,type="l")
-```
+2. Plot the datasets in different graphs (_hint_: `par(mfrow=c(..,..)`, and `plot`))
 
-3. write our own function for the logistic
-and use `sapply()`:
-```{r}
-logistfun = function(t,r=1,n0=0.1,K=1) {
-  K/(1+(K/n0-1)*exp(-r*t))
-}
-logist_vec = sapply(t_vec,logistfun)
+3. For each plot, choose (at least) two appropriate functions based on the type of data or the shape of the data.
 
-```
-
-(Setting e.g. `r=1` sets 1 as the default
-value for the parameter; if I omit some
-of the parameters when I call this
-function, `R` will fill in the default values.)
-
-**When we use this function, it will no longer matter how `r`, `n0` and `K` are defined in the workspace: the values that `R` uses in `logistfun()` are those that we define in the call to the function. **
-
-```{r}
-r=17
-logistfun(1,r=2)
-r=0
-logistfun(1,r=2)
-```
+  + _hint 1_: dataset 1 describes a light response curve of ten individual plants
+  + _hint 2_: dataset 2 describes the intake rate of a predator as a function of prey density
+  + _hint 3_: dataset 3 the data describe an allometric relationship
+  + _hint 4_: dataset 4 contains measurements of population size over time
+  + _hint 5_: This dataset you need to figure out for yourselves.
+  + _hint 6_: **optional** dataset 6 a species response curve (presence/absence). Fit a model that models the               probability of presence (use google to find a good one).
+  
+4. Choose appropriate parameter values through eyeballing so that the chosen curves more or less match the data. Eyeballing means that you knowledge on the effect of parameter values on the shape of the function. Later we will use likelihood methods to estimate the parameter values. 
+  
+  
 
 
-We can do more with this plot: let's see if our
-conjectures are right.  
-Using `abline()`
-and `curve()` to add horizontal lines to a plot
-to test our estimates of starting value and ending value,
-vertical and horizontal lines that intersect at the half-maximum,
-a line with the intercept and initial linear slope, and
-a curve corresponding to the initial exponential increase:
-```{r}
-curve(logistfun(x),from=0,to=10,lwd=2)
-abline(h=n0,lty=2)
-abline(h=K,lty=2)
-abline(h=K/2,lty=3)
-abline(v=-log(n0/(K-n0))/r,lty=4)
-r=1
-abline(a=n0,b=r*n0*(1-n0/K),lty=5)
-curve(n0*exp(r*x),from=0,lty=6,add=TRUE)
-```
 
-**Exercise 6.2* **:
-Plot and analyze the Shepherd function $G(N)=\frac{RN}{(1+aN)^b}$, 
-which is
-a generalization of the Michaelis-Menten function.
-What are the effects of the $R$ and $a$ parameters
-on the curve?
-For what parameter
-values does this function become equivalent to
-the Michaelis-Menten function?
-What is the behavior (value, initial slope) at $N=0$?
-What is the behavior (asymptote [if any], slope) for large $N$,
-for $b=0$, $0<b<1$, $b=1$, $b>1$?
-Define an `R` function for the Shepherd function (call it
-`shep`).  Draw a plot or plots
-showing the behavior for the ranges above, including lines that
-show the initial slope.
-Extra credit: when does the function have a maximum between 0 and
-$\infty$?  What is the height of the
-maximum when it occurs?
-(Hint: when you're figuring out whether a fraction is zero
-or not, you don't have to think about the denominator at all.)
-The calculus isn't that hard, but you may also use the
-`D()` function in `R`.
-Draw horizontal and vertical lines onto the graph to test your
-answer.
-
-**Exercise 6.3 * **:
-The Holling type~III functional response
-($f(x)=ax^2/(1+bx^2)$) is useful when
-(e.g.) the predation rate initially
-accelerates with prey density, but then
-saturates.  However, the parameters $a$
-(curvature at low prey density)
-and $b$ (the reciprocal of the half-maximum
-squared) aren't easy to read off a graph.
-Reparameterize the Holling type~III
-function in terms of its asymptote and half-maximum.
-
-**Exercise 6.4* **:
-Figure out the correspondence between the
-population-dynamic parameterization of the
-logistic function (eq. \ref{eq:pop-logist}:
-parameters $r$, $n(0)$, $K$) 
-and the statistical parameterization
-($f(x)=\exp(a+bx)/(1+\exp(a+bx))$:
-parameters $a$, $b$).
-Convince yourself you got the right answer
-by plotting the logistic with $a=-5$, $b=2$
-(with lines), figuring out the equivalent
-values of $K$, $r$, and $n(0)$, and then plotting the
-curve with both equations to make sure it overlaps.
-Plot the statistical version with lines
-(`plot(...,type="l")} or `curve(...)}
-and then add the population-dynamic version with 
-points (`points()} or `curve(...,type="p",add=TRUE)}).
-
-_Small hint:_ the population-dynamic version
-has an extra parameter, so one of $r$, $n(0)$, and
-$K$ will be set to a constant when you translate
-to the statistical version.
-
-_Big hint:_ Multiply the
-numerator and denominator of the statistical form
-by $\exp(-a)$ and the numerator and denominator
-of the population-dynamic form by $\exp(rt)$,
-then compare the forms of the equations.
