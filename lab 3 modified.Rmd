@@ -1,6 +1,6 @@
 ---
 title: 'Analyzing functions: lab 3'
-author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales & Ioannis Baltzakis 2017
+author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales, Ioannis Baltzakis & Bob Douma 2017
 date: "November 3, 2017"
 geometry: margin=4cm
 fontsize: 11pt
