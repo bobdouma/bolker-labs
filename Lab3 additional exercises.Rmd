@@ -82,11 +82,11 @@ population = data.frame(x,y)
 population$dat = 4
 
 # Dataset 5: Negative exponential
-x = rep(seq(0,10,length.out = 20),each= 20)
-a = 2 ; b = 0.5
+x = runif(400,0,10)
+a = 4 ; b = 0.5
 ymean = a*exp(-b*x)
 y = rnbinom(length(x),mu=ymean,size=3)
-plot(y~(jitter(x)))
+plot(y~((x)))
 countprocess = data.frame(x,y)
 countprocess$dat = 5
 
