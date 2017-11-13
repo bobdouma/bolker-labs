@@ -1,6 +1,6 @@
 ---
 title: "Lab 4: probability distributions, averaging and Jensen's inequality"
-author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales 2017
+author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales & Bob Douma 2017
 date: "November 7, 2017"
 geometry: margin=4cm
 fontsize: 11pt
@@ -12,16 +12,13 @@ library(knitr)
 opts_chunk$set(tidy.opts=list(width.cutoff=5), tidy = TRUE)
 ```
 
+
+This lab has two parts. A part to make you familiar with the technicalities of stochastic distributions in `R`: how to generate values from probability distributions; how to make your own probability distribution etc (section 1-5), and a part (section 6) to help you practicing with probability distributions on different types of data.  Under time constraints, make sure that you make at least make the exercise in section 1 and section 6. 
+
 # 1. Random distributions in `R`
 `R` knows about lots of probability distributions.  For each, it
-can generate random numbers drawn from the distribution
-("deviates");
-compute the cumulative distribution function and the probability
-distribution
-function; and compute the quantile function, which gives the
-$x$ value such that $\int_0^x P(x) \, dx$ (area under the curve from 0
-to $x$) is a specified value, such as 0.95 (think about "tail areas"
-from standard statistics).
+can generate random numbers drawn from the distribution ("deviates"); compute the cumulative distribution function and the probability distribution function; and compute the quantile function, which gives the
+$x$ value such that $\int_0^x P(x) \, dx$ (area under the curve from 0 to $x$) is a specified value, such as 0.95 (think about "tail areas" from standard statistics).
 
 
 ```{r,echo=FALSE,fig.cap="Figure 1. `R` functions for an arbitrary distribution `dist`, showing density function (`ddist`), cumulative distribution function (`pdist`), quantile function (`qdist`), and random-deviate function (`rdist`).", fig.height = 3.5}
@@ -115,7 +112,8 @@ These four functions exist for each of the distributions `R` has built
 in: e.g. for the normal distribution they're
 `rnorm()`, `pnorm()`, `dnorm()`, `qnorm()`.
 Each distribution has its own set of parameters (so e.g. `pnorm()`
-is `pnorm(x,mean=0,sd=1)`).
+is `pnorm(x,mean=0,sd=1)`). To see which distributions are available
+in the `base` package; check `?distributions`.
 
 **Exercise 1**:
 For the binomial distribution with 10 trials and a success probability
@@ -202,12 +200,12 @@ the entire simulated frequency distribution
 along with the theoretical values.
 The steps in `R` are:
 
-1. pick 10,000 random deviates:
+**1.** pick 10,000 random deviates:
 ```{r,eval=FALSE}
 x = rbinom(10000,prob=p,size=N)
 ``` 
 
-2. Tabulate the values, and divide
+**2.** Tabulate the values, and divide
 by the number of samples to get
 a probability distribution:
 ```{r,eval=FALSE}
@@ -222,7 +220,7 @@ that it's very unlikely that
 a sample of 10,000 won't include any
 samples with 12 successes.)
 
-3. Draw a barplot of the values, extending
+**3.** Draw a barplot of the values, extending
 the $y$-limits a bit to make room for
 the theoretical values and saving the
 $x$ locations at which the bars are drawn:
@@ -230,7 +228,7 @@ $x$ locations at which the bars are drawn:
 b1 = barplot(tx,ylim=c(0,0.23),ylab="Probability")
 ``` 
 
-4. Add the theoretical values, plotting them
+**4.** Add the theoretical values, plotting them
 at the same $x$-locations as the centers
 of the bars:
 ```{r,eval=FALSE}
@@ -243,7 +241,7 @@ those values as `b1` and re-use
 them to make sure the theoretical
 values end up in the right place.)
 
-5. A few alternative ways to do this plot would be:
+**5.** A few alternative ways to do this plot would be:
 
     5.1. `plot(factor(x)); points(b1,10000*dbinom(0:12,prob=p,size=N))` 
 (plots the number of observations without rescaling and
@@ -259,36 +257,21 @@ and the lines end up at the right numerical locations,
 so we can just use `0:12` as the $x$ locations
 for the theoretical values.
 
-  5.3. You could also draw a histogram:
+    5.3. You could also draw a histogram:
 since histograms were really designed
 continuous data you have to make sure the
 breaks occur in the right place (halfway
 between counts):
 
 ```{r,eval=FALSE}
-h= hist(x,breaks=seq(-0.5,12.5,by=1),col="gray",
-     prob=TRUE)
+h = hist(x,breaks=seq(-0.5,12.5,by=1),col="gray",
+       prob=TRUE)
 points(0:12,dbinom(0:12,prob=p,size=N))
 ```
 
-
-```{r,fig=TRUE,echo=FALSE, fig.cap = "Checking binomial deviates against theoretical values."}
-x = rbinom(10000,prob=p,size=N)
-tx = table(factor(x,levels=0:12))/10000
-b1 = barplot(tx,ylim=c(0,0.23),ylab="Probability")
-points(b1,dbinom(0:12,prob=p,size=N),pch=16)
-``` 
-
-Doing the equivalent plot for continuous distributions
-is actually somewhat easier, since you don't have
-to deal with the complications of a discrete distribution:
-just use `hist(...,prob=TRUE)` to show the
-sampled distribution (possibly with `ylim`
-adjusted for the maximum of the theoretical
-density distribution) and
-`ddist(x,[parameters],add=TRUE)` to add the
-theoretical curve
-(e.g.: `curve(dgamma(x,shape=2,scale=1,add=FALSE))`).
+Doing the equivalent plot for continuous distributions is actually somewhat easier, since you don't have
+to deal with the complications of a discrete distribution: just use `hist(...,prob=TRUE)` to show the
+sampled distribution (possibly with `ylim` adjusted for the maximum of the theoretical density distribution) and `ddist(x,[parameters],add=TRUE)` to add the theoretical curve (e.g.: `curve(dgamma(x,shape=2,scale=1,add=FALSE))`).
 
 **Exercise 2***:
 Pick 10,000 negative binomial
@@ -376,93 +359,23 @@ the correct number of times.
 
 ## 2.1. Jensen's inequality
 
-Looking at Schmitt et al's data, the density of
-settlers
-nearly fits an exponential distribution with 
-a mean of 24.5 (so $\lambda=1/24.5$).
-Schmitt et al. also say that recruitment ($R$)
-as a function of settlement ($S$) is $R = aS/(1+(a/b)S)$,
-with $a = 0.696$ (initial slope, recruits per 0.1 m$^2$ patch reef per settler)
-and $b = 9.79$ (asymptote, recruits per 0.1 m$^2$ patch reef at high settlement density).s
+Jensen's inequality states the following: Suppose 
+you have a number of values, $x$, with a mean $\bar{x}$, and a non-linear 
+function $f(x)$. Then the mean of $f(x)$ is not equal to $f(\bar{x})$.
 
-Let's see how strong Jensen's inequality is for this population.
-We'll figure out the average by approximating an integral
-by a sum: $E[R] = \int_0^\infty f(S) P(S) \, dS \approx \sum f(S_i) P(S_i) \Delta S$,
-where $f(S)$ is the density of recruits as a function
-of settlers and $P(S) \, dS$ is the probability of a particular
-number of settlers.
-We need to set the range big enough to get most of the probability
-of the distribution, and the $\Delta S$ small enough to get most
-of the variation in the distribution; we'll try 0--200 in steps of 0.1.
-(If I set the range too small or the $\Delta S$ too big, I'll miss
-a piece of the distribution or the function.  If I try to be too
-precise, I'll waste time computing.)
+Jensen's inequality can be important in a number of cases. The first one is mentioned in Ch. 4 (page 104) how variability can change the mean behaviour of a system (damselfish). Another example where Jensen's inequality kicks in is when transforming your data. Data-transformations are commonly applied to get normally distributed errors. 
 
-In `R`:
-```{r}
-a = 0.696; b=9.79
-dS = 0.1
-S = seq(0,200,by=dS)
-pS =  dexp(S,rate=1/24.5)
-fS = a*S/(1+(a/b)*S)
-sum(pS*fS*dS)
-``` 
+**Exercise 4**:
+In statistical models, you often estimate the mean effect of a given treatment. Find out what the effect of Jensen's inequality is on a series of log-tranformed datapoints with respect to the estimated mean.
 
-`R` also knows how to integrate functions numerically:
-it can even approximate an integral from 0 to $\infty$.
-First we have to define a (vectorizable) function:
-```{r}
-tmpf = function(S) { dexp(S,rate=1/24.5)*a*S/(1+(a/b)*S) }
-``` 
+Use the following pseudo-code:
+1. Generate 10 random deviates from a uniform distribution (choose the range of 0 to 10).
+2. Calculate the mean of those 20 deviates.
+3. Calculate the mean of the log-transformed values and transform this mean back the normal scale. 
+4. Explain differences between the two means. 
+  + _hint_: make a `log(x)` curve and pick two random points on the x-axis. 
 
-Then we can just ask `R` to integrate it:
-```{r}
-i1 = integrate(tmpf,lower=0,upper=Inf); i1
-``` 
-(Use `adapt()`, in the `adapt` package,
-if you need to do multidimensional integrals.)
-
-This integral shows that we were pretty close
-with our first approximation.
-However, numerical integration will always
-imply some level of approximation; be
-careful with functions with sharp spikes,
-because it can be easy to miss important parts 
-of the function.
-
-Now to try out the delta function approximation
-(as discussed in Chapter 4),
-which is that
-($E[f(x)] \approx f(\bar x)+(\sigma^2 f''(\bar x)/2)$)
-```{r}
-d1 = D(expression(a*x/(1+(a/b)*x)),"x")
-d2 = D(d1,"x")
-``` 
-
-As stated above,
-the mean value of the distribution is about 24.5.
-The variance of the exponential distribution is
-equal to the mean squared, or 600.25.
-```{r}
-Smean = 24.5
-Svar = Smean^2
-d2_num = eval(d2,list(a=0.696,b=9.79,x=Smean))
-mval = a*Smean/(1+(a/b)*Smean)
-dapprox = mval + 1/2*Svar*d2_num
-merr = (mval-i1$value)/i1$value; merr
-err = (dapprox-i1$value)/i1$value; err
-``` 
-The answer from the delta method 
-is only about 5% below
-the true value, as 
-opposed to the naive answer ($f(\bar x)$) which is about
-25% high.  (We have to say `i1$value`
-to extract the actual value of the integral
-from the variable `i1`; try `str(i1)`
-if you want to see all the information that
-`R` is storing about the integral.)
-
-**Exercise 4***:
+**Exercise 5***:
 try the above exercise again, but this time
 with a gamma distribution instead of an exponential.
 Keep the mean equal to 24.5 and change the
@@ -537,7 +450,7 @@ points(b1,my_dnbinom(0:max(x),mean=1,var=4),pch=16)
 abline(v=1)
 ``` 
 
-**Exercise 5***:
+**Exercise 6***:
 Morris (1997) gives a definition of the beta function that
 is different from the standard statistical parameterization.
 The standard parameterization is
@@ -607,7 +520,7 @@ random number is zero; otherwise it is a value
 picked out of the appropriate negative binomial
 distribution.
 
-**Exercise 6**:
+**Exercise 7**:
 check graphically that these functions actually
 work. For an extra challenge, calculate the mean
 and variance of the zero-inflated negative binomial
@@ -694,7 +607,7 @@ hist(x,prob=TRUE,breaks=100,col="gray")
 curve(dt(x,df=11),add=TRUE,lwd=2)
 ``` 
 
-**Exercise 7***:
+**Exercise 8***:
 generate 10,000 values from
 a gamma-Poisson compounded distribution
 with parameters shape=$k=0.5$, scale=$\mu/k=4/0.5=8$
@@ -719,3 +632,9 @@ and variance
 to see how different the shapes of the distributions
 are.
 
+
+# 6. Choosing error distributions 
+In this exercise we revisit exercise 6 of lab 3.
+In that exercise we had six different datasets each describing a biological phenonmenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
+**Exercise 9** Reload the six datasets and choose for each dataset one or two candidate error distributions.
+  _hint_: ask yourself a number of questions: Do I have counts (integer) or continuous (real) values? Do I have positive values only or also negative values? 
