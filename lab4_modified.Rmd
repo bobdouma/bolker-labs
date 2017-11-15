@@ -320,14 +320,6 @@ Check that the mean and variance
 agree reasonably well with the theoretical values.
 Add points representing
 the theoretical distribution to the plot.
-Now translate the $\mu$ and $k$
-parameters into their $p$ and $nn$
-equivalents (the coin-flipping derivation
-of the negative binomial), and add
-those points to the plot [use a different
-plotting symbol to make sure you can see
-that they overlap with the theoretical
-values based on the $\mu$, k parameterization].
 
 # 2. Averaging across discrete and continuous distributions
 
@@ -559,10 +551,7 @@ distribution.
 
 **Exercise 7**:
 check graphically that these functions actually
-work. For an extra challenge, calculate the mean
-and variance of the zero-inflated negative binomial
-and compare it to the results of
-`rzinbinom(10000,mu=4,size=0.5,zprob=0.2)`.
+work. For comparison you could compare the results with a negative binomial function with the same mean and variance as the data.
 
 # 5. Compounding distributions
 
