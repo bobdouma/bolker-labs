@@ -660,9 +660,9 @@ to see how different the shapes of the distributions
 are.
 
 
-# 6. Choosing error distributions 
+# 6. Choosing probability distributions 
 In this exercise we revisit exercise 6 of lab 3.
 In that exercise we had six different datasets each describing a biological phenonmenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
 
-**Exercise 9** Reload the six datasets and choose for each dataset one or two candidate error distributions.
+**Exercise 9** Reload the six datasets and choose for each dataset one or two candidate probability distributions.
   _hint_: ask yourself a number of questions: Do I have counts (integer) or continuous (real) values? Do I have positive values only or also negative values? 
