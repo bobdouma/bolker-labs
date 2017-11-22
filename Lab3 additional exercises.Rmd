@@ -1,7 +1,7 @@
 ---
-title: "Lab 3 additional exercises"
+title: "Lab 6 additional exercises"
 author: "Bob Douma"
-date: "3 November 2017"
+date: "22 November 2017"
 output: pdf_document
 ---
 
