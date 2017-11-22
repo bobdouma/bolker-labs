@@ -70,7 +70,7 @@ The following steps will lead you through the model fitting procedure.
 4. Apply model selection criteria and conclude which model fits that data best. 
 5. Does the model makes sense from a biological perspective?
       
-Optional (time permitting):      
+Optional and time permitting:      
 6. Repeat the above procedure for the other 5 datasets
 
  
