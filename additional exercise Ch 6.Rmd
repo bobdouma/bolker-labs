@@ -65,8 +65,11 @@ summary(mle2.1)
 The following steps will lead you through the model fitting procedure. 
 
 1. Take the first dataset and tweak the above functions such that it matches with the deterministic and stochastic model that you have chosen. In case you got stuck in the previous exercises where you had to choose a deterministic function and a stochastic function see next page for suggestions. 
-  _hint_: In a previous exercise you have eyeballed the parameter values of the functions, you can use these as starting values.
-  _hint_: In case you get convergence problems, adapt your starting values, or choose a different optimizer. For example Nelder-Mead is a robust one, e.g. `method = "Nelder-Mead"`.
+
+      _hint_: In a previous exercise you have eyeballed the parameter values of the functions, you can use these as starting       values.
+  
+      _hint_: In case you get convergence problems, further adapt your starting values, or choose a different optimizer. For       example Nelder-Mead is a robust one, e.g. `method = "Nelder-Mead"`.
+
 2. Change the determinstic function for a possible alternative determinstic function
 3. Compare the likelihoods of the data given both models
 4. Apply model selection criteria and conclude which model fits that data best. 
