@@ -49,7 +49,7 @@ nll.mle = function(a,b,sd){
   mu = a+b*x 
   # this calculates the likelihood of the function given the probability 
   # distribution, the data and mu and sd
-  nll = -sum(log(dnorm(y,mean=mu,sd=sd))) 
+  nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) 
   return(nll)
 }
 
