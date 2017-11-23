@@ -20,7 +20,8 @@ In this exercise you will learn how to fit models to data through means of maxim
 To fit a model through means of maximum likelihood you need to specify a function that calculate the negative log likelihood (NLL) based on the data and the parameter values. For example to calculate the NLL of a linear model and a normal distribution the following function works: 
 
 
-```{r}
+
+```r
 nll = function(par,y,x){
   a = par[1]
   b = par[2]
@@ -32,18 +33,19 @@ nll = function(par,y,x){
   nll = -sum(log(dnorm(y,mean=mu,sd=sd))) 
   return(nll)
 }
-
 ```
 
 Next we specify a function to find the maximum likelihood estimate
 
-```{r, eval=F}
+
+```r
 par=c(a=1,b=1,c=1) # initial parameters
 opt1 = optim(par=par,nll,x=x,y=y) # y represents the data, x the independent variable
 ```
 
 It can also be done through `mle2`
-```{r}
+
+```r
 nll.mle = function(a,b,sd){
   # this calculates the mean y for a given value of x: the deterministic function
   mu = a+b*x 
@@ -52,10 +54,10 @@ nll.mle = function(a,b,sd){
   nll = -sum(log(dnorm(y,mean=mu,sd=sd))) 
   return(nll)
 }
-
 ```
 
-```{r, eval=F}
+
+```r
 # the data should be supplied through data and the parameters through list().
 mle2.1 = mle2(nll.mle,start=list(a=1,b=1,sd=1),data=data.frame(x,y)) 
 summary(mle2.1)
