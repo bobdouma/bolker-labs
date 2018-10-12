@@ -1,0 +1,1730 @@
+\input{labskel.tex}
+\title{An introduction to \R\ for ecological modeling (lab 1)}
+\date{\today}
+\author{Stephen Ellner\thanks{Ecology and Evolutionary Biology, Cornell University},
+modified by Ben Bolker\thanks{Department of Biology, University of Florida}}
+
+
+
+%% TODO: hint about range change in log graph
+%% mfcol(,)
+%% ?
+
+\begin{document}
+
+\maketitle
+
+\includegraphics[width=2.64cm,height=0.93cm]{cc-attrib-nc.png}
+\begin{minipage}[b]{3in}
+{\tiny Licensed under the Creative Commons 
+  attribution-noncommercial license
+(\url{http://creativecommons.org/licenses/by-nc/3.0/}).
+Please share \& remix noncommercially,
+mentioning its origin.}
+\end{minipage}
+
+\addtocounter{section}{-1}
+\section{How to use this document}
+
+\SweaveOpts{keep.source=TRUE}
+<<setopts,echo=FALSE>>=
+options(continue=" ")
+@ 
+\begin{itemize}
+\item These notes contain many sample calculations. It is important to 
+do these yourself---\textbf{type them in at your keyboard and see what
+happens on your screen}---to get the 
+feel of working in \R. 
+\item \textbf{Exercises} in the middle of a section should be done
+immediately when you get to them, and make sure you have them right 
+before moving on. Some more challenging exercises 
+(indicated by asterisks) appear at the end of some sections. These
+can be left until later, and may be assigned as homework.   
+\end{itemize}
+
+These notes are based in part on course materials by former TAs
+Colleen Webb, Jonathan Rowell and Daniel Fink at Cornell, Professors
+Lou Gross (University of Tennessee) and Paul Fackler (NC State
+University), and on the book \emph{Getting Started with Matlab} by
+Rudra Pratap (Oxford University Press).  They also draw on the
+documentation supplied with \R.  They parallel, but go into 
+more depth than, the chapter supplement for the book
+\emph{Ecological Models and Data in \R}.
+
+You can find many other similar introductions scattered around
+the web, or in the ``contributed documentation'' section on the
+R web site (\url{http://cran.r-project.org/other-docs.html}). 
+This particular version is limited
+(it has similar coverage to Sections~1 and 2 of the \emph{Introduction
+to \R} that comes with \R) and targets biologists who are
+neither programmers nor statisticians.
+
+\section{What is \R?}
+\R\ is an object-oriented scripting language that combines 
+\begin{itemize}
+\item a programming language called \Slang,
+developed by John Chambers at Bell Labs, that can be used for 
+numerical simulation of deterministic and stochastic dynamic models
+\item an extensive set of functions for classical and modern
+  statistical data analysis and modeling
+\item graphics functions for visualizing data and model output
+\item a user interface with a few basic menus and extensive help
+facilities
+\end{itemize}
+
+\R\ is an open source project, available for free download via the
+Web. Originally a research project in statistical computing
+\citep{IhakaGentleman1996}, it is now managed by a development team
+that includes a number of well-regarded statisticians, and is widely
+used by statistical researchers (and a growing number of theoretical
+ecologists and ecological modelers) as a platform for making new
+methods available to users.  The commercial implementation of \Slang\ 
+(called {\sf S-PLUS}) offers an Office-style ``point and click''
+interface that \R\ lacks. For our purposes, however, the advantage of
+this front-end is outweighed by the fact that \R\ is built on a faster
+and much less memory-hungry implementation of \Slang\ and is easier to
+interface with other languages (and is free!).
+A standard installation of \R\ also
+includes extensive documentation, including an introductory manual
+($\approx 100$ pages) and a comprehensive reference manual (over 1000
+pages).  (There is a graphical front-end for parts of \R, called
+``R commander'' (\code{Rcmdr} for short), 
+available at the \R\ site, but we will not be using it in
+this class.)
+
+\subsection{Installing \R\ on your computer: basics}
+
+If \R\ is already installed on your computer, 
+you can skip this section.
+
+The main source for \R\ is the CRAN home page \url{http://cran.r-project.org}. 
+You can get the source code, but most users will prefer a precompiled 
+version. To get one of these from CRAN:
+\begin{itemize}
+\item go to \url{http://cran.r-project.org/mirrors.html} and find
+a mirror site that is geographically somewhat near you.
+\item Find the appropriate page for your
+operating system --- when you get to the
+download section, go to \code{base} rather
+than \code{contrib}.
+Download the binary file (e.g. \code{base/R-x.y.z-win32.exe} for 
+Windows, \code{R-x.y.z.dmg} for MacOS, where \code{x.y.z} is the 
+version number).  The binary files are large (30--60 megabytes) --- you
+will need to find a fast internet connection.
+\item Read and follow
+the instructions (which are pretty much ``click on the icon'').
+\end{itemize}
+
+\R\ should work well on any reasonably modern computer.
+Version 2.5.1 requires MacOS X 10.4.4 (or higher) or
+Windows 95 (or higher), or just about any version
+of Linux; it can also be compiled on other versions
+of Unix.  Windows XP or higher is recommended.
+%I developed and ran all the code in the book
+%with \R\ 2.5.1 on a dual-core PC laptop running
+%at 1.66 GHz under Ubuntu Linux 7.04.
+R moves quickly: if possible, you should make
+sure you have upgraded to the most recent version
+available, or at least that your version isn't more
+than about a year old.
+
+% \flspecific{
+% You can also use one of the CDs I've burned for the class. 
+% These CDs also contain
+% pre-compiled versions of a large number of packages
+% from CRAN, as well as a variety of other tools and documents.}
+
+The standard distributions of \R\ include several \emph{packages},
+user-contributed suites of add-on functions (unfortunately, the
+command to load a package into \R\ is \code{library}!).  These
+Notes use some packages that are not part of the standard
+distribution. In general, you can install additional packages 
+from within \R\ using the \code{Packages} menu,
+or the \code{install.packages} command.
+(See below.)
+
+For Windows or MacOS, install \R\ by launching the downloaded file and
+following the on-screen instructions. At the end you'll have an \R\
+icon on your desktop that you can use to launch the program.
+Installing versions for Linux or Unix is slightly
+more complicated, which will not bother the corresponding users.
+For doing anything more than very simple examples,
+we recommend the Tinn-R 
+(\url{http://www.sci-views.org/Tinn-R})
+or Notepad++ (\url{notepad-plus.sourceforge.net/})
+editors as better Windows interfaces than the built-in console:
+in particular, these editors have \emph{syntax highlighting},
+which colors R commands and allows you to identify
+missing parentheses, quotation marks, etc..
+
+\windows\ If you are using \R\ on a machine
+where you have sufficient permissions, you may want to
+edit some of your graphical user interface (GUI) options.
+\begin{itemize}
+\item {To allow command and graphics windows to move
+independently on the desktop (SDI, single-document
+interface, rather than MDI, multiple-document
+interface): go to \code{File/Edit/Preferences} and click the
+radio button to set \code{SDI} 
+instead of \code{MDI}.  This edits the {\tt Rconsole}
+file. \R\ will ask you where to save it; click
+through to {\tt My Computer/Program Files/R/R-x.y.z/},
+where {\tt x.y.z} stands for the version of \R.
+You will then need to restart \R.}
+%% CHM help no longer available as of 2.10.1 ...
+%% let's hope help works OK by default ...
+%\item{To select the most powerful version of the help system,
+%go to the same directory ({\tt My Computer/Program Files/R/R-x.y.z/})
+%and use Notepad to edit the \code{Rprofile} file
+%to un-comment \code{options(chmhelp=TRUE)}
+%by removing the \# at the start of the line.}
+\end{itemize}
+
+%\windows\ It may also be a good idea to move \R's default
+%directory \ldots
+
+\subsection{Starting \R}
+
+\windows\ Just click on the icon on your desktop, or in the \code{Start}
+menu (if you allowed the Setup program to make either or both of these).
+If you lose these shortcuts for some reason, you can search for
+the executable file \code{Rgui.exe} on your hard drive, which will probably be somewhere like \verb+Program Files\R\R-x.y.z\bin\Rgui.exe+.
+If you are using \code{Tinn-R}, first start \code{Tinn-R},
+then go to \ldots
+
+\subsection{Stopping \R}
+
+\setlength\epigraphwidth{4.25in}
+\epigraph{When entering, always look for the exit.}{Lebanese proverb}
+
+You can stop \R\ from the \code{File} menu
+(\windows), or you can stop it by typing \code{q()} at the 
+command prompt (if you type \code{q} by itself, you will get some
+confusing output which is actually \R\ trying to tell you the
+definition of the \code{q} function; more on this later).
+
+When you quit, \R\ will ask you if you want to save the workspace
+(that is, all of the variables you have defined in this session); for
+now (and in general), say ``no'' in order to avoid clutter.
+
+Should an \R\ command seem to be stuck or
+take longer than you're willing to wait, click on the stop sign on
+the menu bar or hit the \code{Escape} key (in Unix, type Control-C).
+
+\section{Interactive calculations}
+\windows\ When you start \R\ it opens the \textbf{console} window.
+The console has a few basic menus at the top; check them out on your own. The console is 
+also where you enter commands for \R\ to execute
+\emph{interactively}, meaning that the command is executed and 
+the result is displayed as soon as you hit the \code{ Enter} key. For example, at 
+the command prompt \code{>}, type in \code{2+2} and hit \code{Enter}; you will see 
+<<arith1>>=
+2+2 
+@
+(When cutting and pasting from this document to \R, don't include the
+text for the command prompt (\code{>}).)
+
+To do anything complicated, you have to
+store the results from calculations by 
+\emph{assigning} them to variables, using \code{=} or \verb+<-+. For example:
+<<arith2>>=
+a=2+2
+@
+\R\ automatically creates the variable \code{a} and stores the result (4)
+in it, but it doesn't print anything.  This may seem strange, but you'll
+often be creating and manipulating huge sets of data that would fill
+many screens, so the default is to skip printing the results.
+To ask \R\ to print the value, just type the variable name by itself
+at the command prompt:
+<<arith3>>=
+a
+@ 
+(the \code{[1]} at the beginning of the line is just \R\ printing
+an index of element numbers; if you print a result that
+displays on multiple lines, \R\ will put an index at the beginning
+of each line.  \code{print(a)} also works to print the value of
+a variable.)  By default, a variable created this way is a \emph{vector}, 
+and it is \emph{numeric} because we gave \R\ a number rather
+than some other type of data (e.g. a character string like \code{"pxqr"}).
+In this case \code{a} is a numeric vector of length 1,
+which acts just like a number. 
+
+You could also type \code{a=2+2; a},
+using a semicolon to put two or more commands on a single line.
+Conversely, you can break lines \emph{anywhere that \R\ can tell you haven't
+finished your command} and \R\ will give you a ``continuation'' prompt
+(\code{+}) to let you know that it doesn't think you're finished yet: try typing
+\begin{verbatim}
+a=3*(4+ [Enter]
+5)
+\end{verbatim}
+to see what happens
+(you will sometimes see the continuation prompt 
+when you don't expect it, e.g. if you forget to close parentheses).
+If you get stuck continuing a command you don't want---e.g. you opened
+the wrong parentheses---just hit the \code{Escape} key or the stop
+icon in the menu bar to get out.
+
+Variable names in \R\ must begin with a letter, followed by letters or numbers.
+You can break up long names with a period, as in
+\code{very.long.variable.number.3}, or an underscore (\code{\_}), but you 
+can't use blank spaces in variable names
+(or at least it's not worth the trouble).
+Variable names in \R\ are case sensitive,
+so \code{Abc} and \code{abc} 
+are different variables.
+Make variable names long enough to remember, short
+enough to type.
+\code{N.per.ha} or \code{pop.density} are better than \code{x}
+and \code{y} (too short) or \code{available.nitrogen.per.hectare} (too long).
+Avoid \code{c}, \code{l}, \code{q}, \code{t}, \code{C}, \code{D},
+\code{F}, \code{I}, and \code{T}, which are either built-in \R\ functions or
+hard to tell apart.
+
+\R\ does calculations with variables as if they were numbers. It uses  
+\code{+}, \code{-}, \code{*}, \code{/}, and \verb!^!
+for addition, subtraction, multiplication, division and 
+exponentiation, respectively. For example:
+% emphasis on semicolons seemed unnecessary
+<<arith4>>=
+x=5
+y=2
+z1=x*y  ## no output
+z2=x/y  ## no output
+z3=x^y  ## no output
+z2
+z3
+@ 
+
+Even though \R\ did not display the values of \code{x} and \code{y}, it ``remembers'' that 
+it assigned values to them. Type \code{x; y} to display the values. 
+
+You can retrieve and edit previous commands.
+The up-arrow (\thinspace $\uparrow$ \thinspace) key (or
+\code{Control-P}) recalls previous 
+commands to the prompt. For example, you can bring back the second-to-last command and edit it to
+<<arith5>>=
+z3=2*x^y
+@ 
+(experiment with the other arrow keys ($\downarrow$, $\rightarrow$, $\leftarrow$), \code{Home} and \code{End} keys
+too).
+This will save you many hours in the long run.
+
+You can combine several operations in one calculation:
+<<arith6>>=
+A=3
+C=(A+2*sqrt(A))/(A+5*sqrt(A)); C
+@ 
+
+Parentheses specify the order of operations. 
+The command
+<<arith7>>=
+C=A+2*sqrt(A)/A+5*sqrt(A)
+@ 
+is not the same as the one above; rather, it is 
+equivalent to \code{C=A + 2*(sqrt(A)/A) + 5*sqrt(A)}.
+
+The default order of operations is: (1) parentheses; 
+(2) exponentiation, or powers, (3) multiplication 
+and division, (4) addition and subtraction (``\textbf{p}retty \textbf{p}lease
+\textbf{e}xcuse \textbf{m}y \textbf{d}ear \textbf{A}unt \textbf{S}ally'').
+
+\begin{tabular}{lcl}
+\verb!b = 12-4/2^3! & gives  & \verb!12 - 4/8 = 12 - 0.5 = 11.5! \\
+\verb!b = (12-4)/2^3! & gives & \verb!8/8 = 1! \\
+\verb!b = -1^2!   &          gives  &  \verb!-(1^2) = -1! \\
+\verb!b = (-1)^2! &          gives  &  \verb!1!
+\end{tabular} 
+
+In complicated expressions 
+you might start off by \emph{using parentheses to specify 
+explicitly what you want}, such as \verb! b = 12 - (4/(2^3)) ! 
+or at least \verb! b = 12 - 4/(2^3) !; a few extra sets of parentheses
+never hurt anything, although when you get confused
+it's better to think through the order of operations rather than flailing
+around adding parentheses at random.
+
+\R\ also has many \emph{built-in mathematical functions} that operate on variables
+(Table \ref{MathFunctions} shows a few). 
+
+
+\begin{table}[t]
+\begin{tabular}{p{140pt}p{290pt}}
+\hline
+\code{abs} & absolute value \\
+\code{cos}, \code{sin}, \code{tan} &  cosine, sine, tangent of angle $x$ in radians\\
+\code{exp}  & exponential function, $e^x$  \\
+\code{log}  & natural (base-$e$) logarithm \\
+\code{log10} &  common (base-10) logarithm \\
+\code{sqrt}  &  square root \\
+\hline 
+\end{tabular}
+\caption{Some of the built-in mathematical functions in \R. You can
+get a more complete list from the Help system: \code{?Arithmetic} for simple, 
+\code{?log} for logarithmic, \code{?sin} for trigonometric, and \code{?Special} for special 
+functions.} 
+\label{MathFunctions}
+\end{table}
+
+\textbf{Exercise\exnumber}: Using editing
+shortcuts wherever you can, have \R\ compute the values of 
+\begin{enumerate}
+\item $\frac{2^7}{2^7 - 1}$
+and compare it with 
+$( {1 - \frac{1}{2^7}} )^{-1}$
+(If any square brackets [] show up in your web browser's
+rendition of these equations, replace
+them with regular parentheses ().)
+\item 
+\begin{itemize}
+\item $1+0.2$
+\item $1+0.2+0.2^2/2$
+\item $1+0.2+0.2^2/2+0.2^3/6$
+\item $e^{0.2}$ (remember that \R\ knows \code{exp} but not $e$;
+how would you get \R\ to tell you the value of $e$?  What is the
+point of this exercise?)
+\end{itemize}
+\item{the standard normal probability density,
+$\frac{1}{\sqrt{2 \pi}} e^{-x^2/2}$, for values of $x=1$
+and $x=2$ (\R\ knows $\pi$ as \code{pi}.)
+(You can check your answers against the built-in function
+for the normal distribution; \code{dnorm(1)} and
+\code{dnorm(2)} should give
+you the values for the standard normal for $x=1$ and $x=2$.)}
+\end{enumerate}
+
+\section{The help system}
+
+\R\ has a help system, although it is generally
+better for providing detail or reminding you how to do things than
+for basic ``how do I \ldots?'' questions.
+
+\begin{itemize}
+\item You can get help on any \R\ function by entering
+\begin{verbatim}
+?foo
+\end{verbatim} 
+(where \code{foo} is the name of the function
+you are interested in)
+in the console window (e.g., try \code{?sin}). 
+\item The \code{Help} menu on the tool bar
+provides links to other documentation,
+including the manuals and FAQs, and a 
+Search facility (`Apropos' on the menu)
+which is useful if you sort of maybe remember part of the
+the name of what it is you need help on.
+\item Typing \code{help.start()}
+opens a web browser with help information.
+\item \code{example(cmd)} will run any examples that are included
+in the help page for command \code{cmd}.
+\item{\code{demo(topic)} runs demonstration code on topic \code{topic}: type
+\code{demo()} by itself to list all available demos}
+\end{itemize}
+
+By default, \R's help system only provides information 
+about functions that are in the base system and packages
+that you have loaded with \code{library} (see below).
+\begin{itemize}
+\item \code{??topic} or \code{help.search("topic")} 
+  (with quotes)
+will list information
+related to \code{topic} available in the base system 
+or in any extra installed packages:
+then use \code{?topic} to see the information, perhaps using
+\code{library(pkg)} to load the appropriate package first.
+\code{help.search} uses ``fuzzy matching'' --- for example, 
+\code{help.search("log")} finds 528 entries (on my
+particular system) including lots of
+functions with ``plot'', which includes the letters ``lot'', which
+are \emph{almost} like ``log''.  If you can't stand it, you
+can turn this behavior off by specifying the incantation
+\code{help.search("log",agrep=FALSE)} (81 results which still include
+matches for ``logistic'', ``myelogenous'', and ``phylogeny'' \ldots)
+\item \code{help(package="pkg")} will list all the help pages for
+a loaded package.
+\item \code{example(fun)} will run the examples (if any) given
+  in the help for a particular function \code{fun}: e.g. \code{example(log)}
+\item \code{RSiteSearch("topic")} does a full-text
+  search of all the \R\ documentation and the mailing list archives
+  for information on \code{topic} (you need an active
+  internet connection).  
+\item the \code{sos} package is a web-aware help function that
+  searches all of the packages on CRAN; its \code{findFn} function
+  tries to find and organize functions in any package on CRAN that
+  match a search string (again, you need a network connection for this).
+\end{itemize}
+
+Try out one or
+more of these aspects of the help system.
+
+% Finally, here's a commentary on the
+% help system in \R\ from Graham Lawrence:
+% \begin{quote}
+% \small
+% I hate to say this, but what really helped me the most, after the initial
+% feet-wetting, was to abandon the help manuals.  Searching manuals for the
+% answer to a specific question is frustrating because one does not know the
+% key term for the search engine to deliver the item needed.
+
+% So I stopped being serious and production oriented and simply played with \R\ 
+% for a couple of months.  Open the Base package, scan the list of contents
+% for titles that pique my curiosity, paste their examples into \R\ and see what
+% happens.  And those examples use other functions and their documentation has
+% more examples and so on and on; and pretty soon after, whoops, there's
+% another afternoon gone down the tubes.  But all this apparent time wasting
+% had a most happy result.  I now find, much more often than not, that I know
+% what I need to look up to answer a specific question, and that does wonders
+% for my disposition.
+
+% I think of \R\ as a vast jungle, criss-crossed with myriad game trails (the
+% documentation to each function in the packages).  And I can explore each
+% trail and see what animal it leads to in its native habitat, by pasting the
+% examples into \R\ and examining the result.  So when I see an interesting
+% spoor or paw print, I take a stroll down that trail and see where it leads.
+% Not the most efficient way of learning the language, no doubt, but a
+% pleasant and interesting entertainment rather than a chore.
+% \end{quote}
+
+\paragraph{Other (on-line) help resources}
+
+Paul Johnson's ``R tips'' web page (\url{http://pj.freefaculty.org/R/Rtips.html})
+answers a number of ``how do I \ldots ?'' questions,
+although it's out of date in some places.
+The \R\ ``wiki'' (\url{http://wiki.r-project.org}) is a newer venue
+for help information.  The R tips page is (slowly) being moved
+over to the wiki, which will eventually (we hope) contain a lot
+more information.  You can also edit the wiki and add your own
+pages!
+
+
+Also see:
+\begin{itemize}
+\item R reference card: \url{http://cran.r-project.org/doc/contrib/Short-refcard.pdf}
+\item Mathematica to R reference: \\
+\url{http://wiki.r-project.org/rwiki/doku.php?id=getting-started:translations:mathematica2r}
+\item Octave (free MATLAB clone) to R:
+  \url{http://wiki.r-project.org/rwiki/doku.php?id=getting-started:translations:octave2r}
+\item R ecology (``environmetrics'') task view:
+\url{cran.r-project.org/web/views/Environmetrics.html}
+\item contributed documentation at CRAN: \url{http://cran.us.r-project.org/other-docs.html}
+\end{itemize}
+%\end{document}
+
+\textbf{Exercise\exnumber}: Do an Apropos on \code{sin} via the Help
+menu, to see what it does. Now enter the command
+<<help1,eval=FALSE>>=
+help.search("sin")
+@
+and see what that does (answer: \code{help.search} pulls up all help
+pages that include `sin' anywhere in their title or text. Apropos just looks at the name of the function).
+
+\section{A first interactive session: linear regression}
+\newcommand{\rmax}{r_{\mbox{\small max}}}
+To get a feel for working in \R\ we'll fit a straight-line model (linear 
+regression) to data. Below are some data on the maximum growth rate $\rmax$ of laboratory populations 
+of the green alga \emph{Chlorella vulgaris} as a function of light intensity ($\mu$E per
+m$^2$ per second). These 
+experiments were run during the system-design phase of the study reported by
+\citet{Fussman+2000}.
+
+Light: 20,  20,  20,  20,  21,  24,  44,  60,  90,  94, 101 \\
+$\rmax$: 1.73, 1.65, 2.02, 1.89, 2.61, 1.36, 2.37, 2.08, 2.69, 2.32, 3.67 \\
+
+To analyze these data in \R, first enter them as numerical \emph{vectors}: 
+<<chlor1>>=
+Light=c(20,20,20,20,21,24,44,60,90,94,101)
+rmax=c(1.73,1.65,2.02,1.89,2.61,1.36,2.37,2.08,2.69,2.32,3.67)
+@ 
+The function \code{c} \emph{combines} the individual numbers into 
+a vector.  Try recalling (with $\uparrow$) and modifying the above command to 
+% don't try to weave, error stops things (even eval=FALSE doesn't help)
+\begin{verbatim}
+Light=20,20,20,20,21,24,44,60,90,94,101
+\end{verbatim} 
+and see the error message you get: in order to create a vector of 
+specified numbers,
+you \textbf{must} use the \code{c} function.
+Don't be afraid of error messages:
+the answer to ``what would happen if I \ldots?''
+is usually ``try it and see!''
+
+To see a histogram of the growth rates enter \code{hist(rmax)},
+which opens a graphics window and displays the histogram. There are
+\emph{many} other built-in statistics functions: for example
+\code{mean(rmax)} computes you the mean, and \code{sd(rmax)} and
+\code{var(rmax)} compute the standard deviation and variance,
+respectively.  Play around with these functions, and any others you
+can think of.
+
+To see how light intensity 
+affects algal rate of increase, type
+<<chlor2>>=
+plot(Light,rmax)
+@ 
+to plot \code{rmax} ($y$) against \code{Light} ($x$).
+A linear regression would seem like
+a reasonable model for these data. \textbf{Don't close this plot
+window}: we'll soon be adding to it.
+
+
+\begin{figure}
+\begin{center}
+<<chlorfig1,echo=FALSE,fig=TRUE,height=2>>=
+h = rev((1:6)/6)
+xr = seq(0,0.9,length=20)
+xpos = 1.2
+op = par(xpd=TRUE,mar=c(0,0,0,5))
+plot(0:1,range(h),type="n",axes=FALSE,ann=FALSE)
+points(xr,rep(h[1],20),pch=1:20)
+text(xpos,h[1],"pch: point type",adj=1)
+##palette(gray((0:19)/19))
+palette(rainbow(20))
+points(xr,rep(h[2],20),col=1:20,pch=16)
+palette("default")
+text(xpos,h[2],"col: point color",adj=1)
+points(xr,rep(h[3],20),cex=seq(0.01,2,length=20))
+text(xpos,h[3],"cex: point size",adj=1)
+text(xr,rep(h[4],20),c(letters[1:5],LETTERS[1:5],0:9))
+text(xpos,h[4],"text",adj=1)
+##text(seq(0.1,0.9,length=20),rep(0.6,20),letters[1:20],cex=seq(0.01,2,length=20))
+nl = 6
+nlsp = 0.1
+lend = 0.95
+##segments(seq(0,0.9,length=nl),rep(h[5],2*nl),
+##         seq(1/nl,1,length=nl),rep(h[5],2*nl),
+## want to go from 0 to lend, in nl segments,
+## using a fraction fr of the space for interspaces
+## each segment + space takes up lend/nl
+## 
+fr = 0.7
+seg1 = seq(0,by=lend/nl,length=nl)
+seg2 = seq(lend/nl,to=lend,by=lend/nl)-(lend*(1-fr)/nl)
+segments(seg1,rep(h[5],nl),
+         seg2,
+         rep(h[5],nl),
+         lty=1:nl,lwd=3)
+text(xpos,h[5],"lty: line type",adj=1)
+nv = 10
+segments(seq(0,1/(1+nlsp),length=nv),rep(h[6],nv),
+         seq(0.05,0.95,length=nv),rep(h[6],nv),
+         lwd=1:10)
+text(xpos,h[6],"lwd: line width",adj=1)
+par(op)
+@
+\end{center}
+\caption{Some of \R's graphics parameters.
+Color specification, \code{col}, also applies in many other contexts:
+colors are set to a rainbow scale here.  
+See \code{?par}
+for (many more) details on graphics parameters,
+and one or more of \code{?rgb}, \code{?palette},
+or \code{apropos("color")} for more on colors.}
+\label{fig:graphparms}
+\end{figure}
+
+\R's default plotting character is an open circle.
+Open symbols are generally better than closed symbols
+for plotting because it is easier to see where they
+overlap, but you could include \code{pch=16} in the
+\code{plot} command if you wanted closed circles instead.
+Figure~\ref{fig:graphparms} shows several more
+ways to adjust the appearance of lines
+and points in \R.
+
+To perform linear regression we create a linear model using the \code{lm} 
+(\textbf{l}inear \textbf{m}odel) function:
+<<chlorfit1>>=
+fit = lm(rmax~Light)
+@ 
+(Note that the variables are in the \emph{opposite order} from the
+\code{plot} command, which is \code{plot(x,y)}, whereas the
+linear model is read as ``model $\rmax$ as a function of light''.)
+
+The \code{lm} command produces no output at all, 
+but it creates \code{fit} as an \textbf{object}, 
+i.e. a data structure consisting of multiple parts,
+holding the results of a regression analysis 
+with \code{rmax} being modeled as a
+function of \code{Light}. 
+Unlike most statistics packages, \R\ rarely produces automatic 
+summary output from an analysis. 
+Statistical analyses in \R\ are done by creating a 
+model, and then giving additional commands to extract desired information 
+about the model or display results graphically.
+
+To get a summary of the results, enter 
+the command \code{summary(fit)}.
+\R\ sets up model objects (more on this later) 
+so that the function \code{summary} 
+``knows'' that \code{fit} was created by \code{lm}, and produces an appropriate
+summary of results for an \code{lm} object: 
+
+<<chlorfit2>>=
+summary(fit)
+@ 
+
+[If you've had (and remember) a statistics course the output will make sense to you. 
+The table of coefficients gives the estimated regression
+line as $\rmax = \Sexpr{signif(coef(fit)[1],3)} + \Sexpr{signif(coef(fit)[2],3)} \times Light$, and associated with
+each coefficient is the standard error of the estimate, the $t$-statistic
+value for testing whether the coefficient is nonzero, and
+the $p$-value corresponding to the $t$-statistic. Below the table,
+the adjusted R-squared gives the estimated fraction of the variance
+explained by the regression line, and the $p$-value in the last line
+is an overall test for significance of the model against the null
+hypothesis that the response variable is independent of the predictors.]
+
+You can add the regression line to the plot of the data with
+a function taking \code{fit} as its input
+(if you closed the plot of the data, you will need to create it again
+in order to add the regression line):
+<<chlorfit3>>=
+abline(fit)
+@
+(\code{abline}, pronounced ``a b line'', is a general-purpose function
+for adding lines to a plot: you can specify horizontal or vertical lines,
+a slope and an intercept, or a regression model: \code{?abline}). 
+
+\begin{figure}
+\begin{center}
+<<chlorfit4,echo=FALSE,fig=TRUE>>=
+plot(Light,rmax)
+abline(fit)
+@  
+\end{center}
+\label{Intro1.Fig1}
+\caption{Graphical summary of regression analysis}
+\end{figure}
+
+You can get the coefficients by using the \code{coef} function:
+<<chlorfit5>>=
+coef(fit)
+@ 
+
+You can also ``interrogate'' \code{fit} directly. Type 
+\code{names(fit)} to get a list of the components of \code{fit},
+and then 
+use the \verb!$! symbol to
+extract components according to their names.
+
+<<chlorfit6>>=
+names(fit)
+@ 
+For more information (perhaps more than you want)
+about \code{fit}, use \code{str(fit)} (for \textbf{str}ucture).
+You can get the regression coefficients this way:
+<<chlorfit7>>=
+fit$coefficients
+@ 
+It's good to be able to look inside \R\ objects
+when necessary, but all other things being
+equal you should prefer (e.g.) \code{coef(x)}
+to \verb+x$coefficients+.
+
+\section{\R\ interfaces}
+
+\subsection{Editors and GUIs}
+
+While \R\ works perfectly well out of the box, there are interfaces
+that can make your \R\ experience easier.  Editors such as Tinn-R
+(Windows: \url{http://www.sciviews.org/Tinn-R/}), 
+Kate (Linux: \url{http://kate-editor.org}), 
+or Emacs/ESS (cross-platform: \url{http://ess.r-project.org/}
+will color \R\ commands 
+and quoted material, allow you to submit lines or blocks of \R\ code to an \R\
+session, and give hints about function arguments: the standard
+MacOS interface has all of these features built in.
+Graphical interfaces such as JGR (cross-platform: \url{http://rosuda.org/JGR/})
+or SciViews (Windows: \url{http://www.sciviews.org/SciViews-R/}) 
+include similar editors
+and have extra functions such as a workspace browser
+for looking at all the variables you have defined.
+(All of these interfaces, which are designed to
+facilitate \R\ programming, are in a different category
+from Rcmdr, which tries to simplify basic statistics in \R.)
+If you are using Windows
+or Linux I would strongly recommend that, once you have
+tried \R\ a little bit, you download at least an \R-aware
+editor and possibly a GUI to make your life easier.
+Links to all of these systems, and more, can be found
+at \url{http://www.r-project.org/GUI/}.
+
+\subsection{Script files and data files}
+Modeling and complicated data analysis are 
+often much easier if you use \emph{scripts}, which are a series of 
+commands stored in a text file. The Windows and MacOS
+versions of \R\ both have basic script editors:
+you can also use Windows Notepad or Wordpad,
+or a more featureful editor like PFE, Xemacs, or Tinn-R:
+you \textbf{should not} use MS Word.
+%\includegraphics{skullcross-tiny} %% too much trouble!!
+
+Most programs for working with models or analyzing data follow a
+simple pattern of program parts:
+\begin{enumerate}
+\item ``Setup'' statements.
+\item Input some data from a file or the keyboard.
+\item Carry out the calculations that you want.
+\item Print the results, graph them, or save them to a file.
+\end{enumerate}
+
+For example, a script file might
+\begin{enumerate}
+\item Load some packages, or run another script file that 
+creates some functions (more on functions later). 
+\item Read in data from a text file.
+\item Fit several statistical models to the data and
+compare them.
+\item Graph the results, and save the graph to disk for including
+in your term project. 
+\end{enumerate}
+Even for relatively simple tasks, script files are useful for building up a 
+calculation step-by-step, making sure that each part works before adding on to it.
+
+Tips for working with data and script files
+(sounding slightly scary but just trying to help you avoid common
+pitfalls):
+\begin{itemize}
+\item{To tell \R\ where data and script files are located, you 
+can do any one of the following:
+\begin{itemize}
+\item{spell out the {\em path}, or file location, explicitly. (Use
+a single forward slash to separate folders
+(e.g. \verb+"c:/My Documents/R/script.R"+):
+this works on all platforms.)}
+\item{use \code{filename=file.choose()} (this works on all
+platforms, but is only useful on Windows and MacOS).}
+\item{change your working directory to wherever the file(s) are located
+using \code{Change dir} in the \code{File} menu (Windows:
+on Mac it's \code{Misc/Change Working Directory});}
+\item{change your working directory to wherever the file(s) are located
+using the \code{setwd} (\textbf{set} \textbf{w}orking \textbf{d}irectory)
+function, e.g. \verb+setwd("c:/temp")+}
+\end{itemize}
+Changing your working directory is more efficient
+in the long run, if you save all the
+script and data files for a particular project in the same directory
+and switch to that directory when you start work.
+
+If you have a shortcut defined for \R\ on your desktop
+(or in the Start menu)
+you can \emph{permanently} change your default working directory
+by right-clicking on the shortcut icon, selecting
+\code{Properties}, and changing the starting directory to somewhere
+like (for example) \code{My Documents/R work}.
+}
+\item{it's vital that you save your data and script files as
+\emph{plain text} (or sometimes comma-separated) files.  There are
+three things that can go wrong here: (1) if you use a web browser to
+download files, be careful that it doesn't automatically append some
+weird suffix to the files; (2) if your web browser has a ``file association''
+(e.g. it thinks that all files ending in \code{.dat} are Excel files),
+make sure to save the file as plain text, and without
+any extra extensions; (3) \textbf{never, (never, never)
+use Microsoft Word to edit your data and script files}; MS Word will
+try very hard to get you to save them as Word (rather than text) files,
+which will screw them up!}
+\item{If you send script files by e-mail, even if you paste them into
+the message as plain text, lines will occasionally get broken in
+different places --- leading to confusion.  Beware.}
+\end{itemize}
+
+As a first example, the file \code{Intro1.R} has the commands from the interactive 
+regression analysis. \textbf{Important:} 
+before working with an example file, create  
+a personal copy in some location on your own computer. We will refer to this location
+as your \emph{temp folder}. At the end of a lab session 
+you \emph{must} move files onto your personal disk (or email them to yourself).  
+
+Now open \textbf{your copy} of \code{Intro1.R}. In your editor, select 
+and Copy the entire text of the file, and then Paste the text into the
+\R\ console window (\code{Ctrl-C} and \code{Ctrl-V} as shortcuts). 
+This has the same effect as entering the commands
+by hand into the console: they will be executed and so a graph is 
+displayed with the results. Cut-and-Paste allows you to execute script
+files one piece at a time (which is useful for finding and fixing errors). The
+\code{source} function allows you to run an entire script file, e.g. 
+<<chlorscript1,eval=FALSE>>=
+source("c:/temp/Intro1.R")
+@
+You can also \code{source} files by pointing and clicking
+via the \code{File} menu on the console window. 
+
+Another important time-saver is loading data from a text file. Grab  
+copies of \code{Intro2.R} and \code{ChlorellaGrowth.txt} from the 
+web page to see how this is done. In \code{ChlorellaGrowth.txt}
+the two variables are entered as columns of a data matrix. Then 
+instead of typing these in by hand, the command
+<<chlorscript2>>=
+X=read.table("ChlorellaGrowth.txt",header=TRUE)
+@
+reads the file (from the current directory) 
+and puts the data values into the variable 
+\code{X}; \code{header=TRUE} specifies
+that the file includes column names. \textbf{Note} that as specified above
+you need to make sure that \R\ is looking 
+for the data file in the right place \ldots
+either move the data file to your current
+working directory, or change the line so
+that it points to the actual location
+of the data file.
+
+Extract the variables from \code{X} with the commands
+<<chlorscript3>>=
+Light=X[,1]
+rmax=X[,2]
+@ 
+Think of these as shorthand for ``\code{Light} = everything in column 1 of \code{X}'', and 
+``\code{rmax} = everything in column 2 of \code{X}'' (we'll learn about working with 
+data matrices later). From there on out it's the same as before, with some additions
+that set the axis labels and add a title.  
+
+\textbf{Exercise\exnumber} Make a copy of \code{Intro2.R} under a new 
+name, and modify the copy so that it does linear regression  
+of algal growth rate on the natural log of light intensity, 
+\code{LogLight=log(Light)}, and plots the data appropriately. You should end up with 
+a graph that resembles Figure~\ref{Intro1Fig2}. 
+(\emph{Hint:} when you switch from light intensity to
+log light intensity, the range on your $x$ axis will change 
+and you will have to change the $x$ position at which you plot the 
+growth rate equation.)
+
+\begin{figure}
+\begin{center}
+<<echo=FALSE,fig=TRUE,results=hide>>=
+X=read.table("ChlorellaGrowth.txt",header=TRUE) 
+Light=X[,1]
+rmax=X[,2] 
+logLight=log(Light)
+op <- par(cex=1.5,cex.main=0.9)
+plot(logLight,rmax,
+     xlab="Log light intensity (uE/m2/s)", 
+     ylab="Maximum growth rate rmax (1/d)",pch=16)
+title(main="Data from Fussmann et al. (2000)")
+fit=lm(rmax~logLight)
+summary(fit)
+abline(fit) 
+rcoef=round(coef(fit),digits=3)
+text(3.7,3.5,paste("rmax=",rcoef[1],"+",rcoef[2],"log(Light)"))
+par(op)
+@ 
+\end{center}
+\caption{Graphical summary of regression analysis,
+using log of light intensity (and annotating the plot)}
+\label{Intro1Fig2}
+\end{figure}
+
+\textbf{Exercise\exnumber} Run \code{Intro2.R}, then enter the command 
+\code{plot(fit)} in the console and follow the directions in the console.
+Figure out what just happened by entering \code{?plot.lm} to
+bring up the Help page for the function \code{plot.lm} that carries out a 
+\code{plot} command for an object produced by \code{lm}. 
+(This is one example of how \R\ uses the fact that statistical analyses are
+stored as model objects. \code{fit} ``knows'' what kind of object it is 
+(in this case an object of type \code{lm}), and 
+so \code{plot(fit)} invokes a function that produces plots suitable 
+for an \code{lm} object.) \textbf{Answer:} \R\ produced a series of 
+diagnostic plots exploring whether or not the fitted linear model is a 
+suitable fit to the data. In each of the plots, the 3 most extreme points
+(the most likely candidates for ``outliers'') have been identified 
+according to their sequence in the data set. 
+
+\textbf{Exercise\exnumber} The axes in plots are scaled automatically, 
+but the outcome is
+not always ideal (e.g. if you want several graphs with exactly the
+same axis limits). 
+You can use the \code{xlim} and \code{ylim}
+arguments in \code{plot} to control the limits:
+\begin{verbatim}
+plot(x,y,xlim=c(x1,x2), [other stuff]) 
+\end{verbatim}
+will draw the graph with the $x$-axis running from \code{x1} to \code{x2}, and using 
+\code{ylim=c(y1,y2)} within the \code{plot} command will 
+do the same for the $y$-axis. 
+
+Create a plot of growth rate versus light intensity with the
+$x$-axis running from 0 to 120 and the $y$-axis running from 1 to 4. 
+
+\textbf{Exercise\exnumber} You can place several graphs
+within a single figure by using the \code{par} 
+function (short for ``parameter'') to adjust the layout of the plot. For example, the 
+command
+<<eval=FALSE>>=
+par(mfrow=c(2,3))
+@ 
+divides the plotting area into 2 rows and 3 columns. As 
+\R\ draws a series of graphs,
+it places them along the top row from left to right, then along the next row, and so on.
+\code{mfcol=c(2,3)} has the same effect except that 
+\R\ draws successive graphs
+down the first column, then down the second column, and so on. 
+
+Save \code{Intro2.R} with a new name and modify the program as
+follows. Use \code{mfcol=c(2,1)} to create graphs of growth rate as a 
+function of \code{Light}, and of \code{log(growth rate)} as a function of \code{log(Light)} in the same figure.  
+Do the same again, using \code{mfcol=c(1,2)}. 
+
+\textbf{Exercise\exnumber *} Use \code{?par} to read about other plot control parameters
+that you use \code{par} to set (you should
+definitely skim --- this is one of the
+longest help files in the whole \R\ system!). 
+Then draw a $2 \times 2$ set of plots,
+each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different
+line styles and 4 different line colors. 
+
+\textbf{Exercise\exnumber *} Modify one of your scripts so that
+at the very end it saves the plot to disk. In Windows you can do
+this with \code{savePlot}, otherwise with \code{dev.print}.
+Use \code{?savePlot}, \code{?dev.print} to read about these functions.  
+Note that the argument \code{filename} can include the 
+path to a folder; for example, in Windows you can use 
+\code{filename="c:/temp/Intro2Figure".}
+
+(These are really exercises in using the help system, with 
+the bonus that you learn some things about \code{plot}. (Let's see, 
+we know \code{plot} can graph data points ($\rmax$ versus $Light$
+and all that). Maybe it can also draw a line to connect the points, or 
+just draw the line and leave out the points. That would be useful. So
+let's try \code{?plot} and see if it says anything about lines \ldots Hey, it
+also says that \code{graphical parameters can be given as arguments to plot},
+so maybe I can set line colors inside the plot command instead of using
+\code{par} all the time \ldots) 
+The help system can be quite helpful (amazingly enough) once
+you get used to it and get in the habit of using it often.)
+
+The main point is not to be afraid of experimenting; if you have saved your
+previous commands in a script file, there's almost nothing you can break
+by trying out commands and inspecting the results.
+
+\section{The \R\ package system}
+\R\ has many extra packages that provide extra
+functions.  
+You may be able to install new packages from
+a menu within \R. You can always type
+<<eval=FALSE>>=
+install.packages("plotrix")
+@
+(for example --- this installs the \code{plotrix} package).
+You can install more than one package at a time:
+<<eval=FALSE>>=
+install.packages(c("ellipse","plotrix"))
+@
+(\code{c} stands for ``combine'', and is the command
+for combining multiple things into a single object.)
+If the machine on which you use \R\ is not connected to the
+Internet, you can download the packages to some other medium
+(such as a flash drive or CD)
+and install them later, using \code{Install from local zip file}
+in the menu or
+<<eval=FALSE>>=
+install.packages("plotrix",repos=NULL)
+@ 
+%\todo{check on other OS}
+
+If you do not have permission to install packages
+in \R's central directory, \R\ will
+may ask whether you want to install the
+packages in a user-specific directory.
+Go ahead and say yes.
+
+You will frequently get a warning message 
+something like
+\code{Warning message: In file.create(f.tg) :
+cannot create file '.../packages.html', reason 'Permission denied'}.
+Don't worry about this; it means the package has been installed
+successfully,
+but the main help system index files couldn't be updated
+because of file permissions problems.
+
+%Here are all the packages used in the book that
+%are not included with \R\ by default:
+<<eval=FALSE,echo=FALSE>>=
+## TO DO: ignore packages? (weaver)
+r1 <- system("grep \"require(\" chap[0-9].Rnw chap[0-9][0-9].Rnw | sed -e 's/^.*require(\\([^),]*\\).*/\\1/'",intern=TRUE)
+r2 <- system("grep \"library(\" chap[0-9].Rnw chap[0-9][0-9].Rnw | sed -e 's/^.*library(\\([^),]*\\).*/\\1/'",intern=TRUE)
+r3 <- c(r1,r2) 
+r3 <- unique(sort(r3[-grep("\\\\",r3)]))
+i1 <- installed.packages()
+omitpkgs <- rownames(i1)[!is.na(i1[,"Priority"])]
+omitpkgs <- c(omitpkgs,"Hmisc","weaver","pkg")
+r4 <- r3[!(r3 %in% omitpkgs)]
+## OVERRIDE: add chron and gtools/gdata
+r4 <- c("adapt","bbmle","chron","coda","ellipse","emdbook","gplots","gtools","gdata",
+     "MCMCpack","odesolve","plotrix","R2WinBUGS","reshape","rgl","scatterplot3d")
+cat(r4,"\n",fill=50)
+@
+If you install the \code{emdbook} package first
+(\code{install.packages("emdbook")}),
+load the package (\code{library(emdbook)}),
+and then run the command \code{get.emdbook.packages()} (you
+do need the empty parentheses) it will install
+these packages for you automatically.
+
+(\code{R2WinBUGS} is an exception to \R's normally
+seamless cross-platform operation: it depends on a 
+Windows program called WinBUGS. WinBUGS will also
+run on Linux or MacOS [on Intel hardware], with the help of a 
+program called WINE (we'll deal with this later).)
+
+It will save time if you install these packages now.
+
+\section{Statistics in \R}
+Some of the important functions and packages (collections
+of functions) for statistical modeling and data analysis are summarized in Table 
+\ref{StatModelingFunctions}. \cite{MASS} give a 
+good practical (although somewhat advanced) overview, and you 
+can find a list of available packages and their contents 
+at CRAN, the main \R\ website 
+(\url{http://www.cran.r-project.org} --- select a mirror site
+near you and click on \code{Package sources}). For the most
+part, we will not be concerned here with this side of \R.
+
+\begin{table}[t]
+\begin{tabular}{p{100pt}p{310pt}}
+\hline
+\code{aov}, \code{anova} & Analysis of variance or deviance\\
+\code{lm} & Linear models (regression, ANOVA, ANCOVA) \\
+\code{glm} &  Generalized linear models (e.g. logistic, Poisson regression) \\
+\code{gam} & Generalized additive models (in package \code{mgcv}) \\
+\code{nls} & Fit nonlinear models by least-squares \\
+\code{lme}, \code{nlme},
+\code{lmer}, \code{glmer} & Linear,
+generalized linear, and nonlinear mixed-effects models (repeated
+measures, block effects, spatial models): in packages \code{nlme}
+and \code{lme4} \\
+\code{boot} & Package: bootstrapping functions \\
+\code{splines}  &  Package: nonparametric regression (more in packages
+        \code{fields}, \code{KernSmooth}, \code{logspline}, \code{sm} and others)\\
+\code{princomp}, \code{manova}, \code{lda}, \code{cancor}
+ & Multivariate analysis
+(some in package \code{MASS};
+also see packages \code{vegan}, \code{ade4}) \\
+\code{survival} & Package: survival analysis \\
+\code{tree}, \code{rpart} & Packages: tree-based regression \\
+\hline 
+\end{tabular}
+\caption{A few of the functions and packages in \R\ for statistical
+modeling and data analysis. There are \emph{many} more, but you will have
+to learn about them somewhere else. } 
+\label{StatModelingFunctions}
+\end{table}
+
+\section{Vectors} 
+Vectors and matrices (1- and 2-dimensional rectangular arrays of 
+numbers) are pre-defined data types in \R. Operations with vectors 
+and matrices may seem a bit abstract now, but we need them to do 
+useful things later. 
+Vectors' only properties are their type (or \emph{class})
+and length, although they can also have an
+associated list of names.
+
+We've already seen two ways to create vectors in \R:
+\begin{enumerate}
+\item{A command in the console window or a script file listing the values, 
+such as
+<<>>=
+initialsize=c(1,3,5,7,9,11)
+@
+}
+\item{Using \code{read.table}:
+<<eval=FALSE>>=
+initialsize=read.table("c:/temp/initialdata.txt")
+@ 
+(assuming of course that the file exists in the right place).
+}
+\end{enumerate}
+
+You can then use a vector in calculations as if it were 
+a number (more or less) 
+<<>>=
+(finalsize=initialsize+1)
+(newsize=sqrt(initialsize))
+@ 
+(The parentheses are an R trick that tell it to print
+out the results of the calculation even though we
+assigned them to a variable.)
+
+Notice that \R\ applied each operation to every entry in the vector. 
+Similarly, commands like \code{initialsize-5, 2*initialsize, initialsize/10} 
+apply subtraction, multiplication, and division to each element of the 
+vector. The same is true for 
+<<>>=
+initialsize^2
+@ 
+
+In \R\ the default is to apply functions and operations to vectors
+in an \emph{element by element} (or ``vectorized'') manner. 
+
+\subsection{Functions for creating vectors}
+You can use the \code{seq} function to 
+create a set of regularly spaced values.
+\code{seq}'s syntax is 
+\hspace*{1in} \code{x=seq(from,to,by)} or \code{x=seq(from,to)} or
+\code{x=seq(from,to,length.out)}\\
+
+The first form generates a vector \code{(from,from+by,from+2*by,...)}
+with the last entry not extending further than than \code{to}.
+In the second 
+form the value of \code{by} is assumed to be 1 or -1, depending on
+whether \code{from} or \code{to} is larger.
+The third form creates a vector with the desired endpoints and length.
+The syntax \code{from:to} is a shortcut for \code{seq(from,to)}:
+<<>>=
+1:8
+@
+
+\textbf{Exercise\exnumber} Use \code{seq} to create the vector \code{v=(1 5 9 13)},
+and to create a vector going from 1 to 5 in increments of 0.2.
+
+You can use \code{rep} to create a constant vector such as \code{(1 1 1 1)};
+the basic syntax is \code{rep(values,lengths)}.  For example,
+<<>>=
+rep(3,5)
+@ 
+creates a vector in which the value 3 is repeated 5 times. 
+\code{rep} will repeat a whole vector multiple times
+<<>>=
+rep(1:3,3)
+@
+or will repeat each of the elements in a vector a given
+number of times:
+<<>>=
+rep(1:3,each=3)
+@
+
+Even more flexibly, you can repeat each element in the vector
+a different number of times:
+<<>>=
+rep( c(3,4),c(2,5) )
+@ 
+The value 3 was repeated 2 times, followed by the value 4 repeated 5 times.
+\code{rep} can be a little bit mind-blowing as you get started, but
+it will turn out to be useful.
+
+Table \ref{VectorFunctions} lists some of the main functions 
+for creating and working with vectors.
+
+\begin{table}[t]
+\begin{tabular}
+{p{140pt}p{290pt}}
+\hline
+\code{seq(from,to,by=1)} & Vector of evenly spaced values, default increment = 1) \\
+\code{seq(from, to, length.out)} & Vector of evenly spaced values, specified length) \\
+\code{c(u,v,...) } & Combine a set of numbers and/or vectors into a single vector \\
+\code{rep(a,b)} & Create vector by repeating elements of \code{a} by amounts in \code{b} \\
+\code{as.vector(x)} & Convert an object of some other type to a vector \\ 
+\code{hist(v)} & Histogram plot of value in v \\
+\code{mean(v),var(v),sd(v)} & Estimate of population
+mean, variance, standard deviation based on data values in \code{v} \\
+\code{cor(v,w)} & Correlation between two vectors \\
+\hline
+\end{tabular}
+\caption{Some important \R\ functions for creating and working with vectors. Many of these have other optional
+arguments; use the help system (e.g. \code{?cor}) for more information. The statistical functions such as
+\code{var} regard the values as samples from a population and compute an estimate of the population 
+statistic; for example \code{sd(1:3)=1}.}
+\label{VectorFunctions}
+\end{table}
+
+\subsection{Vector indexing}
+You will often want to extract a specific 
+entry or other part of a vector. This procedure
+is called \emph{vector indexing}, and uses
+square brackets (\code{[]}):
+<<>>=
+ z=c(1,3,5,7,9,11)
+z[3]
+@ 
+
+(how would you use \code{seq} to construct \code{z}?)
+\code{z[3]} extracts the third item, or \emph{element}, in the vector \code{z}. 
+You can also access a block of elements using the functions for 
+vector construction, e.g. 
+<<>>=
+z[2:5]
+@ 
+extracts the second through fifth elements.
+
+What happens if you enter \code{v=z[seq(1,5,2)]} ? Try it
+and see, and make sure you understand what happened. 
+
+You can extracted irregularly spaced elements of a vector. For example
+<<>>=
+z[c(1,2,5)]
+@ 
+
+You can also use indexing to \textbf{set specific values within a vector}. For 
+example, 
+<<>>=
+z[1]=12
+@ 
+changes the value of the first entry in \code{z} while leaving 
+all the rest alone, and 
+<<>>=
+z[c(1,3,5)]=c(22,33,44)
+@ 
+changes the first, third, and fifth values 
+(note that we had to use \code{c} to create the vector --- %
+can you interpret the error message you get if you
+try \code{z[1,3,5]} ?)
+
+
+\textbf{Exercise\exnumber} Write a \emph{one-line} command to extract 
+a vector consisting of the second, first, and third elements of \code{z} 
+\emph{in that order}. 
+
+% You may be wondering if vectors in \R\ 
+% are row vectors or column vectors (if you don't know what those are,
+% don't worry). The answer is ``both and neither''.
+% Vectors are printed out as row vectors, but if you use a vector in 
+% an operation that succeeds or fails depending on the vector's orientation, 
+% \R\ will assume that you want the operation to succeed and will proceed as 
+% if the vector has the necessary orientation. For example, \R\ will let
+% you add a vector of length 5 to a $5 \times 1$ matrix or to a 
+% $1 \times 5$ matrix, in either case yielding a matrix of the 
+% same dimensions.
+
+\textbf{Exercise\exnumber} Write a script file that computes values of 
+$y=\frac{(x-1)}{(x+1)}$ for $x=1,2,\cdots,10$, and plots $y$ versus $x$
+with the points plotted and connected by a line (hint:
+in \code{?plot}, search for \code{type}).
+
+\textbf{Exercise\exnumber *} The sum of the geometric series $1 + r + r^2 + r^3 + ... + r^n$ 
+approaches the limit $1/(1-r)$ for $r < 1$ as $n \rightarrow \infty$.   
+Set the values $r=0.5$ and $n=10$, 
+and then write a \textbf{one-line} command that creates 
+the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using \code{sum})
+of this vector to the limiting value $1/(1-r)$. 
+Repeat for   $n=50$.  (\emph{Note} that comparing very similar numeric values
+can be tricky: rounding can happen, and some numbers cannot be represented
+exactly in binary (computer) notation.  By default \R\ displays 7~significant
+digits (\code{options("digits")}). 
+For example:
+<<>>=
+x = 1.999999
+x
+x-2
+x=1.9999999999999
+x
+x-2
+@ 
+All the digits are still there, in the second case, but they are not shown.
+Also note that \code{x-2} is not exactly $-1 \times 10^{-13}$; this is
+unavoidable.)
+
+\subsection{Logical operators}
+Logical operators return a 
+value of \code{TRUE} or \code{FALSE}. For example, 
+try:  
+<<>>=
+a=1
+b=3
+c=a<b
+d=(a>b)
+c
+d
+@ 
+The parentheses around (\verb+a>b+) are optional but make
+the code easier to read.
+One special case where you \emph{do} need parentheses
+(or spaces) is when you make comparisons with negative values;
+\verb+a<-1+ will surprise you by setting \code{a=1},
+because \code{<-} (representing a left-pointing arrow) is
+equivalent to \code{=} in \R.  Use 
+\verb+a< -1+, or more safely \verb+a<(-1)+,
+to make this comparison.
+
+\begin{table}
+\begin{tabular}{p{120pt}p{200pt}}
+\hline
+\code{x<y}  & less than    \\
+\code{x>y}  & greater than \\
+\code{x<=y} & less than or equal to \\
+\code{x>=y} & greater than or equal to \\
+\code{x==y} & equal to \\
+\code{x!=y} & \emph{not} equal to \\
+\hline 
+\end{tabular}
+\caption{Some comparison operators in \R. Use \code{?Comparison} to learn more.}
+\label{Comparisons}
+\end{table}
+
+When we compare two vectors or matrices of the same size, or compare a 
+number with a vector or matrix, comparisons are done element-by-element.  
+For example,
+<<>>=
+x=1:5
+(b=(x<=3))
+@ 
+So if \code{x} and \code{y} are vectors, then \code{(x==y)} will return a vector of 
+values giving the element-by-element comparisons. If you want to know
+whether \code{x} and \code{y} are identical vectors, use \code{identical(x,y)}
+which returns a single value: \code{TRUE} if each entry in \code{x} equals the
+corresponding entry in \code{y}, otherwise \code{FALSE}. You can use \code{?Logical} to
+read more about logical operators. 
+\textbf{Note the difference between = and ==: can you
+figure out what happened in the following cautionary tale?}
+<<>>=
+a = 1:3
+b = 2:4
+a==b
+a=b
+a==b
+@
+
+% (Sometimes this kind of mistake is caught: if you tried to say
+% \verb+if(a=b) print("yes")+ (which is supposed to do something if
+% \code{a} is equal to \code{b}), \R\ would knows that something was wrong
+% and would respond with an errror.)
+
+Exclamation points \verb+!+ are used in \R\ to mean ``not''; 
+\verb+!=+ (not \verb+!==+) means ``not equal to''.
+
+\R\ also does arithmetic on logical values, treating \code{TRUE} as 1 and 
+\code{FALSE} as 0. So \verb! sum(b) ! returns the value 3, telling us that three 
+entries of \code{x} satisfied the condition (\verb+x<=3+). This is useful for
+(e.g.) seeing how many of the elements of a vector are larger than a cutoff
+value.
+
+Build more complicated conditions by using \emph{logical operators} to 
+combine comparisons: 
+
+\begin{tabular}{cl}
+\code{!} &   Negation  \\
+\verb!&!, \verb!&&! &     AND  \\
+\verb!|!, \verb!||! &     OR 
+\end{tabular}
+
+OR is \emph{non-exclusive}, meaning that \code{x|y} is true 
+if either \code{x} or \code{y} \emph{or both} are true
+(a ham-and-cheese sandwich would satisfy the condition
+``ham OR cheese'').
+For example, try
+<<>>=
+a=c(1,2,3,4)
+b=c(1,1,5,5)
+(a<b)& (a>3)
+(a<b) | (a>3)
+@
+and make sure you understand what happened
+(if it's confusing, try breaking up the expression
+and looking at the results of \verb+a<b+ and \verb+a>3+
+separately first). The two forms of AND
+and OR differ in how they handle vectors. The shorter one does
+element-by-element comparisons; the longer one only looks at the
+first element in each vector. 
+
+\subsection{Vector indexing II} 
+We can also use \emph{logical} vectors (lists of \code{TRUE} and
+\code{FALSE} values) to pick elements out of vectors.
+This is important, e.g., for subsetting data (getting rid of those
+pesky outliers!)
+
+As a simple example, we might want to focus on just the low-light
+values of $\rmax$ in the \emph{Chlorella} example:
+<<>>=
+X=read.table("ChlorellaGrowth.txt",header=TRUE)
+Light=X[,1]
+rmax=X[,2]
+lowLight = Light[Light<50]
+lowLightrmax = rmax[Light<50]
+lowLight
+lowLightrmax
+@
+
+What is really happening here (think about it
+for a minute) is that \verb+Light<50+ 
+generates a logical vector the same
+length as \code{Light} (\code{TRUE TRUE TRUE \ldots})
+which is then used to select the appropriate
+values.
+
+If you want the positions at which \code{Light}
+is lower than 50, you could say
+\verb+(1:length(Light))[Light<50]+, but you
+can also use a built-in function:
+\verb+which(Light<50)+.  If you wanted
+the position at which the maximum value
+of \code{Light} occurs, you could say
+\verb+which(Light==max(Light))+.  (This
+normally results in a vector of length 1; when
+could it give a longer vector?)  There
+is even a built-in command for this
+specific function, \code{which.max} (although
+\code{which.max} always returns just the
+\emph{first} position at which the maximum
+occurs).
+
+
+\textbf{Exercise\exnumber}:
+What would happen if instead of setting
+\code{lowLight} you replaced \code{Light}
+by saying \verb+Light=Light[Light<50]+,
+and then \verb+rmax=rmax[Light<50]+?
+Why would that be wrong?
+Try it with some temporary variables --- set
+\code{Light2=Light} and \code{rmax2=rmax} 
+and then play with \code{Light2} and \code{rmax2}
+so you don't mess up your working variables ---
+and work out what happened \ldots
+
+We can also combine logical operators (making sure to
+use the element-by-element \verb+&+ and \verb+|+ versions
+of AND and OR):
+<<>>=
+Light[Light<50 & rmax <= 2.0]
+rmax[Light<50 & rmax <= 2.0]
+@
+
+\textbf{Exercise\exnumber} 
+\code{runif(n)} is a function (more on it soon) that
+generates a vector of \code{n} random, uniformly distributed
+numbers between 0 and 1.  
+Create a vector of 20 numbers,
+then select the subset of those numbers that 
+is less than the mean. (If you want your answers to
+match mine exactly, use \code{set.seed(273)} to
+set the random-number generator to a particular
+starting point before you use \code{runif};
+[273 is an arbitrary number I chose].)
+
+\textbf{Exercise\exnumber*} 
+Find the \emph{positions} 
+of the elements that are less than the mean
+of the vector you just created (e.g. if your vector were
+\verb+(0.1 0.9. 0.7 0.3)+ the answer
+would be \verb+(1 4)+).
+
+As I mentioned in passing above, vectors can have
+names associated with their elements: if they do,
+you can also extract elements by name (use
+\code{names} to find out the names).
+
+<<>>=
+x = c(first=7,second=5,third=2)
+names(x)
+x["first"]
+x[c("third","first")]
+@
+
+Finally, it is sometimes handy to be able to drop a
+particular set of elements, rather than taking a
+particular set: you can do this with negative indices.
+For example, \code{x[-1]} extracts all but the first
+element of a vector.
+
+\textbf{Exercise\exnumber*}:
+Specify two ways to take only the elements
+in the odd positions (first, third, \ldots)
+of a vector of arbitrary length.
+
+\section{Matrices}
+\subsection{Creating matrices}
+Like vectors, you can create matrices by 
+using \code{read.table} to read in 
+values from a data file.  (Actually, this
+creates a data frame, which is \emph{almost}
+the same as a matrix --- see section~\ref{sec:dataframes}.)
+You can also create matrices of numbers by creating a vector of the matrix 
+entries, and then reshaping them to the desired number of rows
+and columns using the function \code{matrix}. For example 
+<<>>=
+(X=matrix(1:6,nrow=2,ncol=3))
+@ 
+takes the values 1 to 6 and reshapes them into a 2 by 3 matrix.
+
+By default \R\ loads the values into
+the matrix \emph{column-wise} (this is
+probably counter-intuitive since we're used
+to reading tables row-wise). 
+Use the optional
+parameter \code{byrow} to change this behavior. 
+For example :
+<<>>=
+(A=matrix(1:9,nrow=3,ncol=3,byrow=TRUE))
+@ 
+
+\R\ will re-cycle through entries in the data vector, if necessary
+to fill a matrix of the specified size. So for example
+<<eval=FALSE>>=
+matrix(1,nrow=10,ncol=10)
+@ 
+creates a 10$\times$10 matrix of ones.
+
+\textbf{Exercise\exnumber} Use a command of the form \code{X=matrix(v,nrow=2,ncol=4)}
+where \code{v} is a data vector, to create the following matrix \code{X}:
+<<echo=FALSE>>=
+matrix(rep(1:2,4),nrow=2)
+@ 
+If you can, try to use R commands to construct the vector
+rather than typing out all of the individual values.
+
+\R\ will also collapse a matrix to behave like a vector
+whenever it makes sense: for example \code{sum(X)} above
+is 12.
+
+\textbf{Exercise\exnumber} Use \code{rnorm} 
+(which is like \code{runif}, but generates Gaussian
+(normally distributed) numbers with a specified
+mean and standard deviation instead) and \code{matrix} to 
+create a $5 \times 7$ matrix of Gaussian random numbers with
+mean 1 and standard deviation 2. (Use \code{set.seed(273)}
+again for consistency.)
+
+ 
+Another useful function for creating matrices is \code{diag}.
+\code{diag(v,n)} creates an $n \times n$ matrix with data
+vector $v$ on its diagonal. So for example \code{diag(1,5)}
+creates the $5 \times 5$ \emph{identity matrix}, which has 1's on
+the diagonal and 0 everywhere else.
+Try \code{diag(1:5,5)} and \code{diag(1:2,5)}; why does
+the latter produce a warning?
+
+Finally, you can use the \code{data.entry} function. 
+This function can only edit existing matrices, but for example (try this now!!)
+<<eval=FALSE>>=
+A=matrix(0,nrow=3,ncol=4)
+data.entry(A)
+@ 
+will create \code{A} as a $3 \times 4$ matrix, and then call up 
+a spreadsheet-like interface in which you can change the values
+to whatever you need.
+
+\begin{table}[t]
+\begin{tabular}{p{145pt}p{290pt}}
+\hline
+\code{matrix(v,nrow=m,ncol=n)} & $m \times n$ matrix using the values in \code{v} \\
+\code{t(A)} & transpose (exchange rows and columns) of matrix \code{A} \\
+\code{dim(X)} & dimensions of matrix X. \code{dim(X)[1]}=\# rows, \code{dim(X)[2]}=\# columns \\
+\code{data.entry(A)} & call up a spreadsheet-like interface to edit the values in \code{A} \\
+\code{diag(v,n)} & diagonal $n \times n$ matrix with $v$ on diagonal, 0 elsewhere 
+(\code{v} is 1 by default, so \code{diag(n)} gives an $n \times n$ identity matrix)\\
+\code{cbind(a,b,c,...)} & combine compatible objects by attaching them along columns \\
+\code{rbind(a,b,c,...)} & combine compatible objects by attaching them along rows \\
+\code{as.matrix(x)} & convert an object of some other type to a matrix, if possible \\
+\code{outer(v,w)} & ``outer product'' of vectors \code{v}, \code{w}: the matrix whose 
+$(i,j)$\textsuperscript{th}
+element is \code{v[i]*w[j]} \\
+\hline
+\end{tabular}
+\caption{Some important functions for creating and working with matrices. Many
+of these have additional optional arguments; use the help system for full details.}
+\label{MatrixFunctions}
+\end{table}
+
+\subsection{\code{cbind} and \code{rbind}} 
+If their sizes match, you can combine vectors to form matrices, and
+stick matrices together with vectors or other matrices.
+\code{cbind} (``column bind'') and \code{rbind}
+(``row bind'') are the functions to use.
+
+\code{cbind} binds together columns of two objects. One thing it can do
+is put vectors together to form a matrix: 
+<<>>=
+(C=cbind(1:3,4:6,5:7))
+@ 
+\R\ interprets vectors as row or column vectors according to
+what you're doing with them. Here it treats them as column vectors so that 
+columns exist to be bound together. On the other hand, 
+<<>>=
+(D=rbind(1:3,4:6))
+@ 
+treats them as rows. Now we have two matrices that can be combined. 
+
+\textbf{Exercise\exnumber} Verify that \code{rbind(C,D)} works,  \code{cbind(C,C)}
+works, but \code{cbind(C,D)} doesn't. Why not? 
+
+
+\subsection{Matrix indexing}
+Matrix indexing is like vector indexing except that you have 
+to specify both the row and column, or range of rows and columns. For 
+example \code{z=A[2,3]} sets \code{z} equal to 6, which is the (2\textsuperscript{nd} row, 
+3\textsuperscript{rd} column) entry of the matrix \textbf{A} that you recently
+created, and 
+<<>>=
+A[2,2:3]
+(B=A[2:3,1:2])
+@ 
+
+There is an easy shortcut to extract entire rows or columns: leave out the limits,
+leaving a blank before or after the comma.
+<<>>=
+(first.row=A[1,])
+(second.column=A[,2])
+@ 
+
+(What does \code{A[,]} do?)
+
+As with vectors, indexing also works in reverse for assigning values to matrix 
+entries. For example,
+<<>>=
+(A[1,1]=12)
+@ 
+
+You can do the same with blocks, rows, or columns, for example
+<<>>=
+(A[1,]=c(2,4,5))
+@ 
+
+If you use \code{which} on a matrix, \R\ will normally
+treat the matrix as a vector --- so for example
+\code{which(A==8)} will give the answer 6 (figure out
+why).  However, \code{which} does have an 
+option that will treat its argument
+as a matrix:
+<<>>=
+which(A==8,arr.ind=TRUE)
+@ 
+
+\section{Other structures: Lists and data frames}
+
+\subsection{Lists}
+While vectors and matrices may seem familiar,
+lists are probably new to you.
+Vectors and matrices have to contain elements that
+are all the same type:
+lists in \R\ can contain anything --- vectors, matrices,
+other lists \ldots
+Indexing lists is a little different too: use
+double square brackets \code{[[ ]]} (rather
+than single square brackets as for a vector)
+to extract an element of a list by number or name, or
+\verb+$+ to extract an element by name (only).
+Given a list like this:
+<<>>=
+L = list(A=x,B=y,C=c("a","b","c"))
+@ 
+Then \verb+L$A+, \verb+L[["A"]]+, and 
+\verb+L[[1]]+ will all grab the first element
+of the list.
+
+You won't use lists too much at the beginning,
+but many of R's own results are structured in
+the form of lists.
+
+\subsection{Data frames}
+\label{sec:dataframes}
+
+Data frames are the solution to the problem that 
+most data sets have several different kinds of
+variables observed for each sample
+(e.g. categorical site location and continuous rainfall),
+but matrices can only contain a single type of
+data.  Data frames are a 
+hybrid of lists and vectors; internally, they are a list
+of vectors that may be of different types but must all
+be the same length, but you can do most of the same
+things with them (e.g., extracting a subset of rows)
+that you can do with matrices.  You can index them
+either the way you would index a list, using
+\verb+[[ ]]+ or \verb+$+ --- where each variable
+is a different item in the list --- or the way you
+would index a matrix.  Use \code{as.matrix}
+if you have a data frame (where all variables are the same type) that
+you really want to be a matrix, e.g. if you need
+to transpose it (use \code{as.data.frame} to
+go the other way).
+
+\bibliography{bookbib}
+
+\end{document}

@@ -14,10 +14,6 @@ knitr::opts_chunk$set(echo = TRUE)
 This lab will be somewhat shorter in terms of "`R` stuff"
 than the previous labs, because more of the new material
 is algebra and calculus than `R` commands.
-Try to do a reasonable amount of the work with paper
-and pencil before resorting to messing around in `R`.
-
-derivatives ifelse for thresholds
 
 # 1 For loops
 
@@ -372,6 +368,8 @@ the results of differentiation into functions:
 see the help page.
 
 # 6 Getting familiar with a bestiary of functions
+
+### Bob: pen en paper invoegen ####
 
 The models that we will be fitting to data are composed of a deterministic component and a stochastic component. The deterministic component describes the expected pattern in absence of any randomness. You are not restricted to linear functions (as in linear regression) but you can choose among different functions. 
 
