@@ -28,12 +28,19 @@ library(kableExtra)
 
 # Learning outcomes
 The aim of this tutorial is to learn the basics of `R`. After completing the tutorial you will be able to:
+
 1. Install `R` and associated packages and Rstudio
+
 2. Do interactive calculations in the `R` console
+
 3. Consult the built-in help in `R`
+
 4. Create, modify and run `R` scripts
+
 5. Setup a typical workflow in `R` (loading libraries, reading data, doing statistics and saving results)
+
 6. Work with the most common data types in `R` (vectors, matrices, lists and data.frames)
+
 
 # How to use this tutorial
 
@@ -226,7 +233,7 @@ kable(data, caption = "Some of the built-in mathematical functions in R. You can
 ```
 
 
-**Exercise 2.1**: Using editing shortcuts wherever you can, have `R` compute the values of 
+**Exercise 7.1**: Using editing shortcuts wherever you can, have `R` compute the values of 
 
 1. $\frac{2^7}{2^7 - 1}$ and compare it with $( {1 - \frac{1}{2^7}} )^{-1}$ (If any square brackets [] show up in your web browser's
 rendition of these equations, replace
@@ -296,7 +303,7 @@ a loaded package.
 In our experience, the help provided by `R` requires some experience in the `R` language to be able to understand it. Therefore, a general, but practical advice is to google your problem. In 99.9% of the cases someone else had a similar question in the past which were solved by the `R` community. Place were you likely will find answers are https://stackoverflow.com or https://stat.ethz.ch.
 
 
-**Exercise 3.1**: Do an Apropos on `sin` via the Help menu, to see what it does. Now enter the command
+**Exercise 8.1**: Do an Apropos on `sin` via the Help menu, to see what it does. Now enter the command
 
 ```{r,eval=FALSE}
 help.search("sin")
@@ -481,7 +488,7 @@ rmax=X[,2]
 
 Think of these as shorthand for "`Light` = everything in column 1 of `X`", and "`rmax` = everything in column 2 of `X`" (we'll learn about working with data matrices later). From there on out it's the same as before, with some additions that set the axis labels and add a title.
 
-**Exercise 5.1** Make a copy of `Intro2.R` under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, `LogLight=log(Light)`, and plots the data appropriately. You should end up with  a graph that resembles Figure 3. (*Hint:* when you switch from light intensity to log light intensity, the range on your $x$ axis will change and you will have to change the $x$ position at which you plot the growth rate equation.)
+**Exercise 10.1** Make a copy of `Intro2.R` under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, `LogLight=log(Light)`, and plots the data appropriately. You should end up with  a graph that resembles Figure 3. (*Hint:* when you switch from light intensity to log light intensity, the range on your $x$ axis will change and you will have to change the $x$ position at which you plot the growth rate equation.)
 
 ```{r,echo=FALSE,fig=TRUE,results='hide', fig.cap = "Graphical summary of regression analysis, using log of light intensity (and annotating the plot)", fig.width=4.5,fig.height=4}
 X=read.table("ChlorellaGrowth.txt",header=TRUE) 
@@ -501,10 +508,10 @@ text(3.7,3.5,paste("rmax=",rcoef[1],"+",rcoef[2],"log(Light)"))
 par(op)
 ``` 
 
-**Exercise 5.2** Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened by entering `?plot.lm` to bring up the Help page for the function `plot.lm` that carries out a `plot` command for an object produced by `lm`. (This is one example of how R uses the fact that statistical analyses are stored as model objects. `fit` "knows" what kind of object it is (in this case an object of type `lm`), and so `plot(fit)` invokes a function that produces plots suitable  for an `lm` object.) 
+**Exercise 10.2** Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened by entering `?plot.lm` to bring up the Help page for the function `plot.lm` that carries out a `plot` command for an object produced by `lm`. (This is one example of how R uses the fact that statistical analyses are stored as model objects. `fit` "knows" what kind of object it is (in this case an object of type `lm`), and so `plot(fit)` invokes a function that produces plots suitable  for an `lm` object.) 
 **Answer:** R produced a series of diagnostic plots exploring whether or not the fitted linear model is a suitable fit to the data. In each of the plots, the 3 most extreme points (the most likely candidates for "outliers") have been identified according to their sequence in the data set. 
 
-**Exercise 5.3** The axes in plots are scaled automatically,  but the outcome is not always ideal (e.g. if you want several graphs with exactly the same axis limits).  You can use the `xlim` and `ylim` arguments in `plot` to control the limits:
+**Exercise 10.3** The axes in plots are scaled automatically,  but the outcome is not always ideal (e.g. if you want several graphs with exactly the same axis limits).  You can use the `xlim` and `ylim` arguments in `plot` to control the limits:
 
 ```
 plot(x,y,xlim=c(x1,x2), [other stuff]) 
@@ -514,7 +521,7 @@ will draw the graph with the $x$-axis running from `x1` to `x2`, and using `ylim
 
 Create a plot of growth rate versus light intensity with the $x$-axis running from 0 to 120 and the $y$-axis running from 1 to 4. 
 
-**Exercise 5.4** You can place several graphs within a single figure by using the `par` function (short for "parameter") to adjust the layout of the plot. For example, the command
+**Exercise 10.4** You can place several graphs within a single figure by using the `par` function (short for "parameter") to adjust the layout of the plot. For example, the command
 
 ```{r,eval=FALSE}
 par(mfrow=c(2,3))
@@ -524,9 +531,9 @@ divides the plotting area into 2 rows and 3 columns. As  `R` draws a series of g
 
 Modify the script as follows. Use `mfcol=c(2,1)` to create graphs of growth rate as a  function of `Light`, and of `log(growth rate)` as a function of `log(Light)` in the same figure. Do the same again, using `mfcol=c(1,2)`. 
 
-**Exercise 5.5 * ** Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  Then draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors. 
+**Exercise 10.5 * ** Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  Then draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors. 
 
-**Exercise 5.6 * ** Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with `savePlot`, otherwise with `dev.print`. Use `?savePlot`, `?dev.print` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".`
+**Exercise 10.6 * ** Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with `savePlot`, otherwise with `dev.print`. Use `?savePlot`, `?dev.print` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".`
 
 (These are really exercises in using the help system, with the bonus that you learn some things about `plot`. (Let's see, we know `plot` can graph data points ($r_{max}$ versus $Light$ and all that). Maybe it can also draw a line to connect the points, or just draw the line and leave out the points. That would be useful. So let's try `?plot` and see if it says anything about lines ... Hey, it also says that `graphical parameters can be given as arguments to plot`, so maybe I can set line colors inside the plot command instead of using `par` all the time ...). The help system can be quite helpful (amazingly enough) once you get used to it and get in the habit of using it often.)
 
@@ -569,7 +576,7 @@ initialsize^2
 In `R` the default is to apply functions and operations to vectors in an *element by element* (or "vectorized") manner. This is an extremely useful propery in `R`
 
 ### Functions for creating vectors
-
+  
 You can use the `seq` function to create a set of regularly spaced values. `seq`'s syntax is `x=seq(from,to,by)` or `x=seq(from,to)` or `x=seq(from,to,length.out)`. 
 The first form generates a vector `(from,from+by,from+2*by,...)` with the last entry not extending further than than `to`. In the second 
 form the value of `by` is assumed to be 1 or -1, depending on
@@ -578,7 +585,7 @@ whether `from` or `to` is larger. The third form creates a vector with the desir
 1:8
 ```
 
-**Exercise 8.1** Use `seq` to create the vector `v=(1 5 9 13)`, and to create a vector going from 1 to 5 in increments of 0.2.
+**Exercise 11.1** Use `seq` to create the vector `v=(1 5 9 13)`, and to create a vector going from 1 to 5 in increments of 0.2.
 
 You can use `rep` to create a constant vector such as `(1 1 1 1)`; the basic syntax is `rep(values,lengths)`. For example,
 ```{r}
@@ -650,13 +657,13 @@ z[c(1,3,5)]=c(22,33,44)
 changes the first, third, and fifth values (note that we had to use `c` to create the vector --- can you interpret the error message you get if you
 try `z[1,3,5]` ?)
 
-**Exercise 8.2** Write a *one-line* command to extract a vector consisting of the second, first, and third elements of `z` *in that order*. 
+**Exercise 11.2** Write a *one-line* command to extract a vector consisting of the second, first, and third elements of `z` *in that order*. 
 
-**Exercise 8.3** Write a script file that computes values of 
+**Exercise 11.3** Write a script file that computes values of 
 $y=\frac{(x-1)}{(x+1)}$ for $x=1,2,\cdots,10$, and plots $y$ versus $x$
 with the points plotted and connected by a line (hint: in `?plot`, search for `type`).
 
-**Exercise 8.4* ** The sum of the geometric series $1 + r + r^2 + r^3 + ... + r^n$ approaches the limit $1/(1-r)$ for $r < 1$ as $n \rightarrow \infty$. Set the values $r=0.5$ and $n=10$, and then write a **one-line** command that creates the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using `sum`)
+**Exercise 11.4* ** The sum of the geometric series $1 + r + r^2 + r^3 + ... + r^n$ approaches the limit $1/(1-r)$ for $r < 1$ as $n \rightarrow \infty$. Set the values $r=0.5$ and $n=10$, and then write a **one-line** command that creates the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using `sum`)
 of this vector to the limiting value $1/(1-r)$. Repeat for  $n=50$. (*Note* that comparing very similar numeric values can be tricky: rounding can happen, and some numbers cannot be represented exactly in binary (computer) notation. By default `R` displays 7~significant digits (`options("digits")`). 
 
 For example:
@@ -755,7 +762,7 @@ values.
 If you want the positions at which `Light` is lower than 50, you could say `(1:length(Light))[Light<50]`, but you can also use a built-in function: `which(Light<50)`. If you wanted the position at which the maximum value
 of `Light` occurs, you could say `which(Light==max(Light))`. (This normally results in a vector of length 1; when could it give a longer vector?) There is even a built-in command for this specific function, `which.max` (although `which.max` always returns just the *first* position at which the maximum occurs).
 
-**Exercise 8.5**:
+**Exercise 11.5**:
 What would happen if instead of setting `lowLight` you replaced `Light` by saying `Light=Light[Light<50]`, and then `rmax=rmax[Light<50]`? Why would that be wrong? Try it with some temporary variables --- set `Light2=Light` and `rmax2=rmax` and then play with `Light2` and `rmax2` so you don't mess up your working variables --- and work out what happened ...
 
 We can also combine logical operators (making sure to use the element-by-element `&` and `|` versions of AND and OR):
@@ -764,12 +771,12 @@ Light[Light<50 & rmax <= 2.0]
 rmax[Light<50 & rmax <= 2.0]
 ```
 
-**Exercise 8.6**
+**Exercise 11.6**
 `runif(n)` is a function (more on it soon) that generates a vector of `n` random, uniformly distributed
 numbers between 0 and 1. Create a vector of 20 numbers, then select the subset of those numbers that 
 is less than the mean. (If you want your answers to match mine exactly, use `set.seed(273)` to set the random-number generator to a particular starting point before you use `runif`; [273 is an arbitrary number I chose].)
 
-**Exercise 8.7* ** 
+**Exercise 11.7* ** 
 Find the *positions*  of the elements that are less than the mean of the vector you just created (e.g. if your vector were `(0.1 0.9. 0.7 0.3)` the answer would be `(1 4)`).
 
 As I mentioned in passing above, vectors can have names associated with their elements: if they do, you can also extract elements by name (use `names` to find out the names).
@@ -784,7 +791,7 @@ x[c("third","first")]
 Finally, it is sometimes handy to be able to drop a particular set of elements, rather than taking a particular set: you can do this with negative indices. For example, `x[-1]` extracts all but the first
 element of a vector.
 
-**Exercise 8.8* **:
+**Exercise 11.8* **:
 Specify two ways to take only the elements in the odd positions (first, third, ...) of a vector of arbitrary length.
 
 ## Matrices
@@ -809,7 +816,7 @@ matrix(1,nrow=10,ncol=10)
 ``` 
 creates a $10 \times 10$ matrix of ones.
 
-**Exercise 9.1** Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector, to create the following matrix `X`:
+**Exercise 11.1** Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector, to create the following matrix `X`:
 ```{r, echo = FALSE}
 matrix(rep(1:2,4),nrow=2)
 ``` 
@@ -817,7 +824,7 @@ If you can, try to use `R` commands to construct the vector rather than typing o
 
 `R` will also collapse a matrix to behave like a vector whenever it makes sense: for example `sum(X)` above is 12.
 
-**Exercise 9.2** Use `rnorm` (which is like `runif`, but generates Gaussian (normally distributed) numbers with a specified mean and standard deviation instead) and `matrix` to create a $5 \times 7$ matrix of Gaussian random numbers with mean 1 and standard deviation 2. (Use `set.seed(273)` again for consistency.)
+**Exercise 11.2** Use `rnorm` (which is like `runif`, but generates Gaussian (normally distributed) numbers with a specified mean and standard deviation instead) and `matrix` to create a $5 \times 7$ matrix of Gaussian random numbers with mean 1 and standard deviation 2. (Use `set.seed(273)` again for consistency.)
 
 Another useful function for creating matrices is `diag`. `diag(v,n)` creates an $n \times n$ matrix with data
 vector $v$ on its diagonal. So for example `diag(1,5)` creates the $5 \times 5$ *identity matrix*, which has 1's on the diagonal and 0 everywhere else. Try `diag(1:5,5)` and `diag(1:2,5)`; why does the latter produce a warning?
@@ -859,7 +866,7 @@ If their sizes match, you can combine vectors to form matrices, and stick matric
 ``` 
 treats them as rows. Now we have two matrices that can be combined. 
 
-**Exercise 9.3** Verify that `rbind(C,D)` works, `cbind(C,C)` works, but `cbind(C,D)` doesn't. Why not? 
+**Exercise 11.3** Verify that `rbind(C,D)` works, `cbind(C,C)` works, but `cbind(C,D)` doesn't. Why not? 
 
 ### Matrix indexing
 
