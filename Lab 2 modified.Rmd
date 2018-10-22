@@ -29,8 +29,7 @@ Find the file called 'seedpred.dat': it's in the right format (plain text, long 
 data = read.table("seedpred.dat", header = TRUE)
 ```
 
-(remember not to copy the > if you are cutting and pasting from this document). Add the variable available to the data frame by combining taken and
-remaining (using the $ symbol):
+Add the variable available to the data frame by combining taken and remaining (using the $ symbol):
 
 ```{r}
 data$available = data$taken + data$remaining
@@ -85,7 +84,7 @@ mydata <- read.csv("myfile.dat", fill = FALSE)
 
 to turn off this behavior; if you don't have any missing fields at the end of lines in your data this should work.
 
-If your file is a comma separated file, you can also use `read.csv`. `read.csv` has set some arguments to default, e.g. the seperator is a comma in this case (`sep=","`)
+If your file is a comma separated file, you can also use `read.csv`. This function has set some arguments to default, e.g. the seperator is a comma in this case (`sep=","`)
 
 ##1.1. Checking data
 Here's the quickest way to check that all your variables have been classified
@@ -122,7 +121,7 @@ day = factor(rep(1:2,each=3))
 val = round(runif(6),3)
 d = data.frame(loc,day,val)
 ```
-This data set is in long format. To go to wide format, we first need to (install and) load the library `reshape2`. In Lab 1 you learned how to install packages. You can load a package by `library()` or `require()`. Thus to use an additional package it must be (i) installed on your machine (with `install.packages())` or through the menu system and (ii) loaded in your current `R` session (with `library()`):
+This data set is stored in long format. To go to wide format, we first need to (install and) load the library `reshape2`. In Lab 1 you learned how to install packages. You can load a package by `library()` or `require()`. Thus to use an additional package it must be (i) installed on your machine (with `install.packages())` or through the menu system and (ii) loaded in your current `R` session (with `library()`):
 ```{r}
 library(reshape2)  
 d2 = dcast(d,loc~day )
@@ -140,7 +139,7 @@ By specifying the `variable.name` to `day`, we put the columns (`1` and `2`) int
 melt(d2, variable.name="day",value.name="val")
 ```
 
-**Exercise 1.2**: Add a new column `month` (consisting of two levels) to `d` in which `loc` and `day` are nested in and reshape to wide format and back to long format. The long format is what we commonly use in statistics.
+**Exercise 1.2**: Add a new column `month` (consisting of two levels) to `d` in which `loc` and `day` are nested and reshape to wide format and back to long format. The long format is what we commonly use in statistics.
 
 ```{r}
 loc = factor(rep(LETTERS[1:3],4))
@@ -190,7 +189,7 @@ sapply(data2, class)
 
 ```{r,eval=F}
 data2 = read.table("seedpred.dat", header = TRUE, colClasses = c(rep("factor",
-+ 2), rep("numeric", 3)))
+2), rep("numeric", 3)))
 sapply(data2, class)
 ```
 
@@ -307,7 +306,7 @@ data(dataset)
 (`data()` by itself will list all available data sets.)
 
 #2. Exploratory graphics
-Below we will show you a diversity of possible graphs that you can produce in R. Graphics are really important to explore the data that you collected and want to analyse. A good data exploration improves the efficiency of your statistical analysis as you will have expectations how relations between varialbes look like.
+Below we will show you a diversity of possible graphs that you can produce in R. Graphics are really important to explore the data that you collected and want to analyse. A good data exploration improves the efficiency of your statistical analysis as you will have expectations how relations between variables look like.
 We show you how to make the graphics using the base plotting functions in `R`, even though specialized packages exist to make particular plots. In addition, we will show you how to make those graphs in `ggplot2` package. The `ggplot2` package is very popular as it can create basically any type of graph without much effort. Note that in ggplot2  the 'grammar' to produce a graph is  different from how the other graphs in `R` are build. 
 
 ##2.1 Bubble plot
@@ -352,7 +351,7 @@ library(ggplot2)
   
 ```
 
-In `ggplot2` you need to specify the dataset the variables come from. You do this throug `data=...`, a specification of type of plot, a point plot can be specified through `geom_point`, a specifcation of what is plotted on the axes of the point plot, e.g `aes(x...,y...)`, and optionally the size of the points through `size`. If data is specified in the `ggplot` statement, it means that all plotting commands below `ggplot(...)+` use that dataframe as reference. If the size command is put inside the `aes` then size is dependent on some variable, if put outside the `aes` it requires a single value. If a column name contains a space you can refer to it by putting it between backticks: `...` 
+In `ggplot2` you need to specify the dataset the variables come from. You do this throug `data=...`, a specification of type of plot, a point plot can be specified through `geom_point`, a specifcation of the aesthetics (`aes(x...,y...)`) determines what is plotted on the axes of the point plot. If data is specified in the `ggplot` statement, it means that all plotting commands below `ggplot(...)+` use that dataframe as reference. If the size command is put inside the `aes` then size is dependent on some variable, if put outside the `aes` it requires a single value (similarly for e.g. `colour`, `linetype` and `shape`). New commands can be added to the first statement (`ggplot`) by adding a `+` after each line. If a column name contains a space you can refer to it by putting it between backticks: `...` 
 
 
 We could add the number of observations to the plot (`plot`) using the command `text`. The function `text` needs at least three arguments, the x position and the y position of the text and the text to be printed at this position. `text` allows vectors for each of those arguments. Therefore we can write: 
@@ -393,7 +392,9 @@ par(op)
 Alternatively through `ggplot`
 ```{r}
 ggplot(data=t2)+
-  geom_bar(aes(x=`Seeds available`,y=log10(val+1),fill=as.factor(`Seeds taken`)),stat="identity",position=position_dodge())
+  geom_bar(aes(x=`Seeds available`,y=log10(val+1),
+               fill=as.factor(`Seeds taken`)),
+           stat="identity",position=position_dodge())
 ```
 Again through `aes` we specify what is on the `x` and `y`. Through `fill` we subdivide the bars by the values in `taken`. `stat=identity` expresses that the values assigned to `y` will be used (compare `stat="count"`). Through specifying `position_dodge()` bars are printed side by side instead of stacked bars (`position_fill()`).
 
@@ -404,7 +405,8 @@ t1.species = melt(t1.species,varnames=c("Seeds available","Seeds taken",
                                         "species"),value.name="val")
 ggplot(data=t1.species)+
   geom_bar(aes(x=`Seeds available`,y=log10(val+1),
-               fill=as.factor(`Seeds taken`)),stat="identity",position=position_dodge())+
+               fill=as.factor(`Seeds taken`)),stat="identity",
+           position=position_dodge())+
   facet_wrap(~species)+
   coord_flip()
 ```
@@ -525,7 +527,8 @@ data_long.s = split(data_long,data_long$city)
 plot(incidence ~ date,col=1,type="l",data=data_long[data_long$city == "London",])
 unique.city = unique(data_long$city)
 for (i in 2:length(unique.city)){
-  lines(incidence ~ date,type="l",data=data_long[data_long$city == unique.city[i],],col=i)
+  lines(incidence ~ date,type="l",
+        data=data_long[data_long$city == unique.city[i],],col=i)
 }
 legend("topright",legend=unique.city,col=1:8,lty=1)
 ```

@@ -39,32 +39,30 @@ The aim of this tutorial is to learn the basics of `R`. After completing the tut
 
 5. Setup a typical workflow in `R` (loading libraries, reading data, doing statistics and saving results)
 
-6. Work with the most common data types in `R` (vectors, matrices, lists and data.frames)
+6. Work with the most common data types in `R` (vectors, matrices, lists and data frames)
 
 
 # How to use this tutorial
 
-* This tutorial contain many sample calculations. It is important to do these yourself---**type them in at your keyboard and see what happens on your screen**---to get the feel of working in `R`. 
+* This tutorial contains many sample calculations. It is important to do these yourself---**type them in at your keyboard and see what happens on your screen**---to get the feel of working in `R`. 
 
-* **Exercises** in the middle of a section should be done immediately when you get to them, and make sure you have them right  before moving on. Some more challenging exercises (indicated by asterisks) appear at the end of some sections. These can be left until later, and may be assigned as homework.  
+* **Exercises** in the middle of a section should be done immediately, and make sure you have them rightly solved before moving on. Some more challenging exercises (indicated by asterisks) appear at the end of some sections. These can be left until later, and may be assigned as homework.  
 
 # What is `R`?
 
 `R` is an object-oriented scripting language that combines 
 
-* a programming language called Slang, developed by John Chambers at Bell Labs, that can be used for numerical simulation of deterministic and stochastic dynamic models.
+* a programming language called S-lang, developed by John Chambers at Bell Labs, that can be used for numerical simulation of deterministic and stochastic dynamic models.
 
-* an extensive set of functions for classical and modernstatistical data analysis and modeling.
+* an extensive set of functions for classical and modern statistical data analysis and modeling.
  
 * graphics functions for visualizing data and model output
 
 * a user interface with a few basic menus and extensive help
 facilities
 
-`R` is an open source project, available for free download via the Web. Originally a research project in statistical computing (Ihaka and Gentleman, 1996, it is now managed by a development team that includes a number of well-regarded statisticians, and is widely used by statistical researchers (and a growing number of theoretical ecologists and ecological modelers) as a platform for making new methods available to users. The commercial implementation of Slang (called S-PLUS) offers an Office-style "point and click"" interface that `R` lacks. For our purposes, however, the advantage of
-this front-end is outweighed by the fact that `R` is built on a faster
-and much less memory-hungry implementation of Slang and is easier to
-interface with other languages (and is free!).
+`R` is an open source project, available for free download via the Web. Originally a research project in statistical computing (Ihaka and Gentleman, 1996), it is now managed by a development team that includes a number of well-regarded statisticians, and is widely used by statistical researchers (and a growing number of theoretical ecologists and ecological modelers) as a platform for making new methods available to users. The commercial implementation of Slang (called S-PLUS) offers an Office-style "point and click"" interface that `R` lacks. For our purposes, however, the advantage of
+this front-end is outweighed by the fact that `R` is built on a faster and much less memory-hungry implementation of Slang and is easier to use in combination with other languages (and is free!).
 
 A standard installation of `R` also includes extensive documentation, including an introductory manual ($\approx 100$ pages) and a comprehensive reference manual (over 1000 pages). (There is a graphical front-end for parts of `R`, called "`R` commander" (Rcmdr for short), available at the `R` site, but we will not be using it in this class.)
 
@@ -89,7 +87,7 @@ from within `R` using the `Packages` menu, or the `install.packages` command.
 (See below.) 
 
 # Installing and using Rstudio  
-Nowadays programs are available that integrate `R` in a sophisticated way by combining a console, a *syntax highlighting* editor (giving colors to `R` commands and allows you to identify missing parentheses, quotation marks etc.), tools for plotting, debugging, workspace management and connections to versioning systems into one program. Rstudio is currently the most advanced wrapper around R and is highly recommended if `R` is the core of your work. Rstudio can be found and downloaded at https://www.rstudio.com. 
+Nowadays programs are available that integrate `R` in a sophisticated way by combining a console, a *syntax highlighting* editor (giving colors to `R` commands and allowing you to identify missing parentheses, quotation marks etc.), tools for plotting, debugging, workspace management and connections to versioning systems into one program. Rstudio is currently the most advanced wrapper around R and is highly recommended if `R` is the core of your work. Rstudio can be found and downloaded at https://www.rstudio.com. 
 
 If a new `R` version is launched after you installed Rstudio, you can change the `R` version that is used in Rstudio by clicking on `Tools` and `Global Options`, choose `R general` and select the location of the most recent `R` version.
 
@@ -186,7 +184,7 @@ z3
 
 Even though `R` did not display the values of `x` and `y`, it "remembers" that it assigned values to them. Type `x; y` to display the values. 
 
-You can retrieve and edit previous commands. The up-arrow ($\uparrow$) in the console recalls previous commands to the prompt. They also can be found in the top-right tab `History`. For example, you can bring back the second-to-last command and edit it to 
+You can retrieve and edit previous commands. The up-arrow ($\uparrow$) in the console recalls previous commands to the prompt. They also can be found in the top-right tab `History`. For example, you can bring back the second-to-last command and edit it into 
 ```{r}
 z3=2*x^y
 ```
@@ -216,8 +214,7 @@ b = -1^2 gives -(1^2) = -1
 b = (-1)^2 gives 1
 
 In complicated expressions you might start off by *using parentheses to specify explicitly what you want*, such as b = 12 - (4/(2^3)) 
-or at least b = 12 - 4/(2^3); a few extra sets of parentheses
-never hurt anything, although when you get confused it's better to think through the order of operations rather than flailing around adding parentheses at random. `R` also has many *built-in mathematical functions* that operate on variables
+or at least b = 12 - 4/(2^3); a few extra sets of parentheses never hurt, although when you get confused it's better to think through the order of operations rather than flailing around adding parentheses at random. `R` also has many *built-in mathematical functions* that operate on variables
 (Table 1 shows a few). 
 
 ```{r, echo = FALSE, results = 'asis'}
@@ -266,8 +263,7 @@ R has a help system, although it is generally better for providing detail or rem
 you are interested in) in the console window (e.g., try `?sin`). 
 
 * The `Help` menu on the tool bar provides links to other documentation,
-including the manuals and FAQs, and a Search facility (`Apropos' on the menu)
-which is useful if you sort of maybe remember part of the the name of what it is you need help on. 
+including the manuals and FAQs, and a Search facility (`Apropos' on the menu) which is useful if you sort of maybe remember part of the name of what it is you need help on. 
 
 * Typing `help.start()` opens a web browser with help information.
 
@@ -283,15 +279,11 @@ By default, R's help system only provides information about functions that are i
 `help.search("log")` finds 528 entries (on my particular system) including lots of functions with "plot", which includes the letters "lot", which
 are *almost* like "log". If you can't stand it, you can turn this behavior off by specifying the incantation `help.search("log",agrep=FALSE)` (81 results which still include matches for "logistic", "myelogenous", and "phylogeny" ...)
 
-* `help(package="pkg")` will list all the help pages for
-a loaded package.
+* `help(package="pkg")` will list all the help pages for a loaded package.
 
-* `example(fun)` will run the examples (if any) given
- in the help for a particular function `fun`: e.g. `example(log)`
+* `example(fun)` will run the examples (if any) given in the help for a particular function `fun`: e.g. `example(log)`
  
-* `RSiteSearch("topic")` does a full-text
- search of all the R documentation and the mailing list archives
- for information on `topic` (you need an active
+* `RSiteSearch("topic")` does a full-text search of all the R documentation and the mailing list archives for information on `topic` (you need an active
  internet connection). 
  
 * the `sos` package is a web-aware help function that
@@ -313,7 +305,7 @@ and see what that does (answer: `help.search` pulls up all help pages that inclu
 
 
 # Using scripts and data files
-Modeling and complicated data analysis are often much easier if you use *scripts*, which are a series of commands stored in a text file. Scripting has a number of advantages and should be standard practice when doing statstics for reasons of transparency (you can see what you have done), repeatability (tomorrow you will get the same result as today) and transferability (a colleague can easily check what you have done and redo your analysis). Even for relatively simple tasks, script files are useful for building up a calculation step-by-step, making sure that each part works before adding on to it. We recommend of making a habit typing all commands in a script editor before sending it the console, otherwise important parts of your analysis may get lost because you did not store them. 
+Modeling and complicated data analysis are often much easier if you use *scripts*, which are a series of commands stored in a text file. Scripting has a number of advantages and should be standard practice when doing statstics for reasons of transparency (you can see what you have done), repeatability (tomorrow you will get the same result as today) and transferability (a colleague can easily check what you have done and redo your analysis). Even for relatively simple tasks, script files are useful for building up a calculation step-by-step, making sure that each part works before adding on to it. We recommend you making a habit typing all commands in a script editor before sending it the console, otherwise important parts of your analysis may get lost because you did not store them. 
 
 Rstudio has an advanced script editor that recognizes `R` syntax by giving different colors to different `R` commands and by automatic completion of parentheses. You can also use Windows Notepad or Wordpad but you **should not** use MS Word.
 
@@ -494,7 +486,7 @@ Think of these as shorthand for "`Light` = everything in column 1 of `X`", and "
 X=read.table("ChlorellaGrowth.txt",header=TRUE) 
 Light=X[,1]
 rmax=X[,2] 
-logLight=log(Light)
+logLight=log(Light) # natural logarithm!
 op <- par(cex=1,cex.main=0.9, mar = c(4,4,4,0.5), las = 1)
 plot(logLight,rmax,
    xlab=expression(Log~light~intensity~(mu*E/m^2/s)), 
@@ -544,7 +536,7 @@ The main point is not to be afraid of experimenting; if you have saved your prev
 `R` distinguishes a number of data types including vectors, matrices, data frames and lists that each have special properties and which are used for calculations and data storage.
 
 ## Vectors 
-An important class of data types are vectors and matrices (1- and 2-dimensional rectangular arrays of numbers). Operations with vectors and matrices may seem a bit abstract now, but we need them to do useful things later. Vectors' only properties are their type (or *class*) and length, although they can also have an associated list of names.
+An important class of data types are vectors and matrices (1- and 2-dimensional rectangular arrays of numbers). Operations with vectors and matrices may seem a bit abstract now, but we need them to do useful things later. The only properties of vectors are their type (or *class*) and length, although they can also have an associated list of names.
 
 We've already seen two ways to create vectors in `R`:
 
