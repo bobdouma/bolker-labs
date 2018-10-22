@@ -394,6 +394,85 @@ A pseudocode that implements this idea:
 4. Choose appropriate parameter values through eyeballing so that the chosen curves more or less match the data. Eyeballing means that you knowledge on the effect of parameter values on the shape of the function. Later we will use likelihood methods to estimate the parameter values. 
   
   
+```{r, eval=F, echo=F}
+set.seed(101)
+# code to generate the data of the six datasets
+
+# Dataset 1: Light response curve
+# Non-rectangular parabola, fourth bullet point (p.98) 
+x = rep(seq(0,1000,100),each=5)
+theta = 0.7; a = 0.23; pmax = 25
+P = 1/(2*theta)*(a*x+pmax-sqrt((a*x+pmax)^2-(4*theta*a*x*pmax))) - 1
+y = rnorm(55,P,2)
+photo = data.frame(x,y)
+photo$dat = 1
+
+# Dataset 2: Intake rate of the predator as a function of prey density
+x = runif(50,min=0,max=200)
+# Type II functional response//Michaelis menten
+a = 20; b = 10
+ymean = (a*x)/(b+x)
+theta=0.1;k=ymean/theta
+y = rgamma(length(x),shape=k,scale=theta)
+plot(y~x)
+predprey = data.frame(x,y)
+predprey$dat = 2
+
+# Dataset 3: Allometric relationship between tree size and number of cones produced
+library(emdbook)
+x= FirDBHFec$DBH
+y =FirDBHFec$TOTCONES
+plot(y~x)
+allometric = data.frame(x,y)
+allometric$dat = 3
+
+# Dataset 4:Population growth
+x = runif(25,0,100)
+# Gompertz growth function
+a = 5; b = .1; d = 200
+ymean = exp(-a*exp(-b*x))*d
+y = rpois(length(x),ymean)
+plot(y~ x)
+population = data.frame(x,y)
+population$dat = 4
+
+# Dataset 5: Negative exponential
+x = runif(400,0,10)
+group = rep(c(1,2),each=200)
+a = 4 ; b = c(0.75,0.25)
+ymean = a*exp(-b[group]*x)
+y = rpois(length(x),lambda=ymean)
+plot(y~((x)))
+countprocess = data.frame(x,group,y)
+countprocess$dat = 5
+
+# dataset 6: species occurence along an environmental gradient with binomial distribution
+x = runif(50,3,8)
+c = 1; u=5; t=1
+p = c*exp(-0.5*(x-u)^2/t^2)
+y = rbinom(50,p,size=1)
+plot(y~ x)
+speciesoccurence = data.frame(x,y)
+speciesoccurence$dat = 6
+
+all = rbind(photo,predprey,allometric,population,countprocess,speciesoccurence)
+write.csv(all,"shapes.csv",row.names=F)
+```
+
+
+```{r,eval=F, echo=F}
+# code to plot the datasets
+shapes = read.csv("shapes.csv")
+
+par(mfrow=c(3,2),oma=c(0,0,0,0),mar=c(4,4,0.1,0.1))
+for (i in 1:6){
+  shapes.subset = shapes[shapes$dat == i,]
+  plot(shapes.subset$y~shapes.subset$x)
+#add curve here
+}
+
+
+```
 
 
 

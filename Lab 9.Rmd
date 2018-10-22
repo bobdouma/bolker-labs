@@ -28,3 +28,33 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+
+```{r, eval=F, echo=F}
+# test dataset five for differences between groups
+dat = data.frame(x,y,group)
+te = function(par,dat){
+  a = par[1]
+  b = par[2:3]
+  ymean = a*exp(-b[dat$group]*dat$x)
+  nll = -sum(dpois(dat$y,lambda=ymean),log=T)
+  return(nll)
+}
+
+par=c(4,0.2,0.2)
+opt1 = optim(par=par,fn=te,dat=dat)
+
+te1 = function(par,dat){
+  a = par[1]
+  b = par[2]
+  ymean = a*exp(-b*dat$x)
+  nll = -sum(dpois(dat$y,lambda=ymean),log=T)
+  return(nll)
+}
+par=c(4,0.2)
+opt2 = optim(par=par,fn=te1,dat=dat)
+
+
+```
+
