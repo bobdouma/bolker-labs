@@ -369,11 +369,11 @@ see the help page.
 
 # 6 Getting familiar with a bestiary of functions
 
-### Bob: pen en paper invoegen ####
-
 The models that we will be fitting to data are composed of a deterministic component and a stochastic component. The deterministic component describes the expected pattern in absence of any randomness. You are not restricted to linear functions (as in linear regression) but you can choose among different functions. 
 
-In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (preferably more) appropriate functions for each dataset. Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Next, by eyeballing you will choose appropriate parameter values so you get a reasonable fit between the data and the choosen function.
+In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (preferably more) appropriate functions for each dataset. Next, you will explore the properties of the selected functions after which you will choose appropriate parameter values through eyeballing so you get a reasonable fit between the data and the choosen function.
+
+Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Bolker mentions the following non-linear functions in his chapter about a bestiary of functions: Hyperbolic, Michaelis-Menten (=Monod or Holling type II), Holling type III, Holling type IV, negative exponential, monomolecular (=limited exponential growth), Ricker, logistic, power law, von Bertalanffy, Sheppard, Hassell, non-rectangular hyperbola. 
 
 
 A pseudocode that implements this idea:
@@ -382,17 +382,28 @@ A pseudocode that implements this idea:
 
 2. Plot the datasets in different graphs (_hint_: `par(mfrow=c(..,..)`, and `plot`))
 
-3. For each plot, choose (at least) two appropriate functions based on the type of data or the shape of the data.
+3. For at least three plots, choose (at least) two appropriate functions based on the type of data or the shape of the data.
 
-  + _hint 1_: dataset 1 describes a light response curve of ten individual plants
-  + _hint 2_: dataset 2 describes the intake rate of a predator as a function of prey density
-  + _hint 3_: dataset 3 the data describe an allometric relationship
-  + _hint 4_: dataset 4 contains measurements of population size over time
-  + _hint 5_: This dataset you need to figure out for yourselves.
-  + _hint 6_: **optional** dataset 6 a species response curve (presence/absence). Fit a model that models the               probability of presence (use google to find a good one).
-  
-4. Choose appropriate parameter values through eyeballing so that the chosen curves more or less match the data. Eyeballing means that you knowledge on the effect of parameter values on the shape of the function. Later we will use likelihood methods to estimate the parameter values. 
-  
+    + _hint 1_: dataset 1 describes a light response curve of ten individual plants
+    + _hint 2_: dataset 2 describes the intake rate of a predator as a function of prey density
+    + _hint 3_: dataset 3 the data describe an allometric relationship
+    + _hint 4_: dataset 4 contains measurements of population size over time
+    + _hint 5_: This dataset you need to figure out for yourselves.
+    + _hint 6_: **optional** dataset 6 a species response curve (presence/absence). Fit a model that models the               probability of presence (use google to find a good one).
+
+4. Explore the properties of the selected functions in the following steps:
+
+    a. What is the value of $f(0)$ and $f'(0)$? 
+    
+    b. What are the limits for $x\to\infty$ for $f(x)$ and $f'(x)$
+    
+    c. What are the limits for $x\to-\infty$ for $f(x)$ and $f'(x)$
+    
+    d. If $f(x)$ saturates at, say the value $a$, for $x\to\infty$ then determine the $x$-value $x_1$ at which $f(x_1)=\frac{a}{2}$. If $f(x)$ obtains a maximum value, find the $x$ and $y$ coordinate of the maximum.
+
+5. Choose appropriate parameter values through eyeballing so that the chosen curves more or less match the data. Eyeballing means that you knowledge on the effect of parameter values on the shape of the function (see question 4). Later we will use likelihood methods to estimate the parameter values. 
+
+6. Time permitting repeat subquestions 3-5 for the other three datasets.  
   
 ```{r, eval=F, echo=F}
 set.seed(101)
