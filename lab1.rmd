@@ -262,46 +262,14 @@ R has a help system, although it is generally better for providing detail or rem
 (where `foo` is the name of the function
 you are interested in) in the console window (e.g., try `?sin`). 
 
-* The `Help` menu on the tool bar provides links to other documentation,
-including the manuals and FAQs, and a Search facility (`Apropos' on the menu) which is useful if you sort of maybe remember part of the name of what it is you need help on. 
-
-* Typing `help.start()` opens a web browser with help information.
-
-* `example(cmd)` will run any examples that are included
-in the help page for command `cmd`.
-
-* `demo(topic)` runs demonstration code on topic `topic`: type `demo()` by itself to list all available demos
-
-By default, R's help system only provides information about functions that are in the base system and packages that you have loaded with `library` (see below).
-
 * `??topic` or `help.search("topic")` 
  (with quotes) will list information related to `topic` available in the base system or in any extra installed packages: then use `?topic` to see the information, perhaps using `library(pkg)` to load the appropriate package first. `help.search` uses "fuzzy matching" --- for example, 
 `help.search("log")` finds 528 entries (on my particular system) including lots of functions with "plot", which includes the letters "lot", which
 are *almost* like "log". If you can't stand it, you can turn this behavior off by specifying the incantation `help.search("log",agrep=FALSE)` (81 results which still include matches for "logistic", "myelogenous", and "phylogeny" ...)
 
-* `help(package="pkg")` will list all the help pages for a loaded package.
 
-* `example(fun)` will run the examples (if any) given in the help for a particular function `fun`: e.g. `example(log)`
- 
-* `RSiteSearch("topic")` does a full-text search of all the R documentation and the mailing list archives for information on `topic` (you need an active
- internet connection). 
- 
-* the `sos` package is a web-aware help function that
- searches all of the packages on CRAN; its `findFn` function
- tries to find and organize functions in any package on CRAN that
- match a search string (again, you need a network connection for this).
-
-**Other (on-line) help resources - just google it** 
+* Other (on-line) help resources - just google it** 
 In our experience, the help provided by `R` requires some experience in the `R` language to be able to understand it. Therefore, a general, but practical advice is to google your problem. In 99.9% of the cases someone else had a similar question in the past which were solved by the `R` community. Place were you likely will find answers are https://stackoverflow.com or https://stat.ethz.ch.
-
-
-**Exercise 8.1**: Do an Apropos on `sin` via the Help menu, to see what it does. Now enter the command
-
-```{r,eval=FALSE}
-help.search("sin")
-```
-
-and see what that does (answer: `help.search` pulls up all help pages that include 'sin' anywhere in their title or text. Apropos just looks at the name of the function).
 
 
 # Using scripts and data files

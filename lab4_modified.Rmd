@@ -13,12 +13,55 @@ opts_chunk$set(tidy.opts=list(width.cutoff=5), tidy = TRUE)
 ```
 
 
-This lab has two parts. A part to make you familiar with the technicalities of stochastic distributions in `R`: how to generate values from probability distributions; how to make your own probability distribution etc (section 1-5), and a part (section 6) to help you practicing with probability distributions on different types of data.  Under time constraints, make sure that you make at least make the exercise in section 1 and section 6. 
+This lab has two parts. A part to make you familiar with the technicalities of stochastic distributions in `R`: how to generate values from probability distributions; how to make your own probability distribution etc (section 1-5), and a part (section 6) to help you practicing with probability distributions on different types of data.  Under time constraints, make sure that you make at least the exercise in section 1 and section 6. 
 
 # 1. Random distributions in `R`
 `R` knows about lots of probability distributions.  For each, it
-can generate random numbers drawn from the distribution ("deviates"); compute the cumulative distribution function and the probability distribution function; and compute the quantile function, which gives the
+can generate random numbers drawn from the distribution ("random numbers"); compute the cumulative distribution function and the probability distribution function; and compute the quantile function, which gives the
 $x$ value such that $\int_0^x P(x) \, dx$ (area under the curve from 0 to $x$) is a specified value, such as 0.95 (think about "tail areas" from standard statistics).
+
+
+Let's take the binomial distribution (yet again) as an example.
+
+- `rbinom(n,size,prob)` gives `n` random draws from the binomial
+distribution with parameters `size` (total number of draws) and
+`p` (probability of success on each draw).  
+You can give different parameters for each draw.
+For example:
+```{r}
+rbinom(10,size=8,prob=0.5)
+rbinom(3,size=8,prob=c(0.2,0.4,0.6))
+``` 
+Figure 1 shows the result of drawing 200 values from a binomial distribution with $N=12$ and $p=0.5$ and
+plotting the results as a `factor` (with 5000 draws we don't have to worry about any of the 13 possible outcomes getting missed and excluded from the plot): 
+```{r,eval=FALSE}
+set.seed(1)
+plot(factor(rbinom(5000,size=12,prob=0.5)), xlab="# of successes", 
+     ylab="# of trials out of 200")
+``` 
+
+**Exercise 1**:
+For the binomial distribution with 10 trials and a success probability
+of 0.2:
+
+
+- `dbinom(x,size,prob)` gives the value of the probability of getting excactly $x$ successes based on the probability distribution. For a continous distribution, the analogous function would compute the probability density function (pdf). Since the binomial is discrete, `x` has to be an integer, and the pdf is just the probability of getting that many successes; if you try `dbinom` with a non-integer `x`, you'll get zero and a warning.
+
+- `pbinom(q,size,prob)` gives the value of the cumulative distribution function (cdf) at `q` (e.g. `pbinom(7,size=10,prob=0.4)`);
+
+- `qbinom(p,size,prob)` gives the quantile function $x=q(p)$, where `p` is a number between 0 and 1 (an area under the pdf, or value of the cdf) and $x$ is the value such that  $P(X \le x)=p$. The *quantile function* $Q$ is the inverse of the cumulative distribution function $C$: if $Q(p)=q$ then $C(q)=p$.
+Example: `qbinom(0.95,size=10,prob=0.4)`.
+
+
+These four functions exist for each of the distributions `R` has built in: e.g. for the normal distribution they're `rnorm()`, `pnorm()`, `dnorm()`, `qnorm()`. Each distribution has its own set of parameters (so e.g. `pnorm()` is `pnorm(x,mean=0,sd=1)`). To see which distributions are available in the `base` package; check `?distributions`. See Figure 2.
+
+
+
+```{r,fig=TRUE,echo=FALSE, fig.cap = "Results of `rbinom`", fig.height = 3}
+par(mar = c(4.0,4.0,0.5,2))
+plot(factor(rbinom(200,size=12,prob=0.1)),xlab="# of successes",
+     ylab="# of trials out of 200")
+``` 
 
 
 <!-- ```{r,echo=FALSE,fig.cap="`R` functions for an arbitrary distribution `dist`, showing density function (`ddist`), cumulative distribution function (`pdist`), quantile function (`qdist`), and random-deviate function (`rdist`).", fig.height = 3.5} -->
@@ -89,64 +132,7 @@ arrows(0,P, qnorm(P,mu,sd),P, length = 0.1, col = 2)
 arrows(qnorm(P,mu,sd),P, qnorm(P,mu,sd), 0, length = 0.1, col = 2)
 ```
 
-Let's take the binomial distribution (yet again) as an example.
 
-- `rbinom(n,size,prob)` gives `n` random draws from the binomial
-distribution with parameters `size` (total number of draws) and
-`p` (probability of success on each draw).  
-You can give different parameters for each draw.
-For example:
-```{r}
-rbinom(10,size=8,prob=0.5)
-rbinom(3,size=8,prob=c(0.2,0.4,0.6))
-``` 
-Figure 2 shows the result of drawing 200 values
-from a binomial distribution with $N=12$ and $p=0.1$ and
-plotting the results as a `factor` (with 200 draws
-we don't have to worry about any of the 13 possible outcomes
-getting missed and excluded from the plot):
-```{r,eval=FALSE}
-plot(factor(rbinom(200,size=12,prob=0.1)), xlab="# of successes", 
-     ylab="# of trials out of 200")
-``` 
-
-```{r,fig=TRUE,echo=FALSE, fig.cap = "Results of `rbinom`", fig.height = 3}
-par(mar = c(4.0,4.0,0.5,2))
-plot(factor(rbinom(200,size=12,prob=0.1)),xlab="# of successes",
-     ylab="# of trials out of 200")
-``` 
-
-- `dbinom(x,size,prob)` gives the value of the probability
-distribution
-function (pdf) at `x` (for a continous distribution,
-the analogous function would compute the probability density
-function). Since the binomial is discrete, `x`
-has to be an integer, and the pdf is just the probability of getting
-that many successes; if you try `dbinom` with a non-integer `x`, you'll get zero and a warning.
-
-- `pbinom(q,size,prob)` gives the value of the cumulative
-distribution
-function (cdf) at `q` (e.g. `pbinom(7,size=10,prob=0.4)`);
-
-- `qbinom(p,size,prob)` gives the quantile function $x=q(p)$,
-where `p` is a number between 0 and 1 (an area under the pdf, or
-value of the cdf) and $x$ is the value such that 
-$P(X \le x)=p$.
-The *quantile function* $Q$ is the inverse of the cumulative distribution
-function $C$: if $Q(p)=q$ then $C(q)=p$.
-Example: `qbinom(0.95,size=10,prob=0.4)`.
-
-
-These four functions exist for each of the distributions `R` has built
-in: e.g. for the normal distribution they're
-`rnorm()`, `pnorm()`, `dnorm()`, `qnorm()`.
-Each distribution has its own set of parameters (so e.g. `pnorm()`
-is `pnorm(x,mean=0,sd=1)`). To see which distributions are available
-in the `base` package; check `?distributions`.
-
-**Exercise 1**:
-For the binomial distribution with 10 trials and a success probability
-of 0.2:
 
 ```{r,echo=FALSE,eval=FALSE}
 set.seed(1001); rbinom(8,size=10,prob=0.2)
@@ -156,7 +142,7 @@ set.seed(1001); rbinom(8,size=10,prob=0.2)
 (twice), $X=2$ (4 times), and $X=4$ and $X=5$ (once each)).
 
 - Calculate the probabilities of getting 3, 4, or 5
-successes. Answer: 
+successes first by hand (See Ch.4) and check it with the computer. Answer: 
 ```{r,echo=FALSE}
 dbinom(3:5,size=10,prob=0.2)
 ``` 
@@ -224,16 +210,14 @@ simulations to check the expected variation
 of different measurement as a function
 of parameters and sample size.)
 
-```{r, eval = TRUE, echo = FALSE, fig = TRUE, fig.cap = "Checking binomial deviates against theoretical values."}
+```{r, eval = TRUE, echo = FALSE, fig = TRUE, fig.cap = "Checking random draws from a binomial distribution against theoretical values."}
 x = rbinom(10000,prob=p,size=N)
 tx = table(factor(x,levels=0:12))/10000
 b1 = barplot(tx,ylim=c(0,0.23),ylab="Probability")
 points(b1,dbinom(0:12,prob=p,size=N),pch=16)
 ```
 
-Finally, Figure 3 shows
-the entire simulated frequency distribution
-along with the theoretical values.
+Finally, Figure 3 shows the entire simulated frequency distribution along with the theoretical values.
 The steps in `R` are:
 
 **1.** pick 10,000 random deviates:
@@ -321,11 +305,9 @@ agree reasonably well with the theoretical values.
 Add points representing
 the theoretical distribution to the plot.
 
-# 2. Averaging across discrete and continuous distributions
+# 2. Averaging distributions
 
-Suppose we have a (tiny) data set;
-we can organize it in two different ways,
-in standard long format or in tabular form:
+Suppose we have a (tiny) data set; we can organize it in two different ways, in standard long format or in tabular form:
 ```{r}
 dat = c(5,6,5,7,5,8); dat
 tabdat=table(dat); tabdat
@@ -338,17 +320,11 @@ prob=tabdat/length(dat); prob
 (dividing by `sum(tabdat)` would
 be equivalent).
 
-In the long format, we can take
-the mean with `mean(dat)`
-or, replicating the formula $\sum x_i/N$
-exactly, `sum(dat)/length(dat)`.
+In the long format, we can take the mean with `mean(dat)` or, replicating the formula $\sum x_i/N$
+exactly, `sum(dat)/length(dat)`. 
 
-In the tabular format, we
-can calculate the mean 
-with the formula $\sum P(x) x$,
-which in `R` would be
-`sum(prob*5:8)` or
-more generally
+In the tabular format, we can calculate the mean with the formula $\sum P(x) x$,
+which in `R` would be `sum(prob*5:8)` or more generally
 ```{r}
 vals = as.numeric(names(prob))
 sum(prob*vals)
@@ -357,14 +333,10 @@ sum(prob*vals)
 by `as.numeric(levels(prob))`,
 or by `sort(unique(dat))`).
 
-However, `mean(prob)`
-or `mean(tabdat)` is just plain wrong
-(at least, I can't think of a situation where
-you would want to calculate this value).
+However, `mean(prob)` or `mean(tabdat)` is just plain wrong (at least, I can't think of a situation where
+you would want to calculate this value). 
 
-**Exercise 3:** figure out
-what it means that
-`mean(tabdat)` equals `r mean(tabdat)`.
+**Exercise 3:** figure out what it means that `mean(tabdat)` equals `r mean(tabdat)`.
 
 Going back the other way, from a table to raw values, we can use
 the `rep()` function to repeat values an appropriate number of times.
@@ -406,7 +378,7 @@ Use the following pseudo-code:
 
 **Exercise 5***:
 try the above exercise again, but this time
-with a gamma distribution instead of an exponential.
+with a gamma distribution instead of an uniform distribution.
 Keep the mean equal to 24.5 and change the
 variance to 100, 25, and 1 (use the information
 that the mean of the gamma distribution is `shape*scale`
@@ -479,7 +451,8 @@ points(b1,my_dnbinom(0:max(x),mean=1,var=4),pch=16)
 abline(v=1)
 ``` 
 
-**Exercise 6***:
+**Exercise 6* **:
+
 Morris (1997) gives a definition of the beta function that
 is different from the standard statistical parameterization.
 The standard parameterization is
@@ -491,13 +464,7 @@ $$
 \mbox{Beta}(x|P,\theta) = \frac{\Gamma(\theta)}{\Gamma(\theta P)\Gamma(\theta (1-P))} x^{\theta P-1} (1-x)^{\theta(1-P)-1}.
 $$
 Find expressions for $P$ and $\theta$ in terms of $a$ and $b$
-and vice versa.  Explain why you might prefer Morris's
-parameterization.
-Define a new set of functions that generate random
-deviates from the beta distribution (`my_rbeta`)
-and calculate the density function (`my_dbeta`)
-in terms of $P$ and $\theta$.
-Generate a histogram from this distribution
+and vice versa (use pen and paper). Explain why you might prefer Morris's parameterization. Define a new set of functions that generate random numbers from the beta distribution (`my_rbeta`) and calculate the density function (`my_dbeta`) in terms of $P$ and $\theta$. Generate a histogram from this distribution
 and draw a vertical line showing the mean of the distribution.
 
 # 4. Creating new distributions
@@ -550,8 +517,7 @@ picked out of the appropriate negative binomial
 distribution.
 
 **Exercise 7**:
-check graphically that these functions actually
-work. For comparison you could compare the results with a negative binomial function with the same mean and variance as the data.
+Check graphically that these functions actually work. For instance, you could compare the results with a negative binomial function with the same mean and variance as the data.
 
 # 5. Compounding distributions
 
@@ -616,7 +582,7 @@ hist(x,prob=TRUE,breaks=100,col="gray")
 curve(dt(x,df=11),add=TRUE,lwd=2)
 ``` 
 
-```{r,fig=TRUE, fig.cap="Clark model: inverse gamma compounded with normal, equivalent to the Student $t$ distribution"}
+```{r,echo=F,fig=TRUE, fig.cap="Clark model: inverse gamma compounded with normal, equivalent to the Student $t$ distribution"}
 hist(x,prob=TRUE,breaks=100,col="gray")
 curve(dt(x,df=11),add=TRUE,lwd=2)
 ``` 
