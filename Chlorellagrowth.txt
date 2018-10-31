@@ -1,4 +1,4 @@
-# light level, Chlorella maximum growth rate
+"light level"	"Chlorella maximum growth rate"
 20 	1.73
 20 	1.65
 20 	2.02

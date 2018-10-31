@@ -16,15 +16,21 @@ output:
     number_sections: yes
 geometry: margin=3cm
 fontsize: 11pt
+header-includes:
+  - \usepackage{xcolor}
+  - \usepackage{framed}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(error = TRUE)
 options(tinytex.verbose = TRUE)
 if(!requireNamespace("kableExtra")) install.packages("kableExtra")
 library(kableExtra)
+knitr::opts_knit$set(root.dir = "D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/2018-2019/labs/bolker-labs")
 ```
+
+
 
 # Learning outcomes
 The aim of this tutorial is to learn the basics of `R`. After completing the tutorial you will be able to:
@@ -41,9 +47,6 @@ The aim of this tutorial is to learn the basics of `R`. After completing the tut
 
 6. Work with the most common data types in `R` (vectors, matrices, lists and data frames)
 
-```{r eval=T,echo=F}
-setwd("D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/2018-2019/labs/bolker-labs")
-```
 
 
 # How to use this tutorial
@@ -95,7 +98,7 @@ Nowadays programs are available that integrate `R` in a sophisticated way by com
 
 If a new `R` version is launched after you installed Rstudio, you can change the `R` version that is used in Rstudio by clicking on `Tools` and `Global Options`, choose `R general` and select the location of the most recent `R` version.
 
-Rstudio usually displays four panels. The default setting is a script editor at the top-left of the screen, the console at the bottom-left, the global environment (which shows what is stored in the memory) at the top-right, and a plotting region at bottom-right. As you see some panel have multiple tabs that include other useful features such as the help (bottom-right), the (available and loaded) packages (bottom-right) etc.
+Rstudio usually displays four panels. The default setting is a script editor at the top-left of the screen, the console at the bottom-left, the global environment (which shows what is stored in the memory) at the top-right, and a plotting region at bottom-right. Some panels have multiple tabs that include other useful features such as help (bottom-right), information on (available and loaded) packages (bottom-right) etc.
 
 # The `R` package system
 `R` has many extra packages that provide extra functions. You may be able to install new packages from a menu within `R`. Type and it will installe the package `ggplot2` that you will use in the next tutorial.
@@ -188,7 +191,7 @@ z3
 
 Even though `R` did not display the values of `x` and `y`, it "remembers" that it assigned values to them. Type `x; y` to display the values. 
 
-You can retrieve and edit previous commands. The up-arrow ($\uparrow$) in the console recalls previous commands to the prompt. They also can be found in the top-right tab `History`. For example, you can bring back the second-to-last command and edit it into 
+You can retrieve and edit previous commands. The up-arrow ($\uparrow$) of the keyboard in the console recalls previous commands to the prompt. They also can be found in the top-right tab `History`. For example, you can bring back the second-to-last command and edit it into 
 ```{r}
 z3=2*x^y
 ```
@@ -234,19 +237,16 @@ kable(data, caption = "Some of the built-in mathematical functions in R. You can
 ```
 
 
-**Exercise 7.1**: Using editing shortcuts wherever you can, have `R` compute the values of 
+**Exercise 7.1**: To get familiar with the built-in functions of `R` and with the use of parentheses, have `R` compute the values of 
 
-1. $\frac{2^7}{2^7 - 1}$ and compare it with $( {1 - \frac{1}{2^7}} )^{-1}$ (If any square brackets [] show up in your web browser's
-rendition of these equations, replace
-them with regular parentheses ().)
+1. The absolute value of `-1` and the vector `c(-2,-1,0,0,1,2)`
 
 2.
   * $1+0.2$
   * $1+0.2+0.2^2/2$
   * $1+0.2+0.2^2/2+0.2^3/6$
   * $e^{0.2}$ (remember that `R` knows `exp` but not $e$;
-how would you get `R` to tell you the value of $e$? What is the
-point of this exercise?)
+how would you get `R` to tell you the value of $e$? This shows you that `R` has some built-in functions
 
 3. the standard normal probability density,
 $\frac{1}{\sqrt{2 \pi}} e^{-x^2/2}$, for values of $x=1$
@@ -256,24 +256,34 @@ for the normal distribution; `dnorm(1)` and
 `dnorm(2)` should give
 you the values for the standard normal for $x=1$ and $x=2$.)
 
-# The help system
-R has a help system, although it is generally better for providing detail or reminding you how to do things than for basic ``how do I ...?'' questions.
+```{r echo=T,  results="hide"}
+abs(-1)
+abs(c(-2,-1,0,0,1,2))
 
-* You can get help on any R function by entering
+1+0.2
+1+0.2+0.2^2/2
+1+0.2+0.2^2/2+0.2^3/6
+exp(0.2)
+
+x=1
+1/(sqrt(2*pi))*exp(-x^2/2)
+dnorm(1)
+x=2
+1/(sqrt(2*pi))*exp(-x^2/2)
+dnorm(2)
 ```
-?foo
-``` 
-(where `foo` is the name of the function
-you are interested in) in the console window (e.g., try `?sin`). 
-
-* `??topic` or `help.search("topic")` 
- (with quotes) will list information related to `topic` available in the base system or in any extra installed packages: then use `?topic` to see the information, perhaps using `library(pkg)` to load the appropriate package first. `help.search` uses "fuzzy matching" --- for example, 
-`help.search("log")` finds 528 entries (on my particular system) including lots of functions with "plot", which includes the letters "lot", which
-are *almost* like "log". If you can't stand it, you can turn this behavior off by specifying the incantation `help.search("log",agrep=FALSE)` (81 results which still include matches for "logistic", "myelogenous", and "phylogeny" ...)
 
 
-* Other (on-line) help resources - just google it** 
-In our experience, the help provided by `R` requires some experience in the `R` language to be able to understand it. Therefore, a general, but practical advice is to google your problem. In 99.9% of the cases someone else had a similar question in the past which were solved by the `R` community. Place were you likely will find answers are https://stackoverflow.com or https://stat.ethz.ch.
+# The help system
+Getting help in R if you know the name of the function is straightforward:
+
+* `?sin` will give you information on the sine function
+
+* `??sin` will give you much wider information related to `sin`
+
+* Searching online is most often the best way to get information on how to do things in `R`. E.g. google "coloured lines in plots R" or "generalized linear model R". It is also often helpful to google information on error messages in R. 
+
+In 99.9% of the cases someone else had a similar question in the past which were solved by the R community. Places were you likely will find answers are https://stackoverflow.com, https://www.statmethods.net, or https://stat.ethz.ch.
 
 
 # Using scripts and data files
@@ -304,9 +314,9 @@ pitfalls):
 can do any one of the following:
 
 * spell out the *path*, or file location, explicitly. (Use
-a single forward slash to separate folders (e.g. `"c:/My Documents/R/script.R"`): this works on all platforms.)
+a single forward slash or double backward slashes to separate folders (e.g. `"c:/My Documents/R/script.R"`): this works on all platforms.)
 
-* change your working directory to wherever the file(s) are located using the `setwd` (**set** **w**orking **d**irectory) function, e.g. `setwd("c:/temp")` or through clicking on 'Session' and 'set working directory'. Changing your working directory is more efficient in the long run, if you save all the script and data files for a particular project in the same directory and switch to that directory when you start work.
+* change your working directory to wherever the file(s) are located using the `setwd` (**set** **w**orking **d**irectory) function, e.g. `setwd("c:/temp")` or through clicking on 'Session' and 'set working directory'. Changing your working directory is more efficient in the long run, if you save all the script and data files for a particular project in the same directory and switch to that directory when you start work. If you want to know your working directory, type `getwd()`. Unfortunately, there is no easy way to tell `R` to look for data in the same directly as the `R` script. This means that, when you move your scripts and your data from one computer to another, you may have to change the working directory to match the new computer's directory structure.
 
 # Typical workflow in `R`: an example using linear regression
 To get a feel for a typical workflow in R we'll fit a straight-line model (linear regression) to data. 
@@ -437,6 +447,10 @@ It's good to be able to look inside `R` objects when necessary, but all other th
 
 Usually data is loaded from a file. To illustrate this, grab copies of `Intro2.R` and `ChlorellaGrowth.txt` from the web page (blackboard) to see how this is done. In `ChlorellaGrowth.txt` the two variables are entered as columns of a data matrix. Then instead of typing these in by hand, the command
 
+```{r, echo=F}
+setwd("D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/2018-2019/labs/bolker-labs")
+```
+
 ```{r}
 X=read.table("ChlorellaGrowth.txt",header=TRUE)
 ```
@@ -452,7 +466,26 @@ rmax=X[,2]
 
 Think of these as shorthand for "`Light` = everything in column 1 of `X`", and "`rmax` = everything in column 2 of `X`" (we'll learn about working with data matrices later). From there on out it's the same as before, with some additions that set the axis labels and add a title.
 
-**Exercise 10.1** Make a copy of `Intro2.R` under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, `LogLight=log(Light)`, and plots the data appropriately. You should end up with  a graph that resembles Figure 3. (*Hint:* when you switch from light intensity to log light intensity, the range on your $x$ axis will change and you will have to change the $x$ position at which you plot the growth rate equation.)
+**Exercise 10.1** Make a copy of `Intro2.R` under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, `LogLight=log(Light)`, and plots the data appropriately. You should end up with  a graph that resembles Figure 3. (*Hint:* when you switch from light intensity to log light intensity, the range on your $x$ axis will change and you will have to change the $x$ position at which you plot the growth rate equation.). Check what has been read in and change to `header=TRUE` if needed.
+
+```{r, echo=T,  results="hide"}
+X=read.table("ChlorellaGrowth.txt",header=TRUE) 
+Light=X[,1]
+rmax=X[,2] 
+logLight=log(Light) # natural logarithm!
+op <- par(cex=1,cex.main=0.9, mar = c(4,4,4,0.5), las = 1)
+plot(logLight,rmax,
+   xlab=expression(Log~light~intensity~(mu*E/m^2/s)), 
+   ylab="Maximum growth rate rmax (1/d)",pch=16)
+title(main="Data from Fussmann et al. (2000)")
+fit=lm(rmax~logLight)
+summary(fit)
+abline(fit) 
+rcoef=round(coef(fit),digits=3)
+text(3.7,3.5,paste("rmax=",rcoef[1],"+",rcoef[2],"log(Light)"))
+par(op)
+
+```
 
 ```{r,echo=FALSE,fig=TRUE,results='hide', fig.cap = "Graphical summary of regression analysis, using log of light intensity (and annotating the plot)", fig.width=4.5,fig.height=4}
 X=read.table("ChlorellaGrowth.txt",header=TRUE) 
@@ -472,7 +505,9 @@ text(3.7,3.5,paste("rmax=",rcoef[1],"+",rcoef[2],"log(Light)"))
 par(op)
 ``` 
 
-**Exercise 10.2** Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened by entering `?plot.lm` to bring up the Help page for the function `plot.lm` that carries out a `plot` command for an object produced by `lm`. (This is one example of how R uses the fact that statistical analyses are stored as model objects. `fit` "knows" what kind of object it is (in this case an object of type `lm`), and so `plot(fit)` invokes a function that produces plots suitable  for an `lm` object.) 
+**Exercise 10.2** Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened by entering `?plot.lm` to bring up the Help page for the function `plot.lm` that carries out a `plot` command for an object produced by `lm`. (This is one example of how R uses the fact that statistical analyses are stored as model objects. `fit` "knows" what kind of object it is (in this case an object of type `lm`), and so `plot(fit)` invokes a function that produces plots suitable  for an `lm` object.). The first diagnostic plots are useful and have been covered in statistics classes, the other two are less useful.
+
+
 **Answer:** R produced a series of diagnostic plots exploring whether or not the fitted linear model is a suitable fit to the data. In each of the plots, the 3 most extreme points (the most likely candidates for "outliers") have been identified according to their sequence in the data set. 
 
 **Exercise 10.3** The axes in plots are scaled automatically,  but the outcome is not always ideal (e.g. if you want several graphs with exactly the same axis limits).  You can use the `xlim` and `ylim` arguments in `plot` to control the limits:
@@ -485,6 +520,12 @@ will draw the graph with the $x$-axis running from `x1` to `x2`, and using `ylim
 
 Create a plot of growth rate versus light intensity with the $x$-axis running from 0 to 120 and the $y$-axis running from 1 to 4. 
 
+```{r,  echo=T,  results="hide"}
+plot(Light,rmax,xlim=c(0,120),ylim=c(1,4))
+
+```
+
+
 **Exercise 10.4** You can place several graphs within a single figure by using the `par` function (short for "parameter") to adjust the layout of the plot. For example, the command
 
 ```{r,eval=FALSE}
@@ -495,9 +536,41 @@ divides the plotting area into 2 rows and 3 columns. As  `R` draws a series of g
 
 Modify the script as follows. Use `mfcol=c(2,1)` to create graphs of growth rate as a  function of `Light`, and of `log(growth rate)` as a function of `log(Light)` in the same figure. Do the same again, using `mfcol=c(1,2)`. 
 
-**Exercise 10.5 * ** Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  Then draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors. 
+```{r,echo=T,  results="hide"}
+mfcol=c(2,1)
+plot(rmax ~ Light)
+plot(rmax ~ logLight)
 
-**Exercise 10.6 * ** Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with `savePlot` or specific functions like `jpeg` or `png`.  Use `?savePlot`, `?jpeg` or `?png` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".`
+```
+
+Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  
+
+**Exercise 10.5 * ** Draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors. Consult `?plot` to see how you can draw lines instead of points.
+
+```{r,  echo=T,  results="hide"}
+par(mfrow=c(2,2))
+x = c(3:8)
+y = 5*x+3
+plot(y~x,type="l")
+plot(y~x,type="l",lty=1,col="red")
+plot(y~x,type="l",lty=2,col="blue")
+plot(y~x,type="l",lty=4,col="orange")
+```
+
+**Exercise 10.6 * ** Modify one of your scripts so that at the very end it saves the plot to disk. In Rstudio this can be done through clicking on the "Export" button in the plotting region. In Windows you can write the command directly in your script by using  `savePlot` or specific functions like `pdf`, `jpeg` or `png`. The latter three are most useful.  Use `?jpeg` or `?png` or `?savePlot` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".`
+
+```{r,  echo=T,  results="hide"}
+png("test.png")
+par(mfrow=c(2,2))
+x = c(3:8)
+y = 5*x+3
+plot(y~x,type="l")
+plot(y~x,type="l",lty=1,col="red")
+plot(y~x,type="l",lty=2,col="blue")
+plot(y~x,type="l",lty=4,col="orange")
+dev.off()
+```
+
 
 (These are really exercises in using the help system, with the bonus that you learn some things about `plot`. (Let's see, we know `plot` can graph data points ($r_{max}$ versus $Light$ and all that). Maybe it can also draw a line to connect the points, or just draw the line and leave out the points. That would be useful. So let's try `?plot` and see if it says anything about lines ... Hey, it also says that `graphical parameters can be given as arguments to plot`, so maybe I can set line colors inside the plot command instead of using `par` all the time ...). The help system can be quite helpful (amazingly enough) once you get used to it and get in the habit of using it often.)
 
@@ -550,6 +623,11 @@ whether `from` or `to` is larger. The third form creates a vector with the desir
 ```
 
 **Exercise 11.1** Use `seq` to create the vector `v=(1 5 9 13)`, and to create a vector going from 1 to 5 in increments of 0.2.
+
+```{r,  echo=T,  results="hide"}
+seq(1,13,4)
+seq(1,5,0.2)
+```
 
 You can use `rep` to create a constant vector such as `(1 1 1 1)`; the basic syntax is `rep(values,lengths)`. For example,
 ```{r}
@@ -604,6 +682,8 @@ extracts the second through fifth elements.
 
 What happens if you enter `v=z[seq(1,5,2)]` ? Try it and see, and make sure you understand what happened. 
 
+Answer: this takes the elements 1, 3 and 5 of the vector z.
+
 You can extracted irregularly spaced elements of a vector. For example
 ```{r}
 z[c(1,2,5)]
@@ -623,12 +703,23 @@ try `z[1,3,5]` ?)
 
 **Exercise 11.2** Write a *one-line* command to extract a vector consisting of the second, first, and third elements of `z` *in that order*. 
 
+```{r,  echo=T,  results="hide"}
+z=c(1,3,5,7,9,11)
+z[c(2,1,3)]
+```
+
 **Exercise 11.3** Write a script file that computes values of 
 $y=\frac{(x-1)}{(x+1)}$ for $x=1,2,\cdots,10$, and plots $y$ versus $x$
 with the points plotted and connected by a line (hint: in `?plot`, search for `type`).
 
-**Exercise 11.4* ** The sum of the geometric series $1 + r + r^2 + r^3 + ... + r^n$ approaches the limit $1/(1-r)$ for $r < 1$ as $n \rightarrow \infty$. Set the values $r=0.5$ and $n=10$, and then write a **one-line** command that creates the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using `sum`)
-of this vector to the limiting value $1/(1-r)$. Repeat for  $n=50$. (*Note* that comparing very similar numeric values can be tricky: rounding can happen, and some numbers cannot be represented exactly in binary (computer) notation. By default `R` displays 7~significant digits (`options("digits")`). 
+```{r,  echo=T,  results="hide"}
+x = c(1:10)
+y = (x-1)/(x+1)
+plot(y~x,type="b")
+```
+
+
+**Exercise 11.4* ** The sum of the geometric series $1 + r + r^2 + r^3 + ... + r^n$ approaches the limit $1/(1-r)$ for $r < 1$ as $n \rightarrow \infty$. Set the values $r=0.5$ and $n=10$, and then write a **one-line** command that creates the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using `sum`) of this vector to the limiting value $1/(1-r)$. Repeat for  $n=50$. (*Note* that comparing very similar numeric values can be tricky: rounding can happen, and some numbers cannot be represented exactly in binary (computer) notation. By default `R` displays 7~significant digits (`options("digits")`). 
 
 For example:
 ```{r}
@@ -641,6 +732,18 @@ x-2
 ``` 
 All the digits are still there, in the second case, but they are not shown.
 Also note that `x-2` is not exactly $-1 \times 10^{-13}$; this is unavoidable.)
+
+```{r,  echo=T,  results="hide"}
+r = 0.5
+n =10
+sum(r^c(1:n))
+
+
+n =50
+sum(r^c(1:n))
+
+```
+
 
 ### Logical operators
 Logical operators return a value of `TRUE` or `FALSE`. For example, 
@@ -735,13 +838,28 @@ Light[Light<50 & rmax <= 2.0]
 rmax[Light<50 & rmax <= 2.0]
 ```
 
+```{r,  echo=T,  results="hide"}
+#  Light < 50 returns a vector with trues and falses. That vector is needed to select on the elements of the vector Light that is lower than 50. To select the accompanying values in rmax you should use the same syntax. If you first overwrite Light by Light[Light<50] it returns a shorter vector. Subsetting rmax with the shorter vector does give the corect result, because all Light < 50 will be TRUE. Try it 
+```
+
 **Exercise 11.6**
 `runif(n)` is a function (more on it soon) that generates a vector of `n` random, uniformly distributed
 numbers between 0 and 1. Create a vector of 20 numbers, then select the subset of those numbers that 
 is less than the mean. (If you want your answers to match mine exactly, use `set.seed(273)` to set the random-number generator to a particular starting point before you use `runif`; [273 is an arbitrary number I chose].)
 
+```{r,  echo=T,  results="hide"}
+a = runif(20)
+a[a < mean(a)]
+
+```
+
 **Exercise 11.7* ** 
 Find the *positions*  of the elements that are less than the mean of the vector you just created (e.g. if your vector were `(0.1 0.9. 0.7 0.3)` the answer would be `(1 4)`).
+
+```{r,  echo=T,  results="hide"}
+which(a < mean(a))
+
+```
 
 As I mentioned in passing above, vectors can have names associated with their elements: if they do, you can also extract elements by name (use `names` to find out the names).
 
@@ -757,6 +875,14 @@ element of a vector.
 
 **Exercise 11.8* **:
 Specify two ways to take only the elements in the odd positions (first, third, ...) of a vector of arbitrary length.
+
+```{r,  echo=T,  results="hide"}
+n = 20
+a = c(1:n)
+a1 = a[seq(1,n,2)]
+a2 = a[-seq(2,n,2)]
+
+```
 
 ## Matrices
 
@@ -781,7 +907,7 @@ matrix(1,nrow=10,ncol=10)
 creates a $10 \times 10$ matrix of ones.
 
 **Exercise 11.1** Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector, to create the following matrix `X`:
-```{r, echo = FALSE}
+```{r, echo = F,  results="hide"}
 matrix(rep(1:2,4),nrow=2)
 ``` 
 If you can, try to use `R` commands to construct the vector rather than typing out all of the individual values.
@@ -789,6 +915,13 @@ If you can, try to use `R` commands to construct the vector rather than typing o
 `R` will also collapse a matrix to behave like a vector whenever it makes sense: for example `sum(X)` above is 12.
 
 **Exercise 11.2** Use `rnorm` (which is like `runif`, but generates Gaussian (normally distributed) numbers with a specified mean and standard deviation instead) and `matrix` to create a $5 \times 7$ matrix of Gaussian random numbers with mean 1 and standard deviation 2. (Use `set.seed(273)` again for consistency.)
+
+```{r,  echo=T,  results="hide"}
+set.seed(273)
+matrix(rnorm(35,0,2),5,7)
+
+```
+
 
 Another useful function for creating matrices is `diag`. `diag(v,n)` creates an $n \times n$ matrix with data
 vector $v$ on its diagonal. So for example `diag(1,5)` creates the $5 \times 5$ *identity matrix*, which has 1's on the diagonal and 0 everywhere else. Try `diag(1:5,5)` and `diag(1:2,5)`; why does the latter produce a warning?
@@ -831,7 +964,13 @@ If their sizes match, you can combine vectors to form matrices, and stick matric
 treats them as rows. Now we have two matrices that can be combined. 
 
 **Exercise 11.3** Verify that `rbind(C,D)` works, `cbind(C,C)` works, but `cbind(C,D)` doesn't. Why not? 
+```{r,  echo=T,  results="hide"}
+C=cbind(1:3,4:6,5:7)
+D=rbind(1:3,4:6)
 
+rbind(C,D)
+cbind(C,D)
+``` 
 ### Matrix indexing
 
 Matrix indexing is like vector indexing except that you have to specify both the row and column, or range of rows and columns. For example `z=A[2,3]` sets `z` equal to 6, which is the (2nd row, 3rd column) entry of the matrix **A** that you recently created, and 
