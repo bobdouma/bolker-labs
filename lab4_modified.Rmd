@@ -28,7 +28,7 @@ distribution with parameters `size` (total number of draws) and
 `p` (probability of success on each draw).  
 You can give different parameters for each draw.
 For example:
-```{r}
+```{r,eval=FALSE}
 rbinom(10,size=8,prob=0.5)
 rbinom(3,size=8,prob=c(0.2,0.4,0.6))
 ``` 
@@ -40,11 +40,6 @@ plot(factor(rbinom(5000,size=12,prob=0.5)), xlab="# of successes",
      ylab="# of trials out of 200")
 ``` 
 
-**Exercise 1**:
-For the binomial distribution with 10 trials and a success probability
-of 0.2:
-
-
 - `dbinom(x,size,prob)` gives the value of the probability of getting excactly $x$ successes based on the probability distribution. For a continous distribution, the analogous function would compute the probability density function (pdf). Since the binomial is discrete, `x` has to be an integer, and the pdf is just the probability of getting that many successes; if you try `dbinom` with a non-integer `x`, you'll get zero and a warning.
 
 - `pbinom(q,size,prob)` gives the value of the cumulative distribution function (cdf) at `q` (e.g. `pbinom(7,size=10,prob=0.4)`);
@@ -53,14 +48,16 @@ of 0.2:
 Example: `qbinom(0.95,size=10,prob=0.4)`.
 
 
-These four functions exist for each of the distributions `R` has built in: e.g. for the normal distribution they're `rnorm()`, `pnorm()`, `dnorm()`, `qnorm()`. Each distribution has its own set of parameters (so e.g. `pnorm()` is `pnorm(x,mean=0,sd=1)`). To see which distributions are available in the `base` package; check `?distributions`. See Figure 2.
+These four functions exist for each of the distributions `R` has built in: e.g. for the normal distribution they're `rnorm()`, `pnorm()`, `dnorm()`, `qnorm()`. Each distribution has its own set of parameters (so e.g. `pnorm()` is `pnorm(x,mean=0,sd=1)`). See Figure 2 for a graphical illustration of the four functions.To see which distributions are available in the `base` package; check `?distributions`. 
 
 
 
 ```{r,fig=TRUE,echo=FALSE, fig.cap = "Results of `rbinom`", fig.height = 3}
 par(mar = c(4.0,4.0,0.5,2))
-plot(factor(rbinom(200,size=12,prob=0.1)),xlab="# of successes",
-     ylab="# of trials out of 200")
+set.seed(1)
+plot(factor(rbinom(5000,size=12,prob=0.5)), xlab="# of successes", 
+     ylab="# of trials out of 5000")
+
 ``` 
 
 
@@ -137,6 +134,11 @@ arrows(qnorm(P,mu,sd),P, qnorm(P,mu,sd), 0, length = 0.1, col = 2)
 ```{r,echo=FALSE,eval=FALSE}
 set.seed(1001); rbinom(8,size=10,prob=0.2)
 ``` 
+
+**Exercise 1**:
+For the binomial distribution with 10 trials and a success probability
+of 0.2:
+
 - Pick 8 random values and sort them into increasing order
 (if you `set.seed(1001)` beforehand, you should get $X=0$
 (twice), $X=2$ (4 times), and $X=4$ and $X=5$ (once each)).
@@ -371,29 +373,11 @@ In statistical models, you often estimate the mean effect of a given treatment. 
 
 Use the following pseudo-code:
 1. Generate 10 random deviates from a uniform distribution (choose the range of 0 to 10).
-2. Calculate the mean of those 20 deviates.
+2. Calculate the mean of those 10 deviates.
 3. Calculate the mean of the log-transformed values and transform this mean back the normal scale. 
 4. Explain differences between the two means. 
   + _hint_: make a `log(x)` curve and pick two random points on the x-axis. 
 
-**Exercise 5***:
-try the above exercise again, but this time
-with a gamma distribution instead of an uniform distribution.
-Keep the mean equal to 24.5 and change the
-variance to 100, 25, and 1 (use the information
-that the mean of the gamma distribution is `shape*scale`
-and the variance is `shape*scale^2`).
-Including the results for the exponential
-(which is a gamma with shape=1), make a table
-showing how the (1) true value of
-mean recruitment [calculated by
-numerical integration in `R` either
-using `integrate()` or summing
-over small $\Delta S$] (2) value of
-recruitment at the mean settlement 
-(3) delta-method approximation
-(4,5) proportional error in \#2 and \#3
-change with the variance.
 
 # 3. The method of moments: reparameterizing distributions
 
@@ -451,7 +435,7 @@ points(b1,my_dnbinom(0:max(x),mean=1,var=4),pch=16)
 abline(v=1)
 ``` 
 
-**Exercise 6* **:
+**Exercise 5* **:
 
 Morris (1997) gives a definition of the beta function that
 is different from the standard statistical parameterization.
@@ -516,7 +500,7 @@ random number is zero; otherwise it is a value
 picked out of the appropriate negative binomial
 distribution.
 
-**Exercise 7**:
+**Exercise 6**:
 Check graphically that these functions actually work. For instance, you could compare the results with a negative binomial function with the same mean and variance as the data.
 
 # 5. Compounding distributions
@@ -600,7 +584,7 @@ you can find these answers in the ecological
 and statistical literature if you search hard
 enough.
 
-**Exercise 8***:
+**Exercise 7***:
 generate 10,000 values from
 a gamma-Poisson compounded distribution
 with parameters shape=$k=0.5$, scale=$\mu/k=4/0.5=8$
@@ -630,5 +614,5 @@ are.
 In this exercise we revisit exercise 6 of lab 3.
 In that exercise we had six different datasets each describing a biological phenonmenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
 
-**Exercise 9** Reload the six datasets and choose for each dataset one or two candidate probability distributions.
+**Exercise 8** Reload the six datasets and choose for each dataset one or two candidate probability distributions.
   _hint_: ask yourself a number of questions: Do I have counts (integer) or continuous (real) values? Do I have positive values only or also negative values? 

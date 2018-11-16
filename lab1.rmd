@@ -793,13 +793,6 @@ If you can, try to use `R` commands to construct the vector rather than typing o
 Another useful function for creating matrices is `diag`. `diag(v,n)` creates an $n \times n$ matrix with data
 vector $v$ on its diagonal. So for example `diag(1,5)` creates the $5 \times 5$ *identity matrix*, which has 1's on the diagonal and 0 everywhere else. Try `diag(1:5,5)` and `diag(1:2,5)`; why does the latter produce a warning?
 
-Finally, you can use the `data.entry` function. This function can only edit existing matrices, but for example (try this now!!)
-```{r,eval=FALSE}
-A=matrix(0,nrow=3,ncol=4)
-data.entry(A)
-``` 
-will create `A` as a $3 \times 4$ matrix, and then call up a spreadsheet-like interface in which you can change the values to whatever you need.
-
 ```{r chunk_100, echo = FALSE, results = 'asis'}
 data = rbind(c("\\texttt{matrix(v,nrow=m,ncol=n)}","$m \\times n$ matrix using the values in \\texttt{v}"),
       c("\\texttt{t(A)}","transpose (exchange rows and columns) of matrix \\texttt{A}"),

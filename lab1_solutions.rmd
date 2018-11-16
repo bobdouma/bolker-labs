@@ -907,7 +907,7 @@ matrix(1,nrow=10,ncol=10)
 creates a $10 \times 10$ matrix of ones.
 
 **Exercise 11.1** Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector, to create the following matrix `X`:
-```{r, echo = F,  results="hide"}
+```{r}
 matrix(rep(1:2,4),nrow=2)
 ``` 
 If you can, try to use `R` commands to construct the vector rather than typing out all of the individual values.

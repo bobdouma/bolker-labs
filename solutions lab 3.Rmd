@@ -1,7 +1,7 @@
 ---
-title: "Solutions to lab 3 exercise 6"
+title: "Solutions to lab 3"
 author: "Bob Douma"
-date: "13 November 2017"
+date: "13 November 2018"
 output:
   pdf_document: default
   html_document: default
@@ -38,7 +38,7 @@ sd(a,na.rm=T)/length(na.omit(a))
 ```{r}
 sigma.self = function(x,na.rm=F){
   mean = mean(x,na.rm=na.rm)
-  n = length(na.omit(x))
+  n = length(ifelse(na.rm,na.omit(x),x))
   sd = sqrt(sum((x-mean)^2,na.rm=na.rm)/(n-1))
   return(sd)
 }
@@ -55,12 +55,12 @@ how you got there.
 curve(-(x-5)^2+1,from=0,to=10)
 ``` 
 
-A quadratic functionh $x^2$ has a maximum. or minimum. This maximum/minimum is at $x=0$. To shift the curve to have its maximum at $x=5$, one need to subtract $5$ from the $x$, i.e. $(x-5)^2$. The maximum of this function is at $y=0$, so one need to add $1$ to the function, i.e. $(x-5)^2+1$.
+A quadratic functionh $x^2$ has a maximum. or minimum. This maximum/minimum is at $x=0$. To shift the curve to have its maximum at $x=5$, you need to subtract $5$ from the $x$, i.e. $(x-5)^2$. The maximum of this function is at $y=0$, so one need to add $1$ to the function, i.e. $(x-5)^2+1$.
 
 
 ## Below the solutions to Exercise 6 of Lab 3
 
-1. The first step is to read in the data. The data is stored in different sheet of the file `shapes.xlsx`. Select a sheet, go to `file` and 'save as' and save the sheet as a comma-separated-file (.csv). Beware that if you are using a computer with dutch settings, you may run into problems for two reasons: First, the decimal character is a comma `,` in Dutch while a dot `.` in english. Second the defaul list separator is a semicolon `;` in Dutch while a `,` in English. Check the file that you saved to check the settings of your computer. If this is not correct; go to control panel; to region and language settings; to advanced settings and change the decimal character into a `.`  and the list separator (lijstschijdingsteken) in to a `,`.
+1. The first step is to read in the data. The data is stored in different sheet of the file `shapes.xlsx`. Select a sheet, go to `file` and 'save as' and save the sheet as a comma-separated-file (.csv). Beware that if you are using a computer with dutch settings, you may run into problems for two reasons: First, the decimal character is a comma `,` in Dutch while a dot `.` in english. Second the default list separator is a semicolon `;` in Dutch while a `,` in English. Check the file that you saved to check the settings of your computer. If this is not correct; go to control panel; to region and language settings; to advanced settings and change the decimal character into a `.`  and the list separator (lijstschijdingsteken) in to a `,`.
 
 
 
@@ -69,7 +69,7 @@ setwd("D://...//...//...) # fill in location
 shapes1 = read.csv(shapes1.csv)
 ```
 
-2. After you have read in the data, you can make a plot through `plot(shapes1$y~ shapes1$x)`. Multiple plots can be made through specifying `par(mfrow=c(3,2))`. This will setup the grid, after using `plot` six times, the grid will be filled with plots.
+2. After you have read in the data, you can make a plot, e.g. through `plot(shapes1$y~ shapes1$x)` for dataset 1. Multiple plots can be made through specifying `par(mfrow=c(3,2))`. This will setup the grid, after using `plot` six times, the grid will be filled with plots. Note that all the datasets are different in their specification of the header (names). You can take account of the header name through `header=TRUE` inside the `read.csv` function. Check the datafiles to make sure whether or not there are column headings.
 
 3. Choosing appropriate deterministic functions
 
@@ -90,7 +90,7 @@ shapes1 = read.csv(shapes1.csv)
       What about a negative exponential? $ae^{-bx}$ or a power function $ax^b$
       
       **dataset 6**
-      Species reponse curves are curves that describe the probability of presence as a function of some factor. A good candidate good be a unimodel response curve. You could take the equation of the normal distribution without the scaling constant: e.g.
+      Species reponse curves are curves that describe the probability of presence as a function of an environmental variable. A good candidate good be a unimodel response curve. You could take the equation of the normal distribution without the scaling constant: e.g.
       $a e^{\frac{-(x-\mu)^2}{2\sigma^2}}$
 
 4. See the word file on blackboard "Bestiary of functions.docx"

@@ -348,6 +348,7 @@ library(ggplot2)
                        size = log(val)/2))+
       ylab("Seeds taken")+
       xlab("Seeds available")
+    # or alternatively labs(x="Seeds taken",y="Seeds available")
   
 ```
 
@@ -452,11 +453,10 @@ With `ggplot2` this is possible through the following syntax. Note that there is
 ```{r}
 library(Rmisc)
 sum.data = summarySE(data,measurevar= "frac_taken",groupvars=c("available"))
-pd = position_dodge(0) 
 ggplot(aes(x=available,y=frac_taken),data=sum.data)+ 
   geom_bar(,stat="identity")+
   geom_errorbar(aes(ymin=frac_taken-se, ymax=frac_taken+se),
-                stat="identity", position=pd)
+                stat="identity")
 
 ```
 Make sure that the data reference is in the `ggplot()` function so all other functions such as `geom_bar` and `geom_errobar` make use of the same `data.frame`. 
