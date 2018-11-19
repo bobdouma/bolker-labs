@@ -1,6 +1,6 @@
 ---
 title: "Lab 6"
-author: "Ben Bolker, modified at several places by Bob Douma and Alejandro Morales. Bayesian by Alejandro..."
+author: "Ben Bolker, modified at several places by Bob Douma and Alejandro Morales. Bayesian part by Alejandro Morales Sierra."
 date: "19 October 2018"
 output:
   pdf_document: default
@@ -763,7 +763,7 @@ In this section you practice Bayesian parameter estimation on the same dataset a
   2. Stochastic functions/Probability distributions
 
       **dataset 1**
-      y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous         probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
+      y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
 
       **dataset 2**
       y represents real numbers and only positive numbers occur. The data represents a functional response (intake rate of the predator), and it is likely that you can only measure positive numbers (number of prey items per unit of time).  This implies that we should choose a continuous probability distribution. Within the family of continuous probability distributions, the Gamma and the Lognormal could be taken as candidate distributions because they can only take positive numbers (beware that the Gamma cannot take 0). However, you could try to use a normal as well.
