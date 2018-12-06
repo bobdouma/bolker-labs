@@ -1,6 +1,10 @@
-# bolker-labs
+﻿# bolker-labs
 
-This repository contains modified labs that belong to Bolker's Ecological Modelling and Data Analysis in R. Labs have been modified over the years to increase clarity, make them up-to-date with the most recent developments and match the learning goals of the course "Ecological modelling and Data Analysis in R" https://ssc.wur.nl/Studiegids/Vak/CSA-34306. 
+This repository contains modified labs that belong to Bolker's Ecological Modelling and Data Analysis in R. The original labs can be found at:
+https://ms.mcmaster.ca/~bolker/emdbook/
+
+
+Labs have been modified by several people (Bob Douma, Alejandro Morales Sierra, Wopke van der Werf, Lia Hemerik, Joost van Heerwaarden) over the years to increase clarity, make them up-to-date with the most recent developments and match the learning goals of the course "Ecological modelling and Data Analysis in R" https://ssc.wur.nl/Studiegids/Vak/CSA-34306. 
 
 ----------------------------
 
@@ -27,3 +31,4 @@ This work is licensed under the [Creative Commons Attribution-NonCommercial 4.0 
 ----------------------------
 
 Bob Douma
+bob.douma@wur.nl
