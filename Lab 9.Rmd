@@ -1,7 +1,7 @@
 ---
-title: "Lab 9"
+title: "Lab 9 + GLS and Mixed effect MOdels"
 author: "Bob Douma"
-date: "19 October 2018"
+date: "3 December 2018"
 output: pdf_document
 ---
 
@@ -64,16 +64,16 @@ opt1 = optim(par=par,fn=te,dat=dat)
 4. Apply model selection techniques (Likelihood ratio test, AIC or BIC) to select the most parsimonious model. Are the models nested? Which model is preferred?
 
 # Fitting models with the heterogenous variance 
-It is common to observe in your data that the variance of your data is not constant along $x$. In the above example we observed a decreasing variance with increasing $x$. In case of the Poisson distribution, the relationship between the mean and the variance is fixed through $\lambda$. For other probability distributios with $\geq2$ parameters the variance can be modelled (somewhat) independent of each other. A classic example is the normal distribution with $mu$ equal to the mean of the distribution and $\sigma$ to the square root of the variance. Traditionally, when the variance increases with $x$ log transformations are applied. However, the variance can also be modelled explictly. The purpose of this excercise is to show you give you insight how this can done (by showing a simple but wrong approach), followed by the correct, but canned approach `gls` in `R`.
+It is common to observe in your data that the variance of your data is not constant along $x$. In the above example we observed a decreasing variance with increasing $x$. In case of the Poisson distribution, the relationship between the mean and the variance is fixed through $\lambda$. For other probability distributions with $\geq2$ parameters the variance can be modelled (somewhat) independent of each other. A classic example is the normal distribution with $mu$ equal to the mean of the distribution and $\sigma$ to the square root of the variance. Traditionally, when the variance increases with $x$ log transformations are applied. However, the variance can also be modelled explictly. The purpose of this excercise is to show you give you insight how this can done (by showing a simple but wrong approach), followed by the correct, but canned approach `gls` in `R`.
 
 To illustrate the principle, we generate data from scratch first with constant variance, then we heterogenous variance:
-```{r}
+```{r,eval=F}
 x = seq(1,100,length.out = 100)
 y = 2 + 2 * x + rnorm(100,0,20)
 plot(y~x)
 ```
 
-```{r}
+```{r,echo=F}
 x = seq(1,100,length.out = 100)
 y = 2 + 2 * x + rnorm(100,0,sqrt(20*x^1))
 plot(y~x)
@@ -107,8 +107,8 @@ opt2= optim(par,fn=nll2,dat=dat)
 2*4+2*opt2$value
 
 ```
-3. Now we will apply the function `gls` (from the package `MASS`). Do the values of the `gls.2` correspond to the values that were obtained through the Bolker approach? Look careful at the residual standard error, the equation how `varPower` is fitted and how the data was generated. To fit the models you can type:
-```{r,eval=T}
+3. Now we will apply the function `gls` (from the package `nlme`), see below the R-script. Do the values of the `gls.2` correspond to the values that were obtained through the Bolker approach? To understand the differences, look careful at 1) the residual standard error of the gls (how does this compare to the variance?), 2) the equation of `varPower` (see Zuur), 3) and how the data was generated. To fit the models you can type:
+```{r,eval=T,results='hide'}
 library(nlme)
 gls.1 = gls(y~x, data=dat,method="ML")
 summary(gls.1)
@@ -120,30 +120,83 @@ AIC(gls.1,gls.2)
 ```
 
 
-4. The variance estimates are biased because they are estimated with _maximum likelihood_ and not _restricted maximum likelihood_ (choose `method=REML` instead). With restricted maximumlikelihood you account for the fact that you need to the mean of the data to estimate its variance (i.e. $\sigma^2=\sum_{i=1}^{N}(y_i-\mu)^2$), but that the mean itself is an estimate from the data (i.e. $\bar{y}$) and not the population parameter itself (i.e. $\mu$). Compare the AIC of both models when using `REML`. Which model fits the data better?
+4. The variance estimates are biased because they are estimated with _maximum likelihood_ and not _restricted maximum likelihood_ (`method=REML` is the default in `gls`). With restricted maximumlikelihood you account for the fact that you need estimate the mean from the data. Since the esimated mean will be slightly different than the true mean, the estimated variance is also slightly different from the true variance (i.e. $\sigma^2=\sum_{i=1}^{N}(y_i-\mu)^2$). Thus the mean itself is an estimate from the data (i.e. $\bar{y}$) and not the population parameter itself (i.e. $\mu$). Thus you should fit models with `REML` when applying AIC. Which model fits the data better?
 
-```{r}
-x = rnorm(50000,2,4)
-
-optim.norm = function(pars,x){
-  mean = pars[1]
-  sd = pars[2]
-  nll = -sum(dnorm(x,mean,sd,log=T))
-}
-
-par=c(mean=1,sd=2)
-opt1 = optim(par,optim.norm,x=x)
-
-
-var.ml = (opt1$par[2])^2
-sum((x-mean(x))^2)/length(x)
-
-sum((x-mean(x))^2)/(length(x)-1)
-var(x)
-
-(var.ml-var(x))/var(x)*100
-
-
-```
 
 # Fitting models to nested data. 
+An important assumption of the models we have discussed so far (linear models, generalized linear models and generalized least squares models) is that the observations are independent of each other. This assumptions is often violated in ecological data. The solution for the lack of independence is to model the data with so called `mixed effect models`. Mixed effect models contain a fixed part and a random part (see Zuur for more information). 
+To understand how mixed effect models work, we will generate data ourselves and backfit the coefficients with a mixed effect model:
+
+$$Y_{i,j} = \alpha+\beta x + b_{i}+\epsilon_{j}$$
+with $b_{i} \sim N(0,\sigma_{site})$
+
+with $\epsilon_{j} \sim N(0,\sigma_{res})$
+
+
+We can simulate data as follows: 
+```{r,results='hide'}
+x = runif(200,0,10) # this is the covariate
+sigma_site = 1
+site = rnorm(10,0,sigma_site) # we construct 10 different sites
+id = as.factor(rep(c(1:10),20)) # site id
+sigma_res = 2
+y = 2+ 2*x + site[id] + rnorm(200,0,sigma_res)
+dat= data.frame(x,y,id)
+
+# let's make a plot
+plot(y ~x,col=id)
+``` 
+
+Now let's fit a mixed effect model with a random intercept across sites:
+
+```{r,eval=F,results='hide' }
+library(nlme)
+
+lme.1 = lme(y ~ x, random=~1|id,data=dat)
+summary(lme.1)
+``` 
+
+5. Check the coefficients of the mixed effect model object `lme.1`. Do the values of the random effects make sense? And do the values of the fixed  part make sense?
+
+Let's plot the fitted lines for each site:
+
+```{r,results='hide',eval=F}
+library(ggplot2)
+dat$fit.site = fitted(lme.1,level=1)
+dat$fit.main = fitted(lme.1,level=0)
+
+ggplot(data=dat) + 
+  geom_point(aes(x=x,y=y,colour=id))+
+  geom_line(aes(x=x,y=fit.site,colour=id))+
+  geom_line(aes(x=x,y=fit.main),size=2)
+
+``` 
+
+6. Simulate data when allowing for random slopes across sites. Choose a $\sigma$ for the slopes of 1. Fit a mixed effects model with simulated data now allowing for random variation across slopes. Check the book of Zuur for the syntax. If you get convergence problems, run `ctrl <- lmeControl(opt='optim')`, and add `control=ctrl` to the lme function, i.e. `lme(y~x..,control=ctrl)`.
+```{r,eval=F,results='hide',echo=F}
+
+x = runif(200,0,10) # this is the covariate
+sigma_site = 1
+site = rnorm(10,0,sigma_site) # we construct 10 different sites
+id = as.factor(rep(c(1:10),20)) # site id
+sigma_res = 2
+y = 2+ (2+site[id])*x + site[id] + rnorm(200,0,sigma_res)
+dat= data.frame(x,y,id)
+
+# let's make a plot
+plot(y ~x,col=id)
+
+lme.2 = lme(y ~ x, random=~x|id,data=dat,control=ctrl)
+summary(lme.2)
+
+
+library(ggplot2)
+dat$fit.site = fitted(lme.2,level=1)
+dat$fit.main = fitted(lme.2,level=0)
+
+ggplot(data=dat) + 
+  geom_point(aes(x=x,y=y,colour=id))+
+  geom_line(aes(x=x,y=fit.site,colour=id))+
+  geom_line(aes(x=x,y=fit.main),size=2)
+
+``` 
