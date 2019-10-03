@@ -1,0 +1,44 @@
+\usepackage{tcolorbox}
+\usepackage{tikz}
+\usepackage{graphicx}
+\usetikzlibrary{calc}
+\tcbuselibrary{most}
+
+% Define the colours to match the CSS above
+\definecolor{background}{HTML}{F8F9F9}
+\definecolor{border}{HTML}{006400}
+\definecolor{titlecol}{HTML}{006400}
+
+% Create our custom box
+\newtcolorbox{customBlock}{
+  colback = background,
+  colframe = border,
+  boxsep=5pt,
+  arc=3pt}
+
+\newtcolorbox{excerciseblock}[2]{title=#1}
+
+\newtcolorbox[auto counter,number within=section,
+number freestyle={\noexpand\thesection.\noexpand\arabic{\tcbcounter}},
+]{exercisebox}[2][]{title=Lab~#2~ Exercise \thetcbcounter #1}
+
+
+
+% Create our custom box
+\newtcolorbox{ti}{
+	colback = background,
+	colframe = border,
+	boxsep=0pt,
+	%bottom=0pt,
+	%bottomrule=pt,
+	after skip=0pt,
+	arc=0pt}
+
+\newtcolorbox{body}{
+	colback = background,
+	colframe = border,
+	boxsep=0pt,
+	%top=0pt,
+	%toprule=0pt,
+	before skip=0pt,
+	arc=0pt}
