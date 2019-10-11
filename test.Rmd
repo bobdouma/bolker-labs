@@ -166,9 +166,9 @@ opt1 = optim(fn=NLLfun1,par=c(mu=mu.mom,k=k.mom),hessian=TRUE)
 ```
 
 ## Likelihood surface
-To find the likelihood surface follow the steps below (background information can be found in Bolker Ch. 6).
-```{block2, type = "exercisebox",latex.options="{6}"}
 
+```{block2, type = "exercisebox",latex.options="{6}"}
+To find the likelihood surface, the profiles, and the confidence intervals follow the steps below
 
 For the likelihood surface:
   

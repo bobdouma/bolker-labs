@@ -1,26 +1,31 @@
 ---
 title: 'Analyzing functions: lab 3'
 author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales, Ioannis Baltzakis & Bob Douma 2017
-date: "November 3, 2017"
-geometry: margin=4cm
+date: "October 11, 2019"
+output:
+  bookdown::pdf_book:
+     includes:
+        in_header: 'preamble1.tex'
+  word_document: default
+  html_document:
+    fig_caption: yes
+    fig_height: 4.5
+    fig_width: 5
+    number_sections: yes
+geometry: margin=3cm
 fontsize: 11pt
-output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-This lab will be somewhat shorter in terms of "`R` stuff"
-than the previous labs, because more of the new material
-is algebra and calculus than `R` commands.
+# Learning goals
+In this lab you will learn to analyse mathematical functions in `R`. To do so, you will learn more advanced programming skills such as for-loops, if-else statements and functions. This lab will be somewhat shorter in terms of "`R` stuff" than the previous labs, because more of the new material is algebra and calculus than `R` commands. 
 
-# 1 For loops
+# For loops
 
-When programming your data analysis, you often need to iterate over multiple elements of a collection. These elements could
-be rows in a `data.frame`, datasets inside a `list`, numbers inside a sequence, etc. The iteration usually means that you
-apply the same code over each element of the collection and you don't want to "copy-paste" the code for each element.
-In programming, an iteration over a collection is called a "for loop". A for loop consists of three components:
+When programming your data analysis, you often need to iterate over multiple elements of a collection. These elements could be rows of a `data.frame`, datasets inside a `list`, numbers inside a vector, etc. The iteration usually means that you apply the same code over each element of the collection and you don't want to "copy-paste" the code for each element. Iterating over a collection is called a "for loop" in programming. A for loop consists of three components:
 
 1. A collection over which you want to iterate.
 
@@ -30,7 +35,7 @@ In programming, an iteration over a collection is called a "for loop". A for loo
 
 Imagine that you want to calculate the factorial of 10. The factorial of a number is simply the product of all
 positive numbers smaller or equal than the number you specify (and it is denote with a "!" after the number). 
-For example, the factorial of 3 is $3! = 3 \times 2 \times 1$. A simple way of calculating the factorial of 10 is
+For example, the factorial of 3 is $3! = 3 \times 2 \times 1$. A simple way of calculating the factorial of 10 by using a for loop is:
 
 ```{r}
 result = 1
@@ -39,7 +44,7 @@ for(i in 1:10) {
 }
 ```
 
-In this for loop, the collection is `1:10`, the variable to keep track of the number is `i` and the body of the loop is simply `result = result*i`. This for loop shows a very typical pattern: we want to summarise some collection of numbers
+In this for loop, the collection is `1:10`, the variable to keep track of the number is `i` and the body of the loop is  `result = result*i`. This for loop shows a very typical pattern: we want to summarise some collection of numbers
 into a single number, in this case, `result`. Another typical pattern is when we want to update the elements of a 
 collection. In this case, it is a good practice to "pre-allocate" your output collection before looping. For example,
 
@@ -51,7 +56,7 @@ for(i in 1:10) {
 }
 ```
 
-In thise case, the result of the for loop (`y`) is a collection of 10 elements where each element is the exponential
+In this case, the result of the for loop (`y`) is a collection of 10 elements where each element is the exponential
 transformation of the element in x with the same position. Note that we specify before the loop that `y` will have 10
 elements. Although this is not strictly required in this case, it is a good practice both to avoid errors and to make
 your code run faster.
@@ -74,9 +79,11 @@ However, there may be situations where you really cannot avoid a for loop. For e
 datasets and need to perform the same analysis on each dataset, you could store your datasets in a list and use a for
 loop to iterate over the different datasets.
 
-**Exercise 1.1**: Calculate the logarithm of the sequence 1:10, using first a for loop and then without a for loop.
+```{block2, type = "exercisebox",latex.options="{3}"}
+Calculate the logarithm of the sequence 1:10, using first a for loop and then without a for loop.
+``` 
 
-# 2 Missing values (NA)
+# Missing values (NA)
 
 Missing values in data collection and analysis deserve special attention. You can get missing values during you data collection for various reasons, e.g. you missed the opportunity to take a measurement, you lose one of the replicates due to contamination, you wrote down a wrong value, or you even lost some of your data.
 
@@ -88,7 +95,7 @@ Many of the functions that read data in `R` have a parameter (otherwise called a
 myData <- read.csv("you-data-file", na.strings=c("*","-") )
 ```
 
-In this case we instructed `R`, with the argument **na.strings=c("\*","\_")** to read our file, and substitute any occurence of an asterisk (\*) or a hyphen(-) with an `NA` symbol.
+In this case we instructed `R`, with the argument **`na.strings=c("\*","\_")`** to read our file, and substitute any occurence of an asterisk (\*) or a hyphen(-) with an `NA` symbol.
 
 The `R` languages has a special way of representing missing values in a dataset. A missing
 value is denoted with the symbol `NA` which stands for "**N**ot **A**vailable". By default, 
@@ -140,13 +147,16 @@ By the way, you should not confuse `NA` with `NaN` which stands for "**N**ot **A
 is the result of either an expression with indeterminate form (e.g. `0/0` or `Inf/Inf`) or when a function 
 is evaluated outside of its valid domain (e.g. `sqrt(-1)` or `log(-1)`).
 
-**Exercise 2.1**: Given some data created from the following code `c(25,1,10,89, NA, NA)`, 
+```{block2, type = "exercisebox",latex.options="{3}"}
+Given some data created from the following code `c(25,1,10,89, NA, NA)`, 
 calculate the mean value and the standard error of this mean ($s.e.m. = \sigma/\sqrt{n}$, where $\sigma$ is the standard deviation and $n$ is the amount of data) by ignoring missing values.
+``` 
 
-# 3 How to make a function
 
-When you want to repeat some calculations for different data, it is best
-to put the data inside a function. A function is defined by 4 elements
+# Making a function
+
+When you want to repeat a calculation for different data, it is best
+to put the data inside a function. `R` consists of many built-in functions, but sometimes you need to do a calculation that is not available in `R`. A function is defined by 4 elements
 
 1. The name of the function. For example, in `R` there is a function that calculates
 the arithmetic mean of a vector of data and its name is `mean`. You should make sure that
@@ -162,16 +172,16 @@ two have default values.
 3. The body of the function. This is the actual code that the function will execute. The real `mean`
 function in R has some crytpic body that requires advanced knowledge of the language to understand.
 However, a more "naive" implementation of `mean` could be `sum(x)/length(x)`. Note that the body
-of a function can consiste of multiple lines.
+of a function can consist of multiple lines.
 
 4. The return value of the function. This is the result of applying the function on the arguments. By default, the result
 of the last line code in the body of the function is the return value of the function. You can also return
-from the at any point in the body with the function `return()` with the variable you want to return inside.
+from any point in the body with the function `return()` with the variable you want to return inside.
 
 The `R` language specifies a particular syntax on how to build a function. For example, a `naive_mean` could be defined as:
 
 ```{r}
-naive_mean = function(x, na.rm = TRUE) {
+naive_mean = function(x, na.rm = FALSE) {
   total = sum(x, na.rm = na.rm)
   n = length(x[!is.na(x)])
   result = total/n
@@ -202,9 +212,20 @@ naive_mean(x, na.rm = TRUE)
 For convenience, default parameters are specified by name rather than position. However we could have also said `naive_mean(x,TRUE)` or even `naive_mean(x = x, na.rm = TRUE)`. All these forms of calling functions are OK, whether you
 choose one style or another is a matter of taste.
 
-**Exercise 3.1**: Build a function to calculate the standard deviation ($\sigma = \sqrt{\frac{\sum_{i = 1}^n\left(x_i - \bar x\right)^2}{n - 1}}$). Test your function with some data that includes missing values.
 
-# 4. Numerical explorations: plotting curves
+```{block2, type = "exercisebox",latex.options="{3}"}
+Build a function to calculate the standard deviation ($\sigma = \sqrt{\frac{\sum_{i = 1}^n\left(x_i - \bar x\right)^2}{n - 1}}$). Test your function with some data that includes missing values, and compare to the built in function for the standard deviation `sd`.
+``` 
+
+Suprisingly the base `R` does not have a built in function for the standard error of the mean (s.e.m.). The sem is defined as $\frac{\sigma}{\sqrt(n)}$. 
+
+```{block2, type = "exercisebox",latex.options="{3}"}
+Make you own function for the sem and use your own home-made function of the standard deviation for that.
+``` 
+
+As you see you can call functions inside functions. It is recommended to divide the work you want to do into little functions that each carry out a specific task, and then combine those functions into a larger function that combines these tasks. This facilitates error checking.
+
+# Numerical explorations: plotting curves
 
 Here are the `R` commands used to generate Figure 3.2 in the book (p 74).  They
 just use `curve()`, with `add=FALSE` (the default,
@@ -244,13 +265,7 @@ exp2_vec = 2*exp(-xvec)
 plot(xvec,exp1_vec,type="l",ylim=c(0,2),ylab="")
 lines(xvec,exp2_vec,lty=4)
 ``` 
-or, since both exponential vectors are the
-same length, we could `cbind()` them
-together and use `matplot()`:
-```{r, eval=FALSE}
-matplot(xvec,cbind(exp1_vec,exp2_vec),type="l",
-        ylab="")
-``` 
+
 Finally, if you have a more complicated function
 you could use `sapply()` to call this function
 along with appropriate parameter values.
@@ -269,12 +284,15 @@ of doing things the other way arises when
 you want to keep the vectors around to do
 other calculations with them.
 
-**Exercise 4.1** *: Construct a curve
+```{block2, type = "exercisebox",latex.options="{3}"}
+Construct a curve
 that has a maximum at ($x=5$, $y=1$).  Write the
 equation, draw the curve in `R`, and explain
 how you got there.
+```
 
-# 4.1 A quick digression: `ifelse()` for piecewise functions
+
+# A quick digression: `ifelse()` for piecewise functions
 
 The `ifelse()` command in `R` is useful for constructing
 piecewise functions.  Its basic syntax is
@@ -321,7 +339,7 @@ go "if $x$ is less than 2, set $y$ to 1; otherwise
 ($x \ge 2$), if $x$ is less than 4 (i.e. $2 \le x<4$), set $y$ to 3;
 otherwise ($x \ge 4$), set $y$ to 5".
 
-# 5 Evaluating derivatives in `R`
+# Evaluating derivatives in `R`
 `R` can evaluate derivatives, but it is not
 very good at simplifying them.
 In order for `R` to know that you really
@@ -367,20 +385,22 @@ version of `D()` that is useful for incorporating
 the results of differentiation into functions:
 see the help page.
 
-# 6 Getting familiar with a bestiary of functions
+# Getting familiar with a bestiary of functions
 
 The models that we will be fitting to data are composed of a deterministic component and a stochastic component. The deterministic component describes the expected pattern in absence of any randomness. You are not restricted to linear functions (as in linear regression) but you can choose among different functions. 
 
-In this exercise you will get familiar with a number of those functions. You will read in a dataset, make plots of six different datasets and choose one (preferably more) appropriate functions for each dataset. Next, you will explore the properties of the selected functions after which you will choose appropriate parameter values through eyeballing so you get a reasonable fit between the data and the choosen function.
+Remember that functions can be purely phenomological or mechanistic (see p.21 of Bolker). Bolker mentions the following non-linear functions in his chapter about a bestiary of functions: Hyperbolic, Michaelis-Menten (=Monod or Holling type II), Holling type III, Holling type IV, negative exponential, monomolecular (=limited exponential growth), Ricker, logistic, power law, von Bertalanffy, Sheppard, Hassell, non-rectangular hyperbola. 
 
-Remember that you can choose functions that are purely phenomological or mechanistic (see p.21 of Bolker). Bolker mentions the following non-linear functions in his chapter about a bestiary of functions: Hyperbolic, Michaelis-Menten (=Monod or Holling type II), Holling type III, Holling type IV, negative exponential, monomolecular (=limited exponential growth), Ricker, logistic, power law, von Bertalanffy, Sheppard, Hassell, non-rectangular hyperbola. 
+```{block2, type = "exercisebox",latex.options="{3}"}
+To get familiar with a number of those functions, you are asked to take a number of steps: read in a dataset, make plots of six different datasets and choose one (preferably more) appropriate functions for each dataset. Next, you will explore the properties of the selected functions after which you will choose appropriate parameter values through eyeballing so you get a reasonable fit between the data and the choosen function.
+
 
 
 A pseudocode that implements this idea:
 
 1. Read the datasets that are in `shapes.xlsx`. Save each sheet as `.csv` file and read it in.
 
-2. Plot the datasets in different graphs (_hint_: `par(mfrow=c(..,..)`, and `plot`))
+2. Plot the datasets in different graphs in a panel plot (_hint_: `par(mfrow=c(..,..)`, and `plot`))
 
 3. For at least three plots, choose (at least) two appropriate functions based on the type of data or the shape of the data.
 
@@ -404,6 +424,9 @@ A pseudocode that implements this idea:
 5. Choose appropriate parameter values through eyeballing so that the chosen curves more or less match the data. Eyeballing means that you knowledge on the effect of parameter values on the shape of the function (see question 4). Later we will use likelihood methods to estimate the parameter values. 
 
 6. Time permitting repeat subquestions 3-5 for the other three datasets.  
+
+```  
+  
   
 ```{r, eval=F, echo=F}
 set.seed(101)

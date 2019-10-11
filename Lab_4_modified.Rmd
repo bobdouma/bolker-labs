@@ -1,10 +1,19 @@
 ---
-title: "Lab 4: probability distributions, averaging and Jensen's inequality"
-author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales & Bob Douma 2017
-date: "November 7, 2017"
-geometry: margin=4cm
+title: "Lab 4: Probability distributions"
+author: \copyright 2005 Ben Bolker, modified at some places by Alejandro Morales & Bob Douma 2019
+date: "October 11, 2019"
+output:
+  bookdown::pdf_book:
+     includes:
+        in_header: 'preamble1.tex'
+  word_document: default
+  html_document:
+    fig_caption: yes
+    fig_height: 4.5
+    fig_width: 5
+    number_sections: yes
+geometry: margin=3cm
 fontsize: 11pt
-output: pdf_document
 ---
 
 ```{r setup, echo=FALSE}
@@ -12,10 +21,10 @@ library(knitr)
 opts_chunk$set(tidy.opts=list(width.cutoff=5), tidy = TRUE)
 ```
 
+# Learning goals
+This lab has two goals. First, to make you familiar with the technicalities of stochastic distributions in `R`. In particular, how to generate values from probability distributions and how to make your own probability distribution  (section 2-6). The second part helps you practicing with probability distributions on different types of data. Under time constraints, make sure that you make at least the exercises in section 2, 3 and 7. 
 
-This lab has two parts. A part to make you familiar with the technicalities of stochastic distributions in `R`: how to generate values from probability distributions; how to make your own probability distribution etc (section 1-5), and a part (section 6) to help you practicing with probability distributions on different types of data.  Under time constraints, make sure that you make at least the exercise in section 1 and section 6. 
-
-# 1. Random distributions in `R`
+# Random distributions in `R`
 `R` knows about lots of probability distributions.  For each, it
 can generate random numbers drawn from the distribution ("random numbers"); compute the cumulative distribution function and the probability distribution function; and compute the quantile function, which gives the
 $x$ value such that $\int_0^x P(x) \, dx$ (area under the curve from 0 to $x$) is a specified value, such as 0.95 (think about "tail areas" from standard statistics).
@@ -28,17 +37,17 @@ distribution with parameters `size` (total number of draws) and
 `p` (probability of success on each draw).  
 You can give different parameters for each draw.
 For example:
-```{r,eval=FALSE}
-rbinom(10,size=8,prob=0.5)
-rbinom(3,size=8,prob=c(0.2,0.4,0.6))
-``` 
+  ```{r,eval=FALSE}
+  rbinom(10,size=8,prob=0.5)
+  rbinom(3,size=8,prob=c(0.2,0.4,0.6))
+  ``` 
 Figure 1 shows the result of drawing 200 values from a binomial distribution with $N=12$ and $p=0.5$ and
 plotting the results as a `factor` (with 5000 draws we don't have to worry about any of the 13 possible outcomes getting missed and excluded from the plot): 
-```{r,eval=FALSE}
-set.seed(1)
-plot(factor(rbinom(5000,size=12,prob=0.5)), xlab="# of successes", 
-     ylab="# of trials out of 200")
-``` 
+  ```{r,eval=FALSE}
+  set.seed(1)
+  plot(factor(rbinom(5000,size=12,prob=0.5)), xlab="# of successes", 
+       ylab="# of trials out of 200")
+  ``` 
 
 - `dbinom(x,size,prob)` gives the value of the probability of getting excactly $x$ successes based on the probability distribution. For a continous distribution, the analogous function would compute the probability density function (pdf). Since the binomial is discrete, `x` has to be an integer, and the pdf is just the probability of getting that many successes; if you try `dbinom` with a non-integer `x`, you'll get zero and a warning.
 
@@ -60,46 +69,6 @@ plot(factor(rbinom(5000,size=12,prob=0.5)), xlab="# of successes",
 
 ``` 
 
-
-<!-- ```{r,echo=FALSE,fig.cap="`R` functions for an arbitrary distribution `dist`, showing density function (`ddist`), cumulative distribution function (`pdist`), quantile function (`qdist`), and random-deviate function (`rdist`).", fig.height = 3.5} -->
-<!-- sh = 4 -->
-<!-- textsize = 1.2 -->
-<!-- op=par(mfrow=c(1,2),mar=c(5.1,5.5,0,0.5)) -->
-<!-- curve(dgamma(x,shape=sh),from=0,to=20,ylab="",lwd=2,axes=FALSE) -->
-<!-- axis(side=1,labels=FALSE) -->
-<!-- axis(side=2,labels=FALSE) -->
-<!-- box() -->
-<!-- xvec = seq(0,5,length=100) -->
-<!-- polygon(c(xvec,rev(xvec)),c(rep(0,length(xvec)),dgamma(rev(xvec),shape=sh)),col="gray",border=NA) -->
-<!-- curve(dgamma(x,shape=sh),from=0,to=20,lwd=2,add=TRUE) -->
-<!-- abline(v=5,lty=3) -->
-<!-- mtext(side=1,line=1.8,at=5,expression(x[0]),cex=textsize) -->
-<!-- abline(h=dgamma(5,shape=sh),lty=2,lwd=2) -->
-<!-- mtext(side=2,at=dgamma(5,shape=sh),las=1,expression(ddist(x[0])), -->
-<!--       line=1.8,cex=textsize) -->
-<!-- text(10,0.1,expression(pdist(x[0])),cex=textsize,col="darkgray") -->
-<!-- mtext(side=2,at=0.0,adj=0,"Probability density",cex=textsize,line=3.5) -->
-<!-- set.seed(1001) -->
-<!-- points(rgamma(10,shape=sh),rep(0,10),cex=1.5) -->
-<!-- text(11.7,0.03,"rdist(10)",adj=0,cex=textsize) -->
-<!-- arrows(10.8,0.023,6.6,0.008,lwd=2) -->
-<!-- curve(pgamma(x,shape=sh),from=0,to=20,ylab="",lwd=2,axes=FALSE) -->
-<!-- axis(side=1,labels=FALSE) -->
-<!-- axis(side=2,labels=FALSE) -->
-<!-- box() -->
-<!-- abline(v=5,lty=3) -->
-<!-- mtext(side=1,line=1.8,at=5,expression(x[0]),cex=textsize) -->
-<!-- abline(h=pgamma(5,shape=sh),lty=2,lwd=2) -->
-<!-- mtext(side=2,at=pgamma(5,shape=sh),las=1,expression(pdist(x[0])), -->
-<!--       line=1.8,cex=textsize) -->
-<!-- abline(v=qgamma(0.95,shape=sh),lty=4,lwd=2) -->
-<!-- mtext(side=2,at=0.95,las=1,0.95, -->
-<!--       line=par("mgp")[2],cex=textsize) -->
-<!-- segments(par("usr")[1],0.95,qgamma(0.95,shape=sh),0.95,lty=4,lwd=2) -->
-<!-- mtext(side=1,at=qgamma(0.95,shape=sh),text="qdist(0.95)",line=1.8, -->
-<!--       cex=textsize,adj=0.1) -->
-<!-- mtext(side=2,at=-0.05,adj=0,"Cumulative distribution",cex=textsize,line=3.5) -->
-<!-- ``` -->
 
 ```{r, echo=FALSE,fig.cap="`R` functions for the Normal distribution, showing probability density function (`dnorm`), and cumulative distribution function (`pnorm`). Random samples are drawn  proportionally to the probability density function with `rnorm` and quantiles are calculated with by inverting the cumulative distribution function with `qnorm`.", fig.height = 5}
 par(mfrow = c(2,2), mar = c(2.5,4,2.5,1), mgp = c(3,1,0), las = 1, xaxs = "i", yaxs = "i")
@@ -135,7 +104,7 @@ arrows(qnorm(P,mu,sd),P, qnorm(P,mu,sd), 0, length = 0.1, col = 2)
 set.seed(1001); rbinom(8,size=10,prob=0.2)
 ``` 
 
-**Exercise 1**:
+```{block2, type = "exercisebox",latex.options="{4}"}
 For the binomial distribution with 10 trials and a success probability
 of 0.2:
 
@@ -145,22 +114,20 @@ of 0.2:
 
 - Calculate the probabilities of getting 3, 4, or 5
 successes first by hand (See Ch.4) and check it with the computer. Answer: 
-```{r,echo=FALSE}
-dbinom(3:5,size=10,prob=0.2)
-``` 
 
 - Calculate the probability of getting 5 or more
 successes.
-Answer: 
+
+``` 
+
+Answers are respectively:
+```{r,echo=FALSE}
+dbinom(3:5,size=10,prob=0.2)
+``` 
 ```{r,echo=FALSE}
 pbinom(4,size=10,prob=0.2,lower.tail=FALSE)
 ``` 
 
-- What tail values would you use to test against the (two-sided)
-null hypothesis that `prob`$=0.2$ at the 95% level? (Use `qbinom()` to get the answer,
-and use `pbinom(0:10,size=10,prob=0.2)` 
-and `pbinom(0:10,size=10,prob=0.2,lower.tail=FALSE)` to check that your
-answer makes sense.
 
 You can use the `R` functions to test your understanding of
 a distribution and make sure that random draws match up
@@ -264,42 +231,15 @@ those values as `b1` and re-use
 them to make sure the theoretical
 values end up in the right place.)
 
-**5.** A few alternative ways to do this plot would be:
-
-    5.1. `plot(factor(x)); points(b1,10000*dbinom(0:12,prob=p,size=N))` 
-(plots the number of observations without rescaling and
-scales the probability distribution to match);
-
-    5.2. `plot(table(x)/10000); points(0:12,dbinom(0:12,prob=p,size=N))` 
-Plotting a table does a plot with `type="h"` (high
-density), which plots a vertical line for each value.
-I think it's not quite as pretty as the barplot, but
-it works.
-Unlike factors, tables can be scaled numerically,
-and the lines end up at the right numerical locations,
-so we can just use `0:12` as the $x$ locations
-for the theoretical values.
-
-    5.3. You could also draw a histogram:
-since histograms were really designed
-continuous data you have to make sure the
-breaks occur in the right place (halfway
-between counts):
-
-```{r,eval=FALSE}
-h = hist(x,breaks=seq(-0.5,12.5,by=1),col="gray",
-       prob=TRUE)
-points(0:12,dbinom(0:12,prob=p,size=N))
-```
 
 Doing the equivalent plot for continuous distributions is actually somewhat easier, since you don't have
 to deal with the complications of a discrete distribution: just use `hist(...,prob=TRUE)` to show the
 sampled distribution (possibly with `ylim` adjusted for the maximum of the theoretical density distribution) and `ddist(x,[parameters],add=TRUE)` to add the theoretical curve (e.g.: `curve(dgamma(x,shape=2,scale=1,add=FALSE))`).
 
-**Exercise 2***:
+```{block2, type = "exercisebox",latex.options="{4}"}
 Pick 10,000 negative binomial
 deviates with $\mu=2$, $k=0.5$
-(using `rnbinom()`).
+(using `rnbinom()`). In `rbnbinom()` $\mu$ = `mu` and $k$ = `size`.
 Pick one of the ways above to draw
 the distribution.  
 Check that the mean and variance
@@ -307,7 +247,9 @@ agree reasonably well with the theoretical values.
 Add points representing
 the theoretical distribution to the plot.
 
-# 2. Averaging distributions
+``` 
+
+# Averaging distributions
 
 Suppose we have a (tiny) data set; we can organize it in two different ways, in standard long format or in tabular form:
 ```{r}
@@ -331,14 +273,18 @@ which in `R` would be `sum(prob*5:8)` or more generally
 vals = as.numeric(names(prob))
 sum(prob*vals)
 ``` 
-(you could also get the values
-by `as.numeric(levels(prob))`,
-or by `sort(unique(dat))`).
+
+`names` extracts the names of the vector and `as.numeric` transform characters to numbers.
+You could also get the values by `as.numeric(levels(prob))`, or by `sort(unique(dat))`.
 
 However, `mean(prob)` or `mean(tabdat)` is just plain wrong (at least, I can't think of a situation where
 you would want to calculate this value). 
 
-**Exercise 3:** figure out what it means that `mean(tabdat)` equals `r mean(tabdat)`.
+```{block2, type = "exercisebox",latex.options="{4}"}
+Figure out what it means that `mean(tabdat)` equals `r mean(tabdat)`.
+
+``` 
+
 
 Going back the other way, from a table to raw values, we can use
 the `rep()` function to repeat values an appropriate number of times.
@@ -360,7 +306,7 @@ will recover our original data (although not in the original
 order) by repeating each element of `vals`
 the correct number of times.
 
-## 2.1. Jensen's inequality
+## Jensen's inequality
 
 Jensen's inequality states the following: Suppose 
 you have a number of values, $x$, with a mean $\bar{x}$, and a non-linear 
@@ -368,18 +314,25 @@ function $f(x)$. Then the mean of $f(x)$ is not equal to $f(\bar{x})$.
 
 Jensen's inequality can be important in a number of cases. The first one is mentioned in Ch. 4 (page 104) how variability can change the mean behaviour of a system (damselfish). Another example where Jensen's inequality kicks in is when transforming your data. Data-transformations are commonly applied to get normally distributed errors. 
 
-**Exercise 4**:
-In statistical models, you often estimate the mean effect of a given treatment. Find out what the effect of Jensen's inequality is on a series of log-tranformed datapoints with respect to the estimated mean.
+In statistical models, you often estimate the mean effect of a given treatment. 
+
+```{block2, type = "exercisebox",latex.options="{4}"}
+Find out what the effect of Jensen's inequality is on a series of log-tranformed datapoints with respect to the estimated mean.
 
 Use the following pseudo-code:
 1. Generate 10 random deviates from a uniform distribution (choose the range of 0 to 10).
 2. Calculate the mean of those 10 deviates.
-3. Calculate the mean of the log-transformed values and transform this mean back the normal scale. 
-4. Explain differences between the two means. 
-  + _hint_: make a `log(x)` curve and pick two random points on the x-axis. 
+3. Plot the function $\log(x)$ with curve on the range from 0-10, and plot your numbers onto it
+4. Calculate the mean of the log-transformed values and transform this mean back the normal scale, and compare to the mean calculated at 1. 
+5. PLot the means with `abline(h=...)` if you want to draw a horizontal line or `abline(v=...)` to draw a vertical line.
+6.Explain differences between the two means. 
+
+```
+
+This exercise shows that it is usually a good idea to leave variables untransformed when estimating the properties from this data.  
 
 
-# 3. The method of moments: reparameterizing distributions
+# The method of moments: reparameterizing distributions
 
 In the chapter, I showed how to use the *method of moments*
 to estimate the parameters of a distribution by setting the
@@ -435,8 +388,7 @@ points(b1,my_dnbinom(0:max(x),mean=1,var=4),pch=16)
 abline(v=1)
 ``` 
 
-**Exercise 5* **:
-
+```{block2, type = "exercisebox",latex.options="{4}"}
 Morris (1997) gives a definition of the beta function that
 is different from the standard statistical parameterization.
 The standard parameterization is
@@ -447,13 +399,19 @@ whereas Morris uses
 $$
 \mbox{Beta}(x|P,\theta) = \frac{\Gamma(\theta)}{\Gamma(\theta P)\Gamma(\theta (1-P))} x^{\theta P-1} (1-x)^{\theta(1-P)-1}.
 $$
-Find expressions for $P$ and $\theta$ in terms of $a$ and $b$
-and vice versa (use pen and paper). Explain why you might prefer Morris's parameterization. Define a new set of functions that generate random numbers from the beta distribution (`my_rbeta`) and calculate the density function (`my_dbeta`) in terms of $P$ and $\theta$. Generate a histogram from this distribution
-and draw a vertical line showing the mean of the distribution.
 
-# 4. Creating new distributions
+  1. Find expressions for $P$ and $\theta$ in terms of $a$ and $b$
+and vice versa (use pen and paper). 
+  2. Explain why you might prefer Morris's parameterization. 
+  3. Define a new set of functions that generate random numbers from the beta distribution (`my_rbeta`) and calculate the density function (`my_dbeta`) in terms of $P$ and $\theta$. 
+  4. Generate a histogram from this distribution
+and draw a vertical line showing the mean of the distribution. Vertical lines can be drawn by using `abline(v=...)`
 
-## 4.1. Zero-inflated distributions
+```
+
+# Creating new distributions
+
+## Zero-inflated distributions
 The general formula for the probability distribution of
 a zero-inflated distribution, with an underlying
 distribution $P(x)$ and a zero-inflation probability
@@ -500,10 +458,12 @@ random number is zero; otherwise it is a value
 picked out of the appropriate negative binomial
 distribution.
 
-**Exercise 6**:
+```{block2, type = "exercisebox",latex.options="{4}"}
 Check graphically that these functions actually work. For instance, you could compare the results with a negative binomial function with the same mean and variance as the data.
 
-# 5. Compounding distributions
+```
+
+# Compounding distributions
 
 The key to compounding distributions in `R` is
 that the functions that generate random deviates
@@ -584,7 +544,7 @@ you can find these answers in the ecological
 and statistical literature if you search hard
 enough.
 
-**Exercise 7***:
+```{block2, type = "exercisebox",latex.options="{4}"}
 generate 10,000 values from
 a gamma-Poisson compounded distribution
 with parameters shape=$k=0.5$, scale=$\mu/k=4/0.5=8$
@@ -609,10 +569,14 @@ and variance
 to see how different the shapes of the distributions
 are.
 
+```
 
-# 6. Choosing probability distributions 
-In this exercise we revisit exercise 6 of lab 3.
-In that exercise we had six different datasets each describing a biological phenonmenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
+# Choosing probability distributions 
+In this exercise we revisit exercise 8.1 of lab 3. In that exercise we had six different datasets each describing a biological phenonmenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
 
-**Exercise 8** Reload the six datasets and choose for each dataset one or two candidate probability distributions.
+```{block2, type = "exercisebox",latex.options="{4}"}
+Reload the six datasets and choose for each dataset one or two candidate probability distributions.
   _hint_: ask yourself a number of questions: Do I have counts (integer) or continuous (real) values? Do I have positive values only or also negative values? 
+  
+```  
+
