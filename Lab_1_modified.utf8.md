@@ -24,13 +24,7 @@ fontsize: 11pt
 ---
 
 
-```{r setup, include=FALSE}
-#knitr:yuh5:opts_chunk$set(echo = TRUE)
-#knitr::opts_chunk$set(error = TRUE)
-options(tinytex.verbose = TRUE)
-if(!requireNamespace("kableExtra")) install.packages("kableExtra")
-library(kableExtra)
-```
+
 
 # Learning outcomes
 The aim of this tutorial is to learn the basics of `R`. After completing the tutorial you will be able to:
@@ -47,9 +41,7 @@ The aim of this tutorial is to learn the basics of `R`. After completing the tut
 
 6. Work with the most common data types in `R` (vectors, matrices, lists and data frames)
 
-```{r eval=F,echo=F}
-setwd("C:/Users/douma002/OneDrive - WageningenUR/Education/CSA-34306 Ecological Models and Data in R/2019-2020/labs/bolker-labs")
-```
+
 
 
 # How to use this tutorial
@@ -102,13 +94,15 @@ from within `R` using the `Packages` menu, or the `install.packages` command.
 
 You may be able to install new packages from a menu within `R`. Type and it will installe the package `ggplot2` that you will use in the next tutorial.
 
-```{r,eval=FALSE,df-drop-2, class.source='bad-code'}
+
+```{.r .bad-code}
 install.packages("ggplot2")
 ```
 
 (for example --- this installs the `ggplot2` package). You can install more than one package at a time:
 
-```{r,eval=FALSE}
+
+```r
 install.packages(c("ggplot2","nlme"))
 ```
 
@@ -116,48 +110,66 @@ install.packages(c("ggplot2","nlme"))
 
 Some of the important functions and packages (collections of functions) for statistical modeling and data analysis are summarized in Table 2. Venables and Ripley (2002) give a good practical (although somewhat advanced) overview, and you can find a list of available packages and their contents at CRAN, the main `R` website (http://www.cran.r-project.org --- select a mirror site near you and click on `Package sources`). For the most part, we will not be concerned here with this side of `R`.
 
-```{r, echo = FALSE, results = 'asis'}
-data = rbind(c("\\texttt{aov}, \\texttt{anova}", "Analysis of variance or deviance"),
-       c("\\texttt{lm}", "Linear models (regression, ANOVA, ANCOVA)"),
-       c("\\texttt{glm}", "Generalized linear models (e.g. logistic, Poisson regression)"),
-       c("\\texttt{gam}", "Generalized additive models (in package \\texttt{mgcv})"),
-       c("\\texttt{nls}", "Fit nonlinear models by least-squares"),
-       c("\\texttt{lme}, \\texttt{nlme},\\texttt{lmer}, \\texttt{glmer}", "Linear, generalized linear, and nonlinear mixed-effects models"),
-       c("","(repeated measures, block effects, spatial models) in packages"),
-       c("","\\texttt{nlme} and \\texttt{lme4}"),
-       c("\\texttt{boot}","Package: bootstrapping functions"),
-       c("\\texttt{splines}","Package: nonparametric regression (more in packages \\texttt{fields},"),
-       c("","\\texttt{KernSmooth}, \\texttt{logspline}, \\texttt{sm} and others)"),
-       c("\\texttt{princomp}, \\texttt{manova}, \\texttt{lda}, \\texttt{cancor}","Multivariate analysis (some in package \\texttt{MASS}; also see packages"),
-       c("","\\texttt{vegan}, \\texttt{ade4})"),
-       c("\\texttt{survival}", "Package: survival analysis"),
-       c("\\texttt{tree}, \\texttt{rpart}","Packages: tree-based regression"))
-kable(data, caption = "A few of the functions and packages in `R` for statistical modeling and data analysis. There are \\emph{many} more, but you will have to learn about them somewhere else.", col.names = c("Function","Definition and packages"), format="latex", booktabs=TRUE, escape = F) %>% 
- kable_styling(latex_options=c("scale_down"))
-```
+\begin{table}
+
+\caption{(\#tab:unnamed-chunk-3)A few of the functions and packages in `R` for statistical modeling and data analysis. There are \emph{many} more, but you will have to learn about them somewhere else.}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{ll}
+\toprule
+Function & Definition and packages\\
+\midrule
+\texttt{aov}, \texttt{anova} & Analysis of variance or deviance\\
+\texttt{lm} & Linear models (regression, ANOVA, ANCOVA)\\
+\texttt{glm} & Generalized linear models (e.g. logistic, Poisson regression)\\
+\texttt{gam} & Generalized additive models (in package \texttt{mgcv})\\
+\texttt{nls} & Fit nonlinear models by least-squares\\
+\addlinespace
+\texttt{lme}, \texttt{nlme},\texttt{lmer}, \texttt{glmer} & Linear, generalized linear, and nonlinear mixed-effects models\\
+ & (repeated measures, block effects, spatial models) in packages\\
+ & \texttt{nlme} and \texttt{lme4}\\
+\texttt{boot} & Package: bootstrapping functions\\
+\texttt{splines} & Package: nonparametric regression (more in packages \texttt{fields},\\
+\addlinespace
+ & \texttt{KernSmooth}, \texttt{logspline}, \texttt{sm} and others)\\
+\texttt{princomp}, \texttt{manova}, \texttt{lda}, \texttt{cancor} & Multivariate analysis (some in package \texttt{MASS}; also see packages\\
+ & \texttt{vegan}, \texttt{ade4})\\
+\texttt{survival} & Package: survival analysis\\
+\texttt{tree}, \texttt{rpart} & Packages: tree-based regression\\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 
 # Interactive calculations in the console
 The console is where you enter commands for `R` to execute *interactively*, meaning that the command is executed and the result is displayed as soon as you hit the `Enter` key (bottom-left panel in Rstudio). For example, at the command prompt `>`, type in `2+2` and hit `Enter`; you will see 
 
-```{r, echo =FALSE}
-2+2
+
+```
+## [1] 4
 ```
 To do anything complicated, you have to store the results from calculations by *assigning* them to variables, using `=` or `<-`. For example:
 
-```{r}
+
+```r
 a=2+2
 ```
 
 `R` automatically creates the variable `a` and stores the result (4) in it, but it doesn't print anything. This may seem strange, but you'll often be creating and manipulating huge sets of data that would fill many screens, so the default is to skip printing the results. To ask `R` to print the value, just type the variable name by itself at the command prompt:
-```{r}
+
+```r
 a
+```
+
+```
+## [1] 4
 ```
 
 (the `[1]` at the beginning of the line is just `R` printing an index of element numbers; if you print a result that displays on multiple lines, `R` will put an index at the beginning of each line. `print(a)` also works to print the value of a variable.) By default, a variable created this way is a *vector*,  and it is *numeric* because we gave `R` a number rather than some other type of data (e.g. a character string like `"pxqr"`). In this case `a` is a numeric vector of length 1, which acts just like a number. 
 
 You could also type `a=2+2; a`, using a semicolon to put two or more commands on a single line. Conversely, you can break lines *anywhere that `R` can tell you haven't finished your command* and `R` will give you a "continuation" prompt (`+`) to let you know that it doesn't think you're finished yet: try typing 
-```{r,eval=FALSE}
+
+```r
 a=3*(4+ [Enter]
 5)
 ```
@@ -174,33 +186,52 @@ Avoid `c`, `l`, `q`, `t`, `C`, `D`, `F`, `I`, and `T`, which are either built-in
 `R` does calculations with variables as if they were numbers. It uses 
 `+`, `-`, `*`, `/`, and `^` for addition, subtraction, multiplication, division and  exponentiation, respectively. For example:
 
-```{r}
+
+```r
 x=5
 y=2
 z1=x*y ## no output
 z2=x/y ## no output
 z3=x^y ## no output
 z2
+```
+
+```
+## [1] 2.5
+```
+
+```r
 z3
+```
+
+```
+## [1] 25
 ```
 
 Even though `R` did not display the values of `x` and `y`, it "remembers" that it assigned values to them. Type `x; y` to display the values. 
 
 You can retrieve and edit previous commands. The up-arrow ($\uparrow$) in the console recalls previous commands to the prompt. They also can be found in the top-right tab `History`. For example, you can bring back the second-to-last command and edit it into 
-```{r}
+
+```r
 z3=2*x^y
 ```
 
 You can combine several operations in one calculation:
-```{r}
+
+```r
 A=3
 C=(A+2*sqrt(A))/(A+5*sqrt(A))
 C
 ```
 
+```
+## [1] 0.5543706
+```
+
 Parentheses specify the order of operations. 
 The command
-```{r}
+
+```r
 C=A+2*sqrt(A)/A+5*sqrt(A)
 ```
 is not the same as the one above; rather, it is equivalent to `C=A + 2*(sqrt(A)/A) + 5*sqrt(A)`.
@@ -219,20 +250,26 @@ In complicated expressions you might start off by *using parentheses to specify 
 or at least b = 12 - 4/(2^3); a few extra sets of parentheses never hurt, although when you get confused it's better to think through the order of operations rather than flailing around adding parentheses at random. `R` also has many *built-in mathematical functions* that operate on variables
 (Table 1 shows a few). 
 
-```{r, echo = FALSE, results = 'asis'}
-library(knitr)
+\begin{table}
 
-data = rbind(c("\\texttt{abs}", "absolute value"),
-       c("\\texttt{cos, sin, tan}", "cosine, sine, tangent of angle $x$ in radians"),
-       c("\\texttt{exp}", "exponential function, $e^x$"),
-       c("\\texttt{log}", "natural (base-$e$) logarithm"),
-       c("\\texttt{log10}", "common (base-10) logarithm"),
-       c("\\texttt{sqrt}", "square root"))
-kable(data, caption = "Some of the built-in mathematical functions in R. You can get a more complete list from the Help system: \\texttt{?Arithmetic} for simple, \\texttt{?log} for logarithmic, \\texttt{?sin} for trigonometric, and \\texttt{?Special} for special functions.", col.names = c("Function","Definition"), format="latex", booktabs=TRUE, escape = F)
-```
+\caption{(\#tab:unnamed-chunk-12)Some of the built-in mathematical functions in R. You can get a more complete list from the Help system: \texttt{?Arithmetic} for simple, \texttt{?log} for logarithmic, \texttt{?sin} for trigonometric, and \texttt{?Special} for special functions.}
+\centering
+\begin{tabular}[t]{ll}
+\toprule
+Function & Definition\\
+\midrule
+\texttt{abs} & absolute value\\
+\texttt{cos, sin, tan} & cosine, sine, tangent of angle $x$ in radians\\
+\texttt{exp} & exponential function, $e^x$\\
+\texttt{log} & natural (base-$e$) logarithm\\
+\texttt{log10} & common (base-10) logarithm\\
+\addlinespace
+\texttt{sqrt} & square root\\
+\bottomrule
+\end{tabular}
+\end{table}
 
-```{block2, type = "exercisebox",latex.options="{1}"}
-Using editing shortcuts wherever you can, have `R` compute the values of:
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Using editing shortcuts wherever you can, have `R` compute the values of:
   
 
 1. $\frac{2^7}{2^7 - 1}$ and compare it with $({1 - \frac{1}{2^7}})^{-1}$ 
@@ -244,35 +281,9 @@ Using editing shortcuts wherever you can, have `R` compute the values of:
   * $\exp(0.2)$ 
 3. The standard normal probability density, $\frac{1}{\sqrt(2\pi)}\exp(-x^2/2)$, for values of $x=1$ and $x=2$ (`R`    
 knows $\pi$ as `pi`.). You can check your answers against the built-in function for the normal distribution; `dnorm(1)`  and `dnorm(2)` should give you the values for the standard normal for $x=1$ and $x=2$.
+</div>\EndKnitrBlock{exercisebox}
 
-```
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-
-1
-`(2^7)/(2^7-1)`
-
-#versus
-
-`(1-2^7)^(-1)`
-
-2
-
-`1+0.2`
-
-`1+0.2+0.2^2/2+cos(2.3)`
-
-3
-
-`x <- 1`
-
-`1/sqrt(2*pi)*exp(-x^2/2)`
-
-`x <- 2`
-
-`1/sqrt(2*pi)*exp(-x^2/2)`
-
-``` 
 
 # The help system
 R has a help system, although it is generally better for providing detail or reminding you how to do things than for basic ``how do I ...?'' questions.
@@ -332,7 +343,8 @@ $r_{max}$: 1.73, 1.65, 2.02, 1.89, 2.61, 1.36, 2.37, 2.08, 2.69, 2.32, 3.67
 
 To analyze these data in R, first enter them as numerical *vectors* in your script and send them to the console:
 
-```{r}
+
+```r
 Light=c(20,20,20,20,21,24,44,60,90,94,101)
 rmax=c(1.73,1.65,2.02,1.89,2.61,1.36,2.37,2.08,2.69,2.32,3.67)
 ```
@@ -346,59 +358,20 @@ and see the error message you get: in order to create a vector of specified numb
 To see a histogram of the growth rates enter `hist(rmax)`, which opens a graphics window and displays the histogram. There are *many* other built-in statistics functions: for example `mean(rmax)` computes you the mean, and `sd(rmax)` and `var(rmax)` compute the standard deviation and variance, respectively. Play around with these functions, and any others you can think of.
 
 To see how light intensity affects algal rate of increase, type
-```{r, eval=FALSE, echo=TRUE}
+
+```r
 plot(rmax ~ Light)
 ```
 
 in the script (and send it the console) to plot `rmax` ($y$) against `Light` ($x$). The `~` sign implies "as a function of". Alternatively, type `plot(Light,rmax)`. A linear regression would seem like a reasonable model for these data. **Don't close this plot window**: we'll soon be adding to it.
 
-```{r,echo=FALSE,fig=TRUE,height=2, fig.cap = "Some of R's graphics parameters. Color specification, `col`, also applies in many other contexts: colors are set to a rainbow scale here. See `?par` for (many more) details on graphics parameters, and one or more of `?rgb`, `?palette`, or `apropos(\"color\")` for more on colors.", fig.height=3.0, fig.width=6}
-h = rev((1:6)/6)
-xr = seq(0,0.9,length=20)
-xpos = 1.2
-op = par(xpd=TRUE,mar=c(0,0,0,5))
-plot(0:1,range(h),type="n",axes=FALSE,ann=FALSE)
-points(xr,rep(h[1],20),pch=1:20)
-text(xpos,h[1],"pch: point type",adj=1)
-##palette(gray((0:19)/19))
-palette(rainbow(20))
-points(xr,rep(h[2],20),col=1:20,pch=16)
-palette("default")
-text(xpos,h[2],"col: point color",adj=1)
-points(xr,rep(h[3],20),cex=seq(0.01,2,length=20))
-text(xpos,h[3],"cex: point size",adj=1)
-text(xr,rep(h[4],20),c(letters[1:5],LETTERS[1:5],0:9))
-text(xpos,h[4],"text",adj=1)
-##text(seq(0.1,0.9,length=20),rep(0.6,20),letters[1:20],cex=seq(0.01,2,length=20))
-nl = 6
-nlsp = 0.1
-lend = 0.95
-##segments(seq(0,0.9,length=nl),rep(h[5],2*nl),
-##     seq(1/nl,1,length=nl),rep(h[5],2*nl),
-## want to go from 0 to lend, in nl segments,
-## using a fraction fr of the space for interspaces
-## each segment + space takes up lend/nl
-##
-fr = 0.7
-seg1 = seq(0,by=lend/nl,length=nl)
-seg2 = seq(lend/nl,to=lend,by=lend/nl)-(lend*(1-fr)/nl)
-segments(seg1,rep(h[5],nl),
-     seg2,
-     rep(h[5],nl),
-     lty=1:nl,lwd=3)
-text(xpos,h[5],"lty: line type",adj=1)
-nv = 10
-segments(seq(0,1/(1+nlsp),length=nv),rep(h[6],nv),
-     seq(0.05,0.95,length=nv),rep(h[6],nv),
-     lwd=1:10)
-text(xpos,h[6],"lwd: line width",adj=1)
-par(op)
-```
+![(\#fig:unnamed-chunk-17)Some of R's graphics parameters. Color specification, `col`, also applies in many other contexts: colors are set to a rainbow scale here. See `?par` for (many more) details on graphics parameters, and one or more of `?rgb`, `?palette`, or `apropos("color")` for more on colors.](Lab_1_modified_files/figure-latex/unnamed-chunk-17-1.pdf) 
 
 `R`'s default plotting character is an open circle. Open symbols are generally better than closed symbols for plotting because it is easier to see where they overlap, but you could include `pch=16` in the `plot` command if you wanted closed circles instead. Figure 1 shows several more ways to adjust the appearance of lines and points in `R`.
 
 To perform linear regression we create a linear model using the `lm` (**l**inear **m**odel) function:
-```{r}
+
+```r
 fit = lm(rmax~Light)
 ```
 (Note that linear model is read as "model $r_{max}$ as a function of light".)
@@ -408,47 +381,86 @@ function of `Light`. Unlike most statistics packages, R rarely produces automati
 
 To get a summary of the results, enter  the command `summary(fit)`. `R` sets up model objects (more on this later)  so that the function `summary` "knows" that `fit` was created by `lm`, and produces an appropriate summary of results for an `lm` object:
 
-```{r}
+
+```r
 summary(fit)
+```
+
+```
+## 
+## Call:
+## lm(formula = rmax ~ Light)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.5478 -0.2607 -0.1166  0.1783  0.7431 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) 1.580952   0.244519   6.466 0.000116 ***
+## Light       0.013618   0.004317   3.154 0.011654 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.4583 on 9 degrees of freedom
+## Multiple R-squared:  0.5251,	Adjusted R-squared:  0.4723 
+## F-statistic: 9.951 on 1 and 9 DF,  p-value: 0.01165
 ```
 
 [If you've had (and remember) a statistics course the output will make sense to you. The table of coefficients gives the estimated regression
 line as $r_{max} = 1.581 + 0.014 \times Light$, and associated with each coefficient is the standard error of the estimate, the $t$-statistic value for testing whether the coefficient is nonzero, and the $p$-value corresponding to the $t$-statistic. Below the table, the adjusted R-squared gives the estimated fraction of the variance explained by the regression line, and the $p$-value in the last line is an overall test for significance of the model against the null hypothesis that the response variable is independent of the predictors.]
 
 You can add the regression line to the plot of the data with a function taking `fit` as its input (if you closed the plot of the data, you will need to create it again in order to add the regression line):
-```{r, eval = FALSE, echo = TRUE}
+
+```r
 abline(fit)
 ```
 (`abline`, pronounced "a b line", is a general-purpose function for adding lines to a plot: you can specify horizontal or vertical lines, a slope and an intercept, or a regression model: `?abline`).
 
-```{r,echo=FALSE,fig=TRUE, fig.cap = "Graphical summary of regression analysis", fig.width=4,fig.height=3}
-par(mar = c(4,4,0.5,0.5), las = 1)
-plot(Light,rmax)
-abline(fit)
-```
+![(\#fig:unnamed-chunk-21)Graphical summary of regression analysis](Lab_1_modified_files/figure-latex/unnamed-chunk-21-1.pdf) 
 
 You can get the coefficients by using the `coef` function:
-```{r}
+
+```r
 coef(fit)
+```
+
+```
+## (Intercept)       Light 
+##  1.58095214  0.01361776
 ```
 
 You can also "interrogate" `fit` directly. Type `names(fit)` to get a list of the components of `fit`, and then use the `$` symbol to extract components according to their names.
 
-```{r}
+
+```r
 names(fit)
+```
+
+```
+##  [1] "coefficients"  "residuals"     "effects"       "rank"         
+##  [5] "fitted.values" "assign"        "qr"            "df.residual"  
+##  [9] "xlevels"       "call"          "terms"         "model"
 ```
 
 For more information (perhaps more than you want) about `fit`, use `str(fit)` (for **str**ucture). You can get the regression coefficients this way:
 
-```{r}
+
+```r
 fit$coefficients
+```
+
+```
+## (Intercept)       Light 
+##  1.58095214  0.01361776
 ```
 
 It's good to be able to look inside `R` objects when necessary, but all other things being equal you should prefer (e.g.) `coef(x)` to `x$coefficients`.
 
 Usually data is loaded from a file. To illustrate this, grab `Intro2.R` and `ChlorellaGrowth.txt` from brighspace to see how this is done. In `ChlorellaGrowth.txt` the two variables are entered as columns of a data matrix. Then instead of typing these in by hand, the command
 
-```{r}
+
+```r
 X=read.table("ChlorellaGrowth.txt",header=TRUE)
 ```
 
@@ -456,78 +468,28 @@ reads the file (**from the current directory**) and puts the data values into th
 
 Extract the variables from `X` with the commands
 
-```{r}
+
+```r
 Light=X[,1]
 rmax=X[,2]
 ```
 
 Think of these as shorthand for "`Light` = everything in column 1 of `X`", and "`rmax` = everything in column 2 of `X`" (we'll learn about working with data matrices later). From there on out it's the same as before, with some additions that set the axis labels and add a title.
 
-```{block2, type = "exercisebox",latex.options="{1}"}
-Make a copy of `Intro2.R` under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, `LogLight=log(Light)`, and plots the data appropriately. You should end up with  a graph that resembles Figure 3.
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Make a copy of `Intro2.R` under a new name, and modify the copy so that it does linear regression of algal growth rate on the natural log of light intensity, `LogLight=log(Light)`, and plots the data appropriately. You should end up with  a graph that resembles Figure 3.
 
 
-*Hint:* when you switch from light intensity to log light intensity, the range on your $x$ axis will change and you will have to change the $x$ position at which you plot the growth rate equation.
-```
+*Hint:* when you switch from light intensity to log light intensity, the range on your $x$ axis will change and you will have to change the $x$ position at which you plot the growth rate equation.</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-
-`X=read.table("ChlorellaGrowth.txt",header=TRUE)`
-
-`Light=X[,1]`
-
-`rmax=X[,2]` 
-
-`logLight=log(Light)` # natural logarithm!
-
-`op <- par(cex=1,cex.main=0.9, mar = c(4,4,4,0.5), las = 1)`
-
-`plot(logLight,rmax,
-   xlab=expression(Log~light~intensity~(mu*E/m^2/s)), 
-   ylab="Maximum growth rate rmax (1/d)",pch=16)
-title(main="Data from Fussmann et al. (2000)")`
-
-`fit=lm(rmax~logLight)`
-
-`summary(fit)`
-
-`abline(fit)` 
-
-`rcoef=round(coef(fit),digits=3)`
-
-`text(3.7,3.5,paste("rmax=",rcoef[1],"+",rcoef[2],"log(Light)"))`
-
-`par(op)`
-
-```
 
 
-```{r,echo=FALSE,fig=TRUE,results='hide', fig.cap = "Graphical summary of regression analysis, using log of light intensity (and annotating the plot)", fig.width=4.5,fig.height=4}
-X=read.table("ChlorellaGrowth.txt",header=TRUE)
-Light=X[,1]
-rmax=X[,2]
-logLight=log(Light) # natural logarithm!
-op <- par(cex=1,cex.main=0.9, mar = c(4,4,4,0.5), las = 1)
-plot(logLight,rmax,
-   xlab=expression(Log~light~intensity~(mu*E/m^2/s)),
-   ylab="Maximum growth rate rmax (1/d)",pch=16)
-title(main="Data from Fussmann et al. (2000)")
-fit=lm(rmax~logLight)
-summary(fit)
-abline(fit)
-rcoef=round(coef(fit),digits=3)
-text(3.7,3.5,paste("rmax=",rcoef[1],"+",rcoef[2],"log(Light)"))
-par(op)
-```
 
-```{block2, type = "exercisebox",latex.options="{1}"}
-Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened.
-```
+![(\#fig:unnamed-chunk-29)Graphical summary of regression analysis, using log of light intensity (and annotating the plot)](Lab_1_modified_files/figure-latex/unnamed-chunk-29-1.pdf) 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-By entering `?plot.lm` R brings up the Help page for the function `plot.lm` that carries out a `plot` command for an object produced by `lm`. This is one example of how R uses the fact that statistical analyses are stored as model objects. `fit` "knows" what kind of object it is (in this case an object of type `lm`, and so `plot(fit)` invokes a function that produces plots suitable  for an `lm` object.
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened.</div>\EndKnitrBlock{exercisebox}
+
+
 
 
 
@@ -539,82 +501,40 @@ The axes in plots are scaled automatically,  but the outcome is not always ideal
 
 will draw the graph with the $x$-axis running from `x1` to `x2`, and using `ylim=c(y1,y2)` within the `plot` command will do the same for the $y$-axis.
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Create a plot of growth rate versus light intensity with the $x$-axis running from 0 to 120 and the $y$-axis running from 1 to 4.
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Create a plot of growth rate versus light intensity with the $x$-axis running from 0 to 120 and the $y$-axis running from 1 to 4.</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`plot(Light,rmax,xlim=c(0,120),ylim=c(1,4))`
 
-``` 
 
 
 You can place several graphs within a single figure by using the `par` function (short for "parameter") to adjust the layout of the plot. For example, the command
 
-```{r,eval=FALSE}
+
+```r
 par(mfrow=c(2,3))
 ```
 
 divides the plotting area into 2 rows and 3 columns. As  `R` draws a series of graphs, it places them along the top row from left to right, then along the next row, and so on. `mfcol=c(2,3)` has the same effect except that `R` draws successive graphs down the first column, then down the second column, and so on.
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Modify the script as follows. Use `mfcol=c(2,1)` to create graphs of growth rate as a  function of `Light`, and of `log(growth rate)` as a function of `log(Light)` in the same figure. Do the same again, using `mfcol=c(1,2)`.
-```
-
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`mfcol=c(2,1)`
-`plot(rmax ~ Light)`
-`plot(rmax ~ logLight)`
-
-```
-
-```{block2, type="exercisebox",latex.options="{1}"}
-Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  Then draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors.
-```
-
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`par(mfrow=c(2,2))`
-`x = c(3:8)`
-`y = 5*x+3`
-`plot(y~x,type="l")`
-`plot(y~x,type="l",lty=1,col="red")`
-`plot(y~x,type="l",lty=2,col="blue")`
-`plot(y~x,type="l",lty=4,col="orange")`
-
-```
-
-```{block2,type= "exercisebox",latex.options="{1}"}
-Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with specific functions like `jpeg` or `png`.  Use `?savePlot`, `?jpeg` or `?png` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".` Note further when you use `savePlot` this command should be preceded by `windows()` to open a new window that is saved by `savePlot` 
-```
-
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`png("test.png")`
-`par(mfrow=c(2,2))`
-`x = c(3:8)`
-`y = 5*x+3`
-`plot(y~x,type="l")`
-`plot(y~x,type="l",lty=1,col="red")`
-`plot(y~x,type="l",lty=2,col="blue")`
-`plot(y~x,type="l",lty=4,col="orange")`
-`dev.off()`
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Modify the script as follows. Use `mfcol=c(2,1)` to create graphs of growth rate as a  function of `Light`, and of `log(growth rate)` as a function of `log(Light)` in the same figure. Do the same again, using `mfcol=c(1,2)`.</div>\EndKnitrBlock{exercisebox}
 
 
-``` 
+
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  Then draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors.</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2,type= "exercisebox",latex.options="{1}"}
-Use google to see how to:
+
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with specific functions like `jpeg` or `png`.  Use `?savePlot`, `?jpeg` or `?png` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".` Note further when you use `savePlot` this command should be preceded by `windows()` to open a new window that is saved by `savePlot` </div>\EndKnitrBlock{exercisebox}
+
+
+
+
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Use google to see how to:
   - rotate the y-axis labels
-  - change the background of the plot to grey
-```
+  - change the background of the plot to grey</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-Google "rotate axis label plot r" and you will get a hit that shows you how to do it: i.e. set las=2
-You can change the background color by setting par(bg="grey")
 
-```
 
 
 # Data types
@@ -627,28 +547,47 @@ We've already seen two ways to create vectors in `R`:
 
 1. A command in the console window or a script file listing the values,
 such as
-```{r}
+
+```r
 initialsize=c(1,3,5,7,9,11)
 ```
 
 2. Using `read.table`:
-  ```{r,eval=FALSE}
+  
+  ```r
   initialsize=read.table("c:/temp/initialdata.txt")
   ```
   (assuming of course that the file exists in the right place).
 
   You can then use a vector in calculations as if it were a number (more or less)
-  ```{r}
+  
+  ```r
   finalsize=initialsize+1
   finalsize
+  ```
+  
+  ```
+  ## [1]  2  4  6  8 10 12
+  ```
+  
+  ```r
   newsize=sqrt(initialsize)
   newsize
+  ```
+  
+  ```
+  ## [1] 1.000000 1.732051 2.236068 2.645751 3.000000 3.316625
   ```
 
 Notice that `R` applied each operation to every element in the vector. Similarly, commands like `initialsize-5, 2*initialsize, initialsize/10` apply subtraction, multiplication, and division to each element of the
 vector. The same is true for
-```{r}
+
+```r
 initialsize^2
+```
+
+```
+## [1]   1   9  25  49  81 121
 ```
 
 In `R` the default is to apply functions and operations to vectors in an *element by element* (or "vectorized") manner. This is an extremely useful propery in `R`.
@@ -658,142 +597,190 @@ In `R` the default is to apply functions and operations to vectors in an *elemen
 You can use the `seq` function to create a set of regularly spaced values. `seq`'s syntax is `x=seq(from,to,by)` or `x=seq(from,to)` or `x=seq(from,to,length.out)`.
 The first form generates a vector starting with `from` with the last entry not extending further than than `to` in steps of `by`. In the second form the value of `by` is assumed to be 1 or -1, depending on
 whether `from` or `to` is larger. The third form creates a vector with the desired endpoints and length. The syntax `from:to` is a shortcut for `seq(from,to)`:
-```{r}
+
+```r
 1:8
 ```
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Use `seq` to create the vector `v=(1 5 9 13)`, and to create a vector going from 1 to 5 in increments of 0.2.
+```
+## [1] 1 2 3 4 5 6 7 8
 ```
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`seq(1,13,4)`
-`seq(1,5,0.2)`
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Use `seq` to create the vector `v=(1 5 9 13)`, and to create a vector going from 1 to 5 in increments of 0.2.</div>\EndKnitrBlock{exercisebox}
 
-```
+
 
 You can use `rep` to create a constant vector such as `(1 1 1 1)`; the basic syntax is `rep(values,lengths)`. For example,
-```{r}
+
+```r
 rep(3,5)
 ```
+
+```
+## [1] 3 3 3 3 3
+```
 creates a vector in which the value 3 is repeated 5 times. `rep` will repeat a whole vector multiple times
-```{r}
+
+```r
 rep(1:3,3)
 ```
+
+```
+## [1] 1 2 3 1 2 3 1 2 3
+```
 or will repeat each of the elements in a vector a given number of times:
-```{r}
+
+```r
 rep(1:3,each=3)
 ```
 
+```
+## [1] 1 1 1 2 2 2 3 3 3
+```
+
 Even more flexibly, you can repeat each element in the vector a different number of times:
-```{r, chunk_50}
+
+```r
 rep( c(3,4),c(2,5) )
+```
+
+```
+## [1] 3 3 4 4 4 4 4
 ```
 The value 3 was repeated 2 times, followed by the value 4 repeated 5 times.
 `rep` can be a little bit mind-blowing as you get started, but it will turn out to be useful.
 
 Table 3 lists some of the main functions for creating and working with vectors.
-```{r, echo = FALSE, results = 'asis'}
-data = rbind(c("\\texttt{seq(from,to,by=1)}" , " Vector of evenly spaced values, default increment = 1"),
-       c("\\texttt{seq(from, to, length.out)}" , " Vector of evenly spaced values, specified length"),
-       c("\\texttt{c(u,v,...)}" , " Combine a set of numbers and/or vectors into a single vector"),
-       c("\\texttt{rep(a,b)}" , " Create vector by repeating elements of \\texttt{a} by amounts in \\texttt{b}"),
-       c("\\texttt{as.vector(x)}" , " Convert an object of some other type to a vector" ),
-       c("\\texttt{hist(v)}" , " Histogram plot of value in v"),
-       c("\\texttt{mean(v),var(v),sd(v)}" , " Estimate of population mean, variance, standard deviation"),
-       c("","based on data values in \\texttt{v}"),
-       c("\\texttt{cor(v,w)}" , " Correlation between two vectors"))
-kable(data, caption = "Some important `R` functions for creating and working with vectors. Many of these have other optional arguments; use the help system (e.g. \\texttt{?cor}) for more information. The statistical functions such as \\texttt{var} regard the values as samples from a population and compute an estimate of the population statistic; for example \\texttt{sd(1:3)=1}.", col.names = c("Function","Definition"), format="latex", booktabs=TRUE, escape = F) %>%
- kable_styling(latex_options=c("scale_down"))
-```
+\begin{table}
+
+\caption{(\#tab:unnamed-chunk-53)Some important `R` functions for creating and working with vectors. Many of these have other optional arguments; use the help system (e.g. \texttt{?cor}) for more information. The statistical functions such as \texttt{var} regard the values as samples from a population and compute an estimate of the population statistic; for example \texttt{sd(1:3)=1}.}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{ll}
+\toprule
+Function & Definition\\
+\midrule
+\texttt{seq(from,to,by=1)} & Vector of evenly spaced values, default increment = 1\\
+\texttt{seq(from, to, length.out)} & Vector of evenly spaced values, specified length\\
+\texttt{c(u,v,...)} & Combine a set of numbers and/or vectors into a single vector\\
+\texttt{rep(a,b)} & Create vector by repeating elements of \texttt{a} by amounts in \texttt{b}\\
+\texttt{as.vector(x)} & Convert an object of some other type to a vector\\
+\addlinespace
+\texttt{hist(v)} & Histogram plot of value in v\\
+\texttt{mean(v),var(v),sd(v)} & Estimate of population mean, variance, standard deviation\\
+ & based on data values in \texttt{v}\\
+\texttt{cor(v,w)} & Correlation between two vectors\\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 ### Vector indexing
 
 You will often want to extract a specific entry or other part of a vector. This procedure is called *vector indexing*, and uses square brackets (`[]`):
-```{r}
+
+```r
 z=c(1,3,5,7,9,11)
 z[3]
+```
+
+```
+## [1] 5
 ```
 
 `z[3]` extracts the third item, or *element*, in the vector `z`.
 You can also access a block of elements using the functions for
 vector construction, e.g.
-```{r}
+
+```r
 z[2:5]
+```
+
+```
+## [1] 3 5 7 9
 ```
 extracts the second through fifth elements.
 
 What happens if you enter `v=z[seq(1,5,2)]` ? Try it and see, and make sure you understand what happened.
 
 You can extracted irregularly spaced elements of a vector. For example
-```{r}
+
+```r
 z[c(1,2,5)]
+```
+
+```
+## [1] 1 3 9
 ```
 
 You can also use indexing to **set specific values within a vector**. For
 example,
-```{r}
+
+```r
 z[1]=12
 ```
 changes the value of the first entry in `z` while leaving all the rest alone, and
-```{r}
+
+```r
 z[c(1,3,5)]=c(22,33,44)
 ```
 changes the first, third, and fifth values (note that we had to use `c` to create the vector --- can you interpret the error message you get if you
 try `z[1,3,5]` ?)
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Write a *one-line* command to extract a vector consisting of the second, first, and third elements of `z` *in that order*.
-```
-
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`z=c(1,3,5,7,9,11)`
-`z[c(2,1,3)]`
-
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Write a *one-line* command to extract a vector consisting of the second, first, and third elements of `z` *in that order*.</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Write a script file that computes values of
+
+
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Write a script file that computes values of
 $y=\frac{(x-1)}{(x+1)}$ for $x=1,2,\cdots,10$, and plots $y$ versus $x$
 with the points plotted and connected by a line 
-*hint:* in `?plot`, search for `type`).
-```
+*hint:* in `?plot`, search for `type`).</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`x = c(1:10)`
-`y = (x-1)/(x+1)`
-`plot(y~x,type="b")`
 
-```
 
 The sum of the geometric series $1 + r + r^2 + r^3 + ... + r^n$ approaches the limit $1/(1-r)$ for $r < 1$ as $n \rightarrow \infty$.
 
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Set the values $r=0.5$ and $n=10$, and then write a *one-line* command that creates the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using `sum`) of this vector to the limiting value $1/(1-r)$. 
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Set the values $r=0.5$ and $n=10$, and then write a *one-line* command that creates the vector $G = (r^0,r^1,r^2,...,r^n)$. Compare the sum (using `sum`) of this vector to the limiting value $1/(1-r)$. 
 
-Repeat for  $n=50$. (*Note* that comparing very similar numeric values can be tricky: rounding can happen, and some numbers cannot be represented exactly in binary (computer) notation. By default `R` displays 7~significant digits (`options("digits")`).
-```
+Repeat for  $n=50$. (*Note* that comparing very similar numeric values can be tricky: rounding can happen, and some numbers cannot be represented exactly in binary (computer) notation. By default `R` displays 7~significant digits (`options("digits")`).</div>\EndKnitrBlock{exercisebox}
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`r = 0.5`
-`n =10`
-`sum(r^c(1:n))`
 
-`n =50`
-`sum(r^c(1:n))`
-
-```
 For example:
-```{r}
+
+```r
 x = 1.999999
 x
+```
+
+```
+## [1] 1.999999
+```
+
+```r
 x-2
+```
+
+```
+## [1] -1e-06
+```
+
+```r
 x=1.9999999999999
 x
+```
+
+```
+## [1] 2
+```
+
+```r
 x-2
+```
+
+```
+## [1] -9.992007e-14
 ```
 All the digits are still there, in the second case, but they are not shown.
 Also note that `x-2` is not exactly $-1 \times 10^{-13}$; this is unavoidable.)
@@ -801,57 +788,86 @@ Also note that `x-2` is not exactly $-1 \times 10^{-13}$; this is unavoidable.)
 ### Logical operators
 Logical operators return a value of `TRUE` or `FALSE`. For example,
 try:
-```{r}
+
+```r
 a=1
 b=3
 d=a<b
 e=(a>b)
 d
+```
+
+```
+## [1] TRUE
+```
+
+```r
 e
+```
+
+```
+## [1] FALSE
 ```
 
 The parentheses around (`a>b`) are optional but make the code easier to read.
 One special case where you *do* need parentheses (or spaces) is when you make comparisons with negative values; `a<-1` will surprise you by setting `a=1`,
 because `<-` (representing a left-pointing arrow) is equivalent to `=` in `R`. Use `a< -1`, or more safely `a<(-1)`, to make this comparison.
-```{r, echo = FALSE, results = 'asis'}
-data = rbind(c("\\texttt{x<y}","less than"),
-       c("\\texttt{x>y}","greater than"),
-       c("\\texttt{x<=y}","less than or equal to"),
-       c("\\texttt{x>=y}","greater than or equal to"),
-       c("\\texttt{x==y}","equal to"),
-       c("\\texttt{x!=y}","\\emph{not} equal to"))
-kable(data, caption = "Some comparison operators in `R`. Use \\texttt{?Comparison} to learn more.", col.names = c("Operator","Definition"), format="latex", booktabs=TRUE, escape = F)
-```
+\begin{table}
+
+\caption{(\#tab:unnamed-chunk-67)Some comparison operators in `R`. Use \texttt{?Comparison} to learn more.}
+\centering
+\begin{tabular}[t]{ll}
+\toprule
+Operator & Definition\\
+\midrule
+\texttt{x<y} & less than\\
+\texttt{x>y} & greater than\\
+\texttt{x<=y} & less than or equal to\\
+\texttt{x>=y} & greater than or equal to\\
+\texttt{x==y} & equal to\\
+\addlinespace
+\texttt{x!=y} & \emph{not} equal to\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 When we compare two vectors or matrices of the same size, or compare a
 number with a vector or matrix, comparisons are done element-by-element.
 For example,
 
-```{r}
+
+```r
 x=1:5
 b=(x<=3)
 ```
 
 So if `x` and `y` are vectors, then `(x==y)` will return a vector of values giving the element-by-element comparisons. If you want to know whether `x` and `y` are identical vectors, use `identical(x,y)` which returns a single value: `TRUE` if each entry in `x` equals the corresponding entry in `y`, otherwise `FALSE`. You can use `?Logical` to read more about logical operators. Note the difference between = and == 
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Can you figure out what happened in the following cautionary tale below?
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Can you figure out what happened in the following cautionary tale below?</div>\EndKnitrBlock{exercisebox}
 
 
-```{r}
+
+```r
 a = 1:3
 b = 2:4
 a==b
+```
+
+```
+## [1] FALSE FALSE FALSE
+```
+
+```r
 a=b
 a==b
 ```
 
-
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-You overwrote a by b in the command `a=b` and so the last statement confirms that they are identical
-
 ```
+## [1] TRUE TRUE TRUE
+```
+
+
+
 
 
 
@@ -864,11 +880,23 @@ Exclamation points `!` are used in `R` to mean "not"; `!=` (not `==`) means "not
 * `|`, `||`: OR
 
 OR is *non-exclusive*, meaning that `x|y` is true  if either `x` or `y` *or both* are true (a ham-and-cheese sandwich would satisfy the condition "ham OR cheese"). For example, try
-```{r}
+
+```r
 a=c(1,2,3,4)
 b=c(1,1,5,5)
 (a<b)& (a>3)
+```
+
+```
+## [1] FALSE FALSE FALSE  TRUE
+```
+
+```r
 (a<b) | (a>3)
+```
+
+```
+## [1] FALSE FALSE  TRUE  TRUE
 ```
 and make sure you understand what happened. If it's confusing, try breaking up the expression
 and looking at the results of `a<b` and `a>3` separately first. The two forms of AND and OR differ in how they handle vectors. The shorter one does element-by-element comparisons; the longer one only looks at the
@@ -878,14 +906,26 @@ We can also use *logical* vectors (lists of `TRUE` and `FALSE` values) to pick e
 This is important, e.g., for subsetting data (getting rid of those pesky outliers!)
 
 As a simple example, we might want to focus on just the low-light values of $r_{max}$ in the *Chlorella* example:
-```{r}
+
+```r
 X=read.table("ChlorellaGrowth.txt",header=TRUE)
 Light=X[,1]
 rmax=X[,2]
 lowLight = Light[Light<50]
 lowLightrmax = rmax[Light<50]
 lowLight
+```
+
+```
+## [1] 20 20 20 20 21 24 44
+```
+
+```r
 lowLightrmax
+```
+
+```
+## [1] 1.73 1.65 2.02 1.89 2.61 1.36 2.37
 ```
 
 What is really happening here (think about it for a minute) is that `Light<50` generates a logical vector the same length as `Light` (`TRUE TRUE TRUE ...`) which is then used to select the appropriate
@@ -895,211 +935,285 @@ If you want the positions at which `Light` is lower than 50, you could say
 `(1:length(Light))[Light<50]`, but you can also use a built-in function: `which(Light<50)`. If you wanted the position at which the maximum value
 of `Light` occurs, you could say `which(Light==max(Light))`. (This normally results in a vector of length 1; when could it give a longer vector?) There is even a built-in command for this specific function, `which.max` (although `which.max` always returns just the *first* position at which the maximum occurs).
 
-```{block2, type="exercisebox",latex.options="{1}"}
-What would happen if instead of setting `lowLight` you replaced `Light` by saying `Light=Light[Light<50]`, and then `rmax=rmax[Light<50]`? 
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">What would happen if instead of setting `lowLight` you replaced `Light` by saying `Light=Light[Light<50]`, and then `rmax=rmax[Light<50]`? 
 
 Why would that be wrong? 
 
-Try it with some temporary variables --- set `Light2=Light` and `rmax2=rmax` and then play with `Light2` and `rmax2` so you dont mess up your working variables --- and work out what happened ...
-```
+Try it with some temporary variables --- set `Light2=Light` and `rmax2=rmax` and then play with `Light2` and `rmax2` so you dont mess up your working variables --- and work out what happened ...</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`Light[Light<50 & rmax <= 2.0]`
-`rmax[Light<50 & rmax <= 2.0]`
 
-```
 
 We can also combine logical operators (making sure to use the element-by-element `&` and `|` versions of AND and OR):
-```{r}
+
+```r
 Light[Light<50 & rmax <= 2.0]
+```
+
+```
+## [1] 20 20 20 24
+```
+
+```r
 rmax[Light<50 & rmax <= 2.0]
 ```
 
-```{block2, type="exercisebox",latex.options="{1}"}
-`runif(n)` is a function (more on it soon) that generates a vector of `n` random, uniformly distributed
+```
+## [1] 1.73 1.65 1.89 1.36
+```
+
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">`runif(n)` is a function (more on it soon) that generates a vector of `n` random, uniformly distributed
 numbers between 0 and 1. Create a vector of 20 numbers, then select the subset of those numbers that
-is less than the mean. (If you want your answers to match mine exactly, use `set.seed(273)` to set the random-number generator to a particular starting point before you use `runif`. [273 is an arbitrary number I chose].)
-```
-
-
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`a = runif(20)`
-`a[a < mean(a)]`
-
-```
-
-```{block2, type="exercisebox",latex.options="{1}"}
-Find the *positions*  of the elements that are less than the mean of the vector you just created (e.g. if your vector were `(0.1 0.9. 0.7 0.3)` the answer would be `(1 4)`).
-```
+is less than the mean. (If you want your answers to match mine exactly, use `set.seed(273)` to set the random-number generator to a particular starting point before you use `runif`. [273 is an arbitrary number I chose].)</div>\EndKnitrBlock{exercisebox}
 
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`which(a < mean(a))`
 
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Find the *positions*  of the elements that are less than the mean of the vector you just created (e.g. if your vector were `(0.1 0.9. 0.7 0.3)` the answer would be `(1 4)`).</div>\EndKnitrBlock{exercisebox}
+
+
+
+
 
 As I mentioned in passing above, vectors can have names associated with their elements: if they do, you can also extract elements by name (use `names` to find out the names).
 
-```{r}
+
+```r
 x = c(first=7,second=5,third=2)
 names(x)
+```
+
+```
+## [1] "first"  "second" "third"
+```
+
+```r
 x["first"]
+```
+
+```
+## first 
+##     7
+```
+
+```r
 x[c("third","first")]
+```
+
+```
+## third first 
+##     2     7
 ```
 
 Finally, it is sometimes handy to be able to drop a particular set of elements, rather than taking a particular set: you can do this with negative indices. For example, `x[-1]` extracts all but the first
 element of a vector.
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Specify two ways to take only the elements in the odd positions (first, third, ...) of a vector of arbitrary length.
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Specify two ways to take only the elements in the odd positions (first, third, ...) of a vector of arbitrary length.</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`n = 20`
-`a = c(1:n)`
-`a1 = a[seq(1,n,2)]`
-`a2 = a[-seq(2,n,2)]`
 
-```
 
 ## Matrices
 
 ### Creating matrices
 
 A matrix is a two-dimensional array, and has the same kind of variables in every column. You can  create matrices of numbers by creating a vector of the matrix entries, and then reshaping them to the desired number of rows and columns using the function `matrix`. For example
-```{r}
+
+```r
 (X=matrix(1:6,nrow=2,ncol=3))
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    3    5
+## [2,]    2    4    6
 ```
 takes the values 1 to 6 and reshapes them into a 2 by 3 matrix.
 
 By default `R` loads the values into the matrix *column-wise* (this is probably counter-intuitive since we're used to reading tables row-wise). Use the optional parameter `byrow` to change this behavior.
 For example :
-```{r}
+
+```r
 (A=matrix(1:9,nrow=3,ncol=3,byrow=TRUE))
 ```
 
+```
+##      [,1] [,2] [,3]
+## [1,]    1    2    3
+## [2,]    4    5    6
+## [3,]    7    8    9
+```
+
 `R` will re-cycle through entries in the data vector, if necessary to fill a matrix of the specified size. So for example
-```{r,eval=FALSE}
+
+```r
 matrix(1,nrow=10,ncol=10)
 ```
 creates a $10 \times 10$ matrix of ones.
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector, to create the following matrix `X`:
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector, to create the following matrix `X`:</div>\EndKnitrBlock{exercisebox}
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`matrix(rep(1:2,4),nrow=2)`
+
+
 
 ```
-
-```{r, echo = FALSE}
-matrix(rep(1:2,4),nrow=2)
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    1    1    1
+## [2,]    2    2    2    2
 ```
 If you can, try to use `R` commands to construct the vector rather than typing out all of the individual values.
 
 `R` will also collapse a matrix to behave like a vector whenever it makes sense: for example `sum(X)` above is 12.
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Use `rnorm` (which is like `runif`, but generates Gaussian (normally distributed) numbers with a specified mean and standard deviation instead) and `matrix` to create a $5 \times 7$ matrix of Gaussian random numbers with mean 1 and standard deviation 2. (Use `set.seed(273)` again for consistency.)
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Use `rnorm` (which is like `runif`, but generates Gaussian (normally distributed) numbers with a specified mean and standard deviation instead) and `matrix` to create a $5 \times 7$ matrix of Gaussian random numbers with mean 1 and standard deviation 2. (Use `set.seed(273)` again for consistency.)</div>\EndKnitrBlock{exercisebox}
 
 
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`set.seed(273)`
-`matrix(rnorm(35,0,2),5,7)`
 
-```
 
 Another useful function for creating matrices is `diag`. `diag(v,n)` creates an $n \times n$ matrix with data
 vector $v$ on its diagonal. So for example `diag(1,5)` creates the $5 \times 5$ *identity matrix*, which has 1's on the diagonal and 0 everywhere else. Try `diag(1:5,5)` and `diag(1:2,5)`; why does the latter produce a warning?
 
 Finally, you can use the `data.entry` function. This function can only edit existing matrices, but for example 
-```{r,eval=FALSE}
+
+```r
 A=matrix(0,nrow=3,ncol=4)
 data.entry(A)
 ```
 will create `A` as a $3 \times 4$ matrix, and then call up a spreadsheet-like interface in which you can change the values to whatever you need.
 
-```{r, echo = FALSE,result='asis'}
-data = rbind(c("\\texttt{matrix(v,nrow=m,ncol=n)}","$m \\times n$ matrix using the values in \\texttt{v}"),
-      c("\\texttt{t(A)}","transpose (exchange rows and columns) of matrix \\texttt{A}"),
-      c("\\texttt{dim(X)}","dimensions of matrix X. \\texttt{dim(X)[1]} = number of rows,"),
-      c("","\\texttt{dim(X)[2]} = number of columns"),
-      c("\\texttt{data.entry(A)}","call up a spreadsheet-like interface to edit the values in \\texttt{A}"),
-      c("\\texttt{diag(v,n)}","diagonal $n \\times n$ matrix with $v$ on diagonal, 0 elsewhere
-(\\texttt{v} is 1 by default,"),
-      c("","so \\texttt{diag(n)} gives an $n \\times n$ identity matrix)"),
-      c("\\texttt{cbind(a,b,c,...)}","combine compatible objects by attaching them along columns"),
-      c("\\texttt{rbind(a,b,c,...)}","combine compatible objects by attaching them along rows"),
-      c("\\texttt{as.matrix(x)}","convert an object of some other type to a matrix, if possible"),
-      c("\\texttt{outer(v,w)}","\"outer product\" of vectors \\texttt{v}, \\texttt{w}: the matrix whose $(i,j)$th element is \\texttt{v[i]*w[j]}"))
+\begin{table}
 
-kable(data, caption = "Some important functions for creating and working with matrices. Many of these have additional optional arguments; use the help system for full details.", col.names = c("Function","Definition"), format="latex", booktabs=TRUE, escape = F) %>%
- kable_styling(latex_options=c("scale_down"))
-```
+\caption{(\#tab:unnamed-chunk-93)Some important functions for creating and working with matrices. Many of these have additional optional arguments; use the help system for full details.}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}[t]{ll}
+\toprule
+Function & Definition\\
+\midrule
+\texttt{matrix(v,nrow=m,ncol=n)} & $m \times n$ matrix using the values in \texttt{v}\\
+\texttt{t(A)} & transpose (exchange rows and columns) of matrix \texttt{A}\\
+\texttt{dim(X)} & dimensions of matrix X. \texttt{dim(X)[1]} = number of rows,\\
+ & \texttt{dim(X)[2]} = number of columns\\
+\texttt{data.entry(A)} & call up a spreadsheet-like interface to edit the values in \texttt{A}\\
+\addlinespace
+\texttt{diag(v,n)} & diagonal $n \times n$ matrix with $v$ on diagonal, 0 elsewhere
+(\texttt{v} is 1 by default,\\
+ & so \texttt{diag(n)} gives an $n \times n$ identity matrix)\\
+\texttt{cbind(a,b,c,...)} & combine compatible objects by attaching them along columns\\
+\texttt{rbind(a,b,c,...)} & combine compatible objects by attaching them along rows\\
+\texttt{as.matrix(x)} & convert an object of some other type to a matrix, if possible\\
+\addlinespace
+\texttt{outer(v,w)} & "outer product" of vectors \texttt{v}, \texttt{w}: the matrix whose $(i,j)$th element is \texttt{v[i]*w[j]}\\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 ### `cbind` and `rbind`
 If their sizes match, you can combine vectors to form matrices, and stick matrices together with vectors or other matrices. `cbind` ("column bind") and `rbind` ("row bind") are the functions to use.
 
 `cbind` binds together columns of two objects. One thing it can do is put vectors together to form a matrix:
-```{r, chunk_101}
+
+```r
 (C=cbind(1:3,4:6,5:7))
 ```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    4    5
+## [2,]    2    5    6
+## [3,]    3    6    7
+```
 `R` interprets vectors as row or column vectors according to what you're doing with them. Here it treats them as column vectors so that columns exist to be bound together. On the other hand,
-```{r}
+
+```r
 (D=rbind(1:3,4:6))
+```
+
+```
+##      [,1] [,2] [,3]
+## [1,]    1    2    3
+## [2,]    4    5    6
 ```
 treats them as rows. Now we have two matrices that can be combined.
 
-```{block2, type="exercisebox",latex.options="{1}"}
-Verify that `rbind(C,D)` works, `cbind(C,C)` works, but `cbind(C,D)` doesn't. Why not?
-```
+\BeginKnitrBlock{exercisebox}\iffalse{-123-49-125-}\fi{}<div class="exercisebox">Verify that `rbind(C,D)` works, `cbind(C,C)` works, but `cbind(C,D)` doesn't. Why not?</div>\EndKnitrBlock{exercisebox}
 
-```{block2, type= "solutionbox", latex.options="{1}",echo=F}
-`C=cbind(1:3,4:6,5:7)`
-`D=rbind(1:3,4:6)`
 
-`rbind(C,D)`
-`cbind(C,D)`
-
-```
 
 ### Matrix indexing
 
 Matrix indexing is like vector indexing except that you have to specify both the row and column, or range of rows and columns. For example `z=A[2,3]` sets `z` equal to 6, which is the (2nd row, 3rd column) entry of the matrix **A** that you recently created, and
-```{r}
+
+```r
 A[2,2:3]
+```
+
+```
+## [1] 5 6
+```
+
+```r
 (B=A[2:3,1:2])
 ```
 
+```
+##      [,1] [,2]
+## [1,]    4    5
+## [2,]    7    8
+```
+
 There is an easy shortcut to extract entire rows or columns: leave out the limits, leaving a blank before or after the comma.
-```{r}
+
+```r
 (first.row=A[1,])
+```
+
+```
+## [1] 1 2 3
+```
+
+```r
 (second.column=A[,2])
+```
+
+```
+## [1] 2 5 8
 ```
 
 (What does `A[,]` do?)
 
 As with vectors, indexing also works in reverse for assigning values to matrix entries. For example,
-```{r}
+
+```r
 (A[1,1]=12)
 ```
 
+```
+## [1] 12
+```
+
 You can do the same with blocks, rows, or columns, for example
-```{r}
+
+```r
 (A[1,]=c(2,4,5))
+```
+
+```
+## [1] 2 4 5
 ```
 
 If you use `which` on a matrix, `R` will normally treat the matrix as a vector --- so for example `which(A==8)` will give the answer 6 (figure out why). However, `which` does have an option that will treat its argument
 as a matrix:
-```{r}
+
+```r
 which(A==8,arr.ind=TRUE)
+```
+
+```
+##      row col
+## [1,]   3   2
 ```
 
 ## Lists
@@ -1108,7 +1222,8 @@ While vectors and matrices may seem familiar, lists are probably new to you. Vec
 other lists ... Indexing lists is a little different too: use double square brackets `[[ ]]` (rather
 than single square brackets as for a vector) to extract an element of a list by number or name, or `$` to extract an element by name (only). Given a list like this:
 
-```{r}
+
+```r
 L = list(A=x,B=y,C=c("a","b","c"))
 ```
 

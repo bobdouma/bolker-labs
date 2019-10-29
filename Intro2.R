@@ -1,4 +1,4 @@
-X=read.table('ChlorellaGrowth.txt')
+X=read.table('ChlorellaGrowth.txt',header=T)
 X=as.matrix(X)
 Light=X[,1]
 rmax=X[,2] 
