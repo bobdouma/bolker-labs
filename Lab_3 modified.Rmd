@@ -83,6 +83,22 @@ loop to iterate over the different datasets.
 Calculate the logarithm of the sequence 1:10, using first a for loop and then without a for loop.
 ``` 
 
+```{block2, type= "solutionbox", latex.options="{block-green}{3}",echo=T}
+
+`for (i in 1:10){`
+
+    `log(i)`
+  
+    `print(log(i))`
+  
+`}`
+
+Note that the print statement was added to print to screen
+
+`log(c(1:10))`
+
+```
+
 # Missing values (NA)
 
 Missing values in data collection and analysis deserve special attention. You can get missing values during you data collection for various reasons, e.g. you missed the opportunity to take a measurement, you lose one of the replicates due to contamination, you wrote down a wrong value, or you even lost some of your data.
@@ -152,7 +168,13 @@ Given some data created from the following code `c(25,1,10,89, NA, NA)`,
 calculate the mean value and the standard error of this mean ($s.e.m. = \sigma/\sqrt{n}$, where $\sigma$ is the standard deviation and $n$ is the amount of data) by ignoring missing values.
 ``` 
 
+```{block2, type= "solutionbox", latex.options="{block-green}{3}",echo=T}
 
+`data <- c(25,1,10,89, NA, NA)`
+
+`sd(data,na.rm=T)/sqrt(length(na.omit(data))) `
+
+```
 # Making a function
 
 When you want to repeat a calculation for different data, it is best
@@ -217,11 +239,37 @@ choose one style or another is a matter of taste.
 Build a function to calculate the standard deviation ($\sigma = \sqrt{\frac{\sum_{i = 1}^n\left(x_i - \bar x\right)^2}{n - 1}}$). Test your function with some data that includes missing values, and compare to the built in function for the standard deviation `sd`.
 ``` 
 
+```{block2, type= "solutionbox", latex.options="{block-green}{3}",echo=T}
+
+`sigma.self = function(x,na.rm=F){ `
+  
+    `mean.x = mean(x,na.rm=na.rm)`
+    
+    `n = length(na.omit(x))`
+    
+    `sd = sqrt(sum((x-mean.x)^2,na.rm=na.rm)/(n-1))`
+    
+    `return(sd)`
+    
+`}`
+
+```
+
 Suprisingly the base `R` does not have a built in function for the standard error of the mean (s.e.m.). The sem is defined as $\frac{\sigma}{\sqrt(n)}$. 
 
 ```{block2, type = "exercisebox",latex.options="{3}"}
 Make you own function for the sem and use your own home-made function of the standard deviation for that.
 ``` 
+
+```{block2, type= "solutionbox", latex.options="{block-green}{3}",echo=T}
+
+`sem.self <- function(x,na.rm=F){`
+  
+   `length.x <- length(na.omit(x))`
+    `sigma.self(x,na.rm=na.rm)/sqrt(length(x))`
+`}`
+
+```
 
 As you see you can call functions inside functions. It is recommended to divide the work you want to do into little functions that each carry out a specific task, and then combine those functions into a larger function that combines these tasks. This facilitates error checking.
 
@@ -289,6 +337,18 @@ Construct a curve
 that has a maximum at ($x=5$, $y=1$).  Write the
 equation, draw the curve in `R`, and explain
 how you got there.
+```
+
+```{block2, type= "solutionbox", latex.options="{block-green}{3}",echo=T}
+
+For example: $-(x-5)^2+1$
+  
+`curve(-(x-5)^2+1,from=-10,to=10)` 
+
+`abline(v=5)`
+
+`abline(h=1)`
+
 ```
 
 
@@ -427,7 +487,6 @@ A pseudocode that implements this idea:
 
 ```  
   
-  
 ```{r, eval=F, echo=F}
 set.seed(101)
 # code to generate the data of the six datasets
@@ -494,16 +553,63 @@ write.csv(all,"shapes.csv",row.names=F)
 ```
 
 
-```{r,eval=F, echo=F}
-# code to plot the datasets
-shapes = read.csv("shapes.csv")
 
-par(mfrow=c(3,2),oma=c(0,0,0,0),mar=c(4,4,0.1,0.1))
-for (i in 1:6){
-  shapes.subset = shapes[shapes$dat == i,]
-  plot(shapes.subset$y~shapes.subset$x)
-#add curve here
-}
+```{block2, type= "solutionbox", latex.options="{block-green}{3}",echo=T}
+
+1. The first step is to read in the data. The data is stored in different sheet of the file `shapes.xlsx`. Select a sheet, go to `file` and 'save as' and save the sheet as a comma-separated-file (.csv). Beware that if you are using a computer with dutch settings, you may run into problems for two reasons: First, the decimal character is a comma `,` in Dutch while a dot `.` in english. Second the default list separator is a semicolon `;` in Dutch while a `,` in English. Check the file that you saved to check the settings of your computer. If this is not correct; go to control panel; to region and language settings; to advanced settings and change the decimal character into a `.`  and the list separator (lijstschijdingsteken) in to a `,`.
+
+`setwd("D://...//...//...)`
+`shapes1 = read.csv(shapes1.csv)`
+
+
+2. After you have read in the data, you can make a plot, e.g. through `plot(shapes1$y~ shapes1$x)` for dataset 1. Multiple plots can be made through specifying `par(mfrow=c(3,2))`. This will setup the grid, after using `plot` six times, the grid will be filled with plots. Note that all the datasets are different in their specification of the header (names). You can take account of the header name through `header=TRUE` inside the `read.csv` function. Check the datafiles to make sure whether or not there are column headings.
+
+3. Choosing appropriate deterministic functions
+
+      **dataset 1**
+      light response curve. There are a number of options of functions to choose from, depending on the level of sophistication:
+      $\frac{ax}{(b+x)}$, $a(1-e^{(-bx)})$, $\frac{1}{2\theta}(\alpha I+p_{max}-\sqrt(\alpha I+p_{max})^2-4\theta I p_{max})$ see page 98 of Bolker.
+      
+      **dataset 2**
+      The dataset describes a functional response. Bolker mentions four of those $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\frac{ax^2}{(b+cx+x^2)}$
+      
+      **dataset 3**
+      Allometric relationships have the form $ax^b$
+      
+      **dataset 4**
+      This could be logistic growth $n(t)=\frac{K}{1+(\frac{K}{n_0})e^{-rt}}$ or the gompertz function $f(x)=e^{-ae^{-bx}}$
+      
+      **dataset 5**
+      What about a negative exponential? $ae^{-bx}$ or a power function $ax^b$
+      
+      **dataset 6**
+      Species reponse curves are curves that describe the probability of presence as a function of an environmental variable. A good candidate good be a unimodel response curve. You could take the equation of the normal distribution without the scaling constant: e.g.
+      $a e^{\frac{-(x-\mu)^2}{2\sigma^2}}$
+
+4. See the word file on blackboard "Bestiary of functions.docx"
+
+5. Curves can be added to the plots through `curve`: e.g. `curve(2x+2x,from=0,to=20)` 
+
+      **dataset 1** 
+      Reasonable values for the first dataset assuming a michaelis menten relationship are a=25 and b=60. For the            non-rectangular parabola one could choose values of theta = 0.7; a = 0.25; pmax = 25. 
+      
+
+      **dataset 2**
+      `curve(ifelse(x>27,18,(2/3)*x),add=T)`
+      
+      `curve(20*x/(10+x),add=T)`
+      
+      **dataset 3**
+      `curve(0.6*x^2,add=T)`
+
+      **dataset 4**
+        `K = 200; r = 0.2; N0=2; curve(K/(1+(K/N0)*exp(-r*x)),add=T)`
+        
+      **dataset 5**  
+      `curve(8*(exp(-0.75*x)),add=T)  `
+    
+      **dataset 6**
+      `mu = 5; b = 2; curve(exp(-(mu-x)^2/b)  ,add=T)`
 
 
 ```

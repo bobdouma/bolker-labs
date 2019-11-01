@@ -1,0 +1,31 @@
+---
+title: "test"
+author: Stephen Ellner, modified by Ben Bolker & Bob Douma. Adapted to R Markdown
+  by Alejandro Morales. 
+date: "October 1, 2019"
+output:
+  bookdown::pdf_book:
+     includes:
+        in_header: 'preamble1_color.tex'
+  #  includes:
+  #      in_header: 'preamble.tex'
+  #pdf_document:
+  #  fig_caption: yes
+  #  fig_width: 5
+  #  number_sections: yes
+  word_document: default
+  html_document:
+    fig_caption: yes
+    fig_height: 4.5
+    fig_width: 5
+    number_sections: yes
+geometry: margin=3cm
+fontsize: 11pt
+---
+
+
+
+```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=T}
+`matrix(rep(1:2,4),nrow=2)`
+
+```

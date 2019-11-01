@@ -25,9 +25,13 @@ number freestyle={\noexpand\thesection.\noexpand\arabic{\tcbcounter}},
 
 \definecolor{block-green}{cmyk}{0.80, 0.13, 0.14, 0.04, 1.00}
 
+%\newtcolorbox[auto counter,number within=section,
+%number freestyle={\noexpand\thesection.\noexpand\arabic{\tcbcounter}},
+%]{solutionbox}[3][]{colbacktitle=#2,title=Lab~#3~ Solution exercise \thetcbcounter #1}
+
 \newtcolorbox[auto counter,number within=section,
 number freestyle={\noexpand\thesection.\noexpand\arabic{\tcbcounter}},
-]{solutionbox}[3][]{colbacktitle=#2,title=Lab~#3~ Solution Exercise \thetcbcounter #1}
+]{solutionbox}[2][colbacktitle=block-green]{title=Lab~#2~ Solution exercise \thetcbcounter #1}
 
 
 % Create our custom box
