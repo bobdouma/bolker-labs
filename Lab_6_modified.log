@@ -1,7 +1,7 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000 64-bit) (preloaded format=pdflatex 2019.5.15)  12 NOV 2019 11:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7000 64-bit) (preloaded format=pdflatex 2019.5.15)  21 NOV 2019 10:24
 entering extended mode
-**./Lab_4_modified.tex
-(Lab_4_modified.tex
+**./Lab_6_modified.tex
+(Lab_6_modified.tex
 LaTeX2e <2018-12-01>
 ("C:\Program Files\MiKTeX 2.9\tex/latex/base\article.cls"
 Document Class: article 2018/09/03 v1.4i Standard LaTeX document class
@@ -1176,8 +1176,8 @@ Library (tcolorbox): 'tcbposter.code.tex' version '4.20'
 )
 \c@tcb@cnt@exercisebox=\count322
 \c@tcb@cnt@solutionbox=\count323
-(Lab_4_modified.aux)
-\openout1 = `Lab_4_modified.aux'.
+(Lab_6_modified.aux)
+\openout1 = `Lab_6_modified.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 180.
 LaTeX Font Info:    ... okay on input line 180.
@@ -1266,9 +1266,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 180.
 LaTeX Info: Redefining \pageref on input line 180.
 LaTeX Info: Redefining \nameref on input line 180.
-(Lab_4_modified.out) (Lab_4_modified.out)
+(Lab_6_modified.out) (Lab_6_modified.out)
 \@outlinefile=\write7
-\openout7 = `Lab_4_modified.out'.
+\openout7 = `Lab_6_modified.out'.
 
 
 (C:\Users\douma002\AppData\Roaming\MiKTeX\2.9\tex/context/base/mkii\supp-pdf.mk
@@ -1298,17 +1298,7 @@ G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 456.
 ) ABD: EveryShipout initializing macros
 \c@lstlisting=\count331
-LaTeX Font Info:    Try loading font information for TS1+lmr on input line 181.
-
-("C:\Program Files\MiKTeX 2.9\tex/latex/lm\ts1lmr.fd"
-File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
-) (Lab_4_modified.toc
-LaTeX Font Info:    Try loading font information for T1+lmtt on input line 2.
-("C:\Program Files\MiKTeX 2.9\tex/latex/lm\t1lmtt.fd"
-File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
-)
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 2.
+(Lab_6_modified.toc
 LaTeX Font Info:    Try loading font information for OT1+lmr on input line 4.
 ("C:\Program Files\MiKTeX 2.9\tex/latex/lm\ot1lmr.fd"
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1344,353 +1334,758 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ))
 \tf@toc=\write8
-\openout8 = `Lab_4_modified.toc'.
-
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 193.
-
-Package xcolor Warning: Incompatible color definition on input line 209.
+\openout8 = `Lab_6_modified.toc'.
 
 [1
 
 {C:/Users/douma002/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map}]
 
-Package xcolor Warning: Incompatible color definition on input line 214.
+Package xcolor Warning: Incompatible color definition on input line 228.
+
+LaTeX Font Info:    Try loading font information for T1+lmtt on input line 229.
+
+("C:\Program Files\MiKTeX 2.9\tex/latex/lm\t1lmtt.fd"
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 230.
+
+Package xcolor Warning: Incompatible color definition on input line 243.
 
 
-Package xcolor Warning: Incompatible color definition on input line 214.
+Package xcolor Warning: Incompatible color definition on input line 243.
 
 
-Package xcolor Warning: Incompatible color definition on input line 219.
+Package xcolor Warning: Incompatible color definition on input line 249.
 
 
-Package xcolor Warning: Incompatible color definition on input line 225.
+Package xcolor Warning: Incompatible color definition on input line 257.
 
 
-Package xcolor Warning: Incompatible color definition on input line 225.
+Package xcolor Warning: Incompatible color definition on input line 257.
 
-<Lab_4_modified_files/figure-latex/unnamed-chunk-3-1.pdf, id=109, 469.755pt x 2
-16.81pt>
-File: Lab_4_modified_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (typ
-e pdf)
-<use Lab_4_modified_files/figure-latex/unnamed-chunk-3-1.pdf>
-Package pdftex.def Info: Lab_4_modified_files/figure-latex/unnamed-chunk-3-1.pd
-f  used on input line 239.
-(pdftex.def)             Requested size: 443.57677pt x 204.72772pt.
-<Lab_4_modified_files/figure-latex/unnamed-chunk-4-1.pdf, id=110, 469.755pt x 3
-61.35pt>
-File: Lab_4_modified_files/figure-latex/unnamed-chunk-4-1.pdf Graphic file (typ
-e pdf)
-<use Lab_4_modified_files/figure-latex/unnamed-chunk-4-1.pdf>
-Package pdftex.def Info: Lab_4_modified_files/figure-latex/unnamed-chunk-4-1.pd
-f  used on input line 245.
-(pdftex.def)             Requested size: 443.57677pt x 341.2129pt.
-[2]
+LaTeX Font Info:    Try loading font information for TS1+lmr on input line 264.
 
-Package xcolor Warning: Incompatible color definition on input line 283.
+("C:\Program Files\MiKTeX 2.9\tex/latex/lm\ts1lmr.fd"
+File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [2]
 
-
-Package xcolor Warning: Incompatible color definition on input line 291.
+Package xcolor Warning: Incompatible color definition on input line 280.
 
 
 Package xcolor Warning: Incompatible color definition on input line 291.
 
 
-Package xcolor Warning: Incompatible color definition on input line 303.
+Package xcolor Warning: Incompatible color definition on input line 291.
 
 
-Package xcolor Warning: Incompatible color definition on input line 307.
+Package xcolor Warning: Incompatible color definition on input line 293.
 
 
-Package xcolor Warning: Incompatible color definition on input line 307.
+Package xcolor Warning: Incompatible color definition on input line 299.
 
 
-Package xcolor Warning: Incompatible color definition on input line 316.
+Package xcolor Warning: Incompatible color definition on input line 299.
 
 
-Package xcolor Warning: Incompatible color definition on input line 320.
+Underfull \hbox (badness 6047) in paragraph at lines 333--336
+[]\T1/lmr/m/n/10.95 (+20) But what is the max-i-mum like-li-hood es-ti-mate (ML
+E)? Use \T1/lmtt/m/n/10.95 optim
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 320.
+Underfull \hbox (badness 10000) in paragraph at lines 333--336
+\T1/lmr/m/n/10.95 (+20) with the de-fault op-tions (Nelder-Mead sim-plex method
+) and the
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 327.
+Underfull \hbox (badness 2573) in paragraph at lines 333--336
+\T1/lmr/m/n/10.95 (+20) method-of-moments es-ti-mates as the start-ing es-ti-ma
+tes (\T1/lmtt/m/n/10.95 par\T1/lmr/m/n/10.95 (+20) ): \T1/lmtt/m/n/10.95 opt1 =
+
+ []
+
+[3]
+
+Package xcolor Warning: Incompatible color definition on input line 343.
 
 
-Package xcolor Warning: Incompatible color definition on input line 331.
+Package xcolor Warning: Incompatible color definition on input line 354.
 
 
-Package xcolor Warning: Incompatible color definition on input line 331.
+Package xcolor Warning: Incompatible color definition on input line 354.
 
-[3 <./Lab_4_modified_files/figure-latex/unnamed-chunk-3-1.pdf>] [4 <./Lab_4_mod
-ified_files/figure-latex/unnamed-chunk-4-1.pdf>]
-<Lab_4_modified_files/figure-latex/unnamed-chunk-11-1.pdf, id=142, 469.755pt x 
-325.215pt>
-File: Lab_4_modified_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (ty
-pe pdf)
-<use Lab_4_modified_files/figure-latex/unnamed-chunk-11-1.pdf>
-Package pdftex.def Info: Lab_4_modified_files/figure-latex/unnamed-chunk-11-1.p
-df  used on input line 351.
+<Lab_6_modified_files/figure-latex/unnamed-chunk-7-1.pdf, id=144, 469.755pt x 3
+25.215pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (typ
+e pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-7-1.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-7-1.pd
+f  used on input line 356.
 (pdftex.def)             Requested size: 443.57677pt x 307.0916pt.
 
-Package xcolor Warning: Incompatible color definition on input line 360.
+Package xcolor Warning: Incompatible color definition on input line 358.
 
+[4]
 
-Package xcolor Warning: Incompatible color definition on input line 364.
-
-
-Package xcolor Warning: Incompatible color definition on input line 364.
+Package xcolor Warning: Incompatible color definition on input line 370.
 
 
 Package xcolor Warning: Incompatible color definition on input line 370.
 
 
-Package xcolor Warning: Incompatible color definition on input line 374.
+Package xcolor Warning: Incompatible color definition on input line 376.
 
 
-Package xcolor Warning: Incompatible color definition on input line 374.
+Package xcolor Warning: Incompatible color definition on input line 380.
 
 
-Package xcolor Warning: Incompatible color definition on input line 390.
-
-[5 <./Lab_4_modified_files/figure-latex/unnamed-chunk-11-1.pdf>]
-
-Package xcolor Warning: Incompatible color definition on input line 394.
+Package xcolor Warning: Incompatible color definition on input line 380.
 
 
-Package xcolor Warning: Incompatible color definition on input line 394.
+Package xcolor Warning: Incompatible color definition on input line 386.
 
 
 Package xcolor Warning: Incompatible color definition on input line 400.
 
 
-Package xcolor Warning: Incompatible color definition on input line 404.
+Package xcolor Warning: Incompatible color definition on input line 400.
 
 
-Package xcolor Warning: Incompatible color definition on input line 404.
+Package xcolor Warning: Incompatible color definition on input line 400.
+
+[5 <./Lab_6_modified_files/figure-latex/unnamed-chunk-7-1.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 400.
 
 
-Underfull \hbox (badness 1314) in paragraph at lines 413--416
-[]\T1/lmr/m/n/10.95 (+20) Doing the equiv-a-lent plot for con-tin-u-ous dis-tri
--bu-tions is ac-tu-ally some-what eas-ier,
+Package xcolor Warning: Incompatible color definition on input line 400.
+
+
+Package xcolor Warning: Incompatible color definition on input line 406.
+
+
+Package xcolor Warning: Incompatible color definition on input line 410.
+
+
+Package xcolor Warning: Incompatible color definition on input line 410.
+
+
+Package xcolor Warning: Incompatible color definition on input line 416.
+
+
+Package xcolor Warning: Incompatible color definition on input line 420.
+
+
+Package xcolor Warning: Incompatible color definition on input line 420.
+
+
+Package xcolor Warning: Incompatible color definition on input line 426.
+
+
+Package xcolor Warning: Incompatible color definition on input line 431.
+
+
+Package xcolor Warning: Incompatible color definition on input line 431.
+
+LaTeX Font Info:    Try loading font information for TS1+lmtt on input line 476
+.
+("C:\Program Files\MiKTeX 2.9\tex/latex/lm\ts1lmtt.fd"
+File: ts1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+) [6]
+Underfull \hbox (badness 10000) in paragraph at lines 523--524
+[]\T1/lmtt/m/n/10.95 # this calculates the mean y for a given value of x: the d
+eterministic
  []
 
 
-Package xcolor Warning: Incompatible color definition on input line 434.
+Overfull \hbox (18.87448pt too wide) in paragraph at lines 542--542
+[]           \TS1/lmtt/m/n/10.95 `\T1/lmtt/m/n/10.95 data=data.frame(x=shapes1$
+x,y=shapes1$y),method="Nelder-Mead")\TS1/lmtt/m/n/10.95 ` 
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 439.
+Overfull \hbox (53.36688pt too wide) in paragraph at lines 562--562
+[]\TS1/lmtt/m/n/10.95 `\T1/lmtt/m/n/10.95 # this calculates the mean y for a gi
+ven value of x: the deterministic function\TS1/lmtt/m/n/10.95 ` 
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 439.
+Overfull \hbox (7.37701pt too wide) in paragraph at lines 566--566
+[]\TS1/lmtt/m/n/10.95 `\T1/lmtt/m/n/10.95 # this calculates the likelihood of t
+he function given the probability \TS1/lmtt/m/n/10.95 `[] 
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 445.
-
-
-Package xcolor Warning: Incompatible color definition on input line 450.
-
-
-Package xcolor Warning: Incompatible color definition on input line 450.
-
-
-Package xcolor Warning: Incompatible color definition on input line 461.
-
-
-Package xcolor Warning: Incompatible color definition on input line 466.
-
-
-Package xcolor Warning: Incompatible color definition on input line 466.
-
-[6]
-
-Package xcolor Warning: Incompatible color definition on input line 483.
-
-
-Package xcolor Warning: Incompatible color definition on input line 488.
-
-
-Package xcolor Warning: Incompatible color definition on input line 488.
-
-
-Package xcolor Warning: Incompatible color definition on input line 512.
-
-
-Package xcolor Warning: Incompatible color definition on input line 516.
-
-
-Package xcolor Warning: Incompatible color definition on input line 516.
-
-
-Package xcolor Warning: Incompatible color definition on input line 526.
-
-
-Package xcolor Warning: Incompatible color definition on input line 530.
-
-
-Package xcolor Warning: Incompatible color definition on input line 530.
+Overfull \hbox (18.87448pt too wide) in paragraph at lines 580--580
+[]           \TS1/lmtt/m/n/10.95 `\T1/lmtt/m/n/10.95 data=data.frame(x=shapes1$
+x,y=shapes1$y),method="Nelder-Mead")\TS1/lmtt/m/n/10.95 ` 
+ []
 
 [7]
-
-Package xcolor Warning: Incompatible color definition on input line 582.
-
-
-Package xcolor Warning: Incompatible color definition on input line 596.
-
-
-Package xcolor Warning: Incompatible color definition on input line 596.
+Overfull \vbox (18.45331pt too high) has occurred while \output is active []
 
 [8]
 
-Package xcolor Warning: Incompatible color definition on input line 613.
+Package xcolor Warning: Incompatible color definition on input line 605.
 
 
-Package xcolor Warning: Incompatible color definition on input line 618.
+Package xcolor Warning: Incompatible color definition on input line 620.
 
 
-Package xcolor Warning: Incompatible color definition on input line 618.
+Package xcolor Warning: Incompatible color definition on input line 620.
+
+[9] [10]
+Underfull \hbox (badness 1946) in paragraph at lines 712--713
+[]\T1/lmr/m/n/10.95 (+20) Calculate the in-ter-val based on the fact that the 9
+5% lim-its are 1.96
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 624.
+Underfull \hbox (badness 1107) in paragraph at lines 724--726
+[]\T1/lmr/m/it/10.95 (+20) hint\T1/lmr/m/n/10.95 (+20) : If the fit-ted mle ob-
+ject is called \T1/lmtt/m/n/10.95 mle2.obj\T1/lmr/m/n/10.95 (+20) , then you ca
+n ex-tract
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 628.
+Underfull \hbox (badness 2012) in paragraph at lines 724--726
+\T1/lmr/m/n/10.95 (+20) the variance-covariance ma-trix by us-ing \T1/lmtt/m/n/
+10.95 vcov(mle2.obj)\T1/lmr/m/n/10.95 (+20) . You can ex-
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 628.
+Underfull \hbox (badness 1946) in paragraph at lines 724--726
+\T1/lmtt/m/n/10.95 mvrnorm(1000,mu=coef(mle2.obj),Sigma=vcov(mle2.obj))\T1/lmr/
+m/n/10.95 (+20) . \T1/lmtt/m/n/10.95 mvrnorm \T1/lmr/m/n/10.95 (+20) is a
+ []
+
+[11]
+Overfull \hbox (48.59747pt too wide) in paragraph at lines 736--737
+[]\T1/lmr/m/it/10.95 (-20) hint\T1/lmr/m/n/10.95 (-20) : If the pre-dic-tions a
+re stored in a ma-trix \T1/lmtt/m/n/10.95 mat\T1/lmr/m/n/10.95 (-20) , you can 
+use \T1/lmtt/m/n/10.95 apply(mat,2,quantile,0.975)
+ []
 
 
-Package xcolor Warning: Incompatible color definition on input line 634.
-
-
-Package xcolor Warning: Incompatible color definition on input line 641.
-
-
-Package xcolor Warning: Incompatible color definition on input line 641.
-
-<Lab_4_modified_files/figure-latex/unnamed-chunk-29-1.pdf, id=173, 469.755pt x 
-325.215pt>
-File: Lab_4_modified_files/figure-latex/unnamed-chunk-29-1.pdf Graphic file (ty
-pe pdf)
-<use Lab_4_modified_files/figure-latex/unnamed-chunk-29-1.pdf>
-Package pdftex.def Info: Lab_4_modified_files/figure-latex/unnamed-chunk-29-1.p
-df  used on input line 643.
-(pdftex.def)             Requested size: 443.57677pt x 307.0916pt.
-[9 <./Lab_4_modified_files/figure-latex/unnamed-chunk-29-1.pdf>]
-
-Package xcolor Warning: Incompatible color definition on input line 690.
-
-
-Package xcolor Warning: Incompatible color definition on input line 697.
-
-
-Package xcolor Warning: Incompatible color definition on input line 697.
-
-
-Package xcolor Warning: Incompatible color definition on input line 712.
-
-[10]
-
-Package xcolor Warning: Incompatible color definition on input line 718.
-
-
-Package xcolor Warning: Incompatible color definition on input line 718.
-
-
-Package xcolor Warning: Incompatible color definition on input line 746.
-
-
-Package xcolor Warning: Incompatible color definition on input line 750.
-
-
-Package xcolor Warning: Incompatible color definition on input line 750.
+Package xcolor Warning: Incompatible color definition on input line 744.
 
 
 Package xcolor Warning: Incompatible color definition on input line 760.
 
 
-Package xcolor Warning: Incompatible color definition on input line 765.
+Package xcolor Warning: Incompatible color definition on input line 760.
 
 
-Package xcolor Warning: Incompatible color definition on input line 765.
+Package xcolor Warning: Incompatible color definition on input line 766.
 
 
-Package xcolor Warning: Incompatible color definition on input line 774.
+Package xcolor Warning: Incompatible color definition on input line 776.
 
 
-Package xcolor Warning: Incompatible color definition on input line 779.
+Package xcolor Warning: Incompatible color definition on input line 776.
 
 
-Package xcolor Warning: Incompatible color definition on input line 779.
+Package xcolor Warning: Incompatible color definition on input line 784.
 
 
-Package xcolor Warning: Incompatible color definition on input line 798.
+Package xcolor Warning: Incompatible color definition on input line 791.
 
 
-Package xcolor Warning: Incompatible color definition on input line 802.
+Package xcolor Warning: Incompatible color definition on input line 791.
+
+[12]
+
+Package xcolor Warning: Incompatible color definition on input line 800.
 
 
-Package xcolor Warning: Incompatible color definition on input line 802.
-
-[11]
-
-Package xcolor Warning: Incompatible color definition on input line 808.
+Package xcolor Warning: Incompatible color definition on input line 806.
 
 
-Package xcolor Warning: Incompatible color definition on input line 812.
-
-
-Package xcolor Warning: Incompatible color definition on input line 812.
-
-
-Package xcolor Warning: Incompatible color definition on input line 817.
-
-
-Package xcolor Warning: Incompatible color definition on input line 821.
-
-
-Package xcolor Warning: Incompatible color definition on input line 821.
+Package xcolor Warning: Incompatible color definition on input line 806.
 
 
 Package xcolor Warning: Incompatible color definition on input line 826.
 
 
-Package xcolor Warning: Incompatible color definition on input line 831.
+Package xcolor Warning: Incompatible color definition on input line 830.
 
 
-Package xcolor Warning: Incompatible color definition on input line 831.
+Package xcolor Warning: Incompatible color definition on input line 830.
 
-<Lab_4_modified_files/figure-latex/unnamed-chunk-43-1.pdf, id=200, 469.755pt x 
+
+Package xcolor Warning: Incompatible color definition on input line 836.
+
+
+Package xcolor Warning: Incompatible color definition on input line 840.
+
+
+Package xcolor Warning: Incompatible color definition on input line 840.
+
+
+Package xcolor Warning: Incompatible color definition on input line 859.
+
+
+Package xcolor Warning: Incompatible color definition on input line 863.
+
+
+Package xcolor Warning: Incompatible color definition on input line 863.
+
+
+Package xcolor Warning: Incompatible color definition on input line 870.
+
+[13]
+
+Package xcolor Warning: Incompatible color definition on input line 876.
+
+
+Package xcolor Warning: Incompatible color definition on input line 876.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-16-1.pdf, id=253, 469.755pt x 
 325.215pt>
-File: Lab_4_modified_files/figure-latex/unnamed-chunk-43-1.pdf Graphic file (ty
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (ty
 pe pdf)
-<use Lab_4_modified_files/figure-latex/unnamed-chunk-43-1.pdf>
-Package pdftex.def Info: Lab_4_modified_files/figure-latex/unnamed-chunk-43-1.p
-df  used on input line 835.
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-16-1.p
+df  used on input line 878.
 (pdftex.def)             Requested size: 443.57677pt x 307.0916pt.
-[12 <./Lab_4_modified_files/figure-latex/unnamed-chunk-43-1.pdf>] [13]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 889.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 889.
-(Lab_4_modified.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 889.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 889.
-Package rerunfilecheck Info: File `Lab_4_modified.out' has not changed.
-(rerunfilecheck)             Checksum: A9DE684355D0E57B34A23794B47EF404;1705.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 889.
+
+Package xcolor Warning: Incompatible color definition on input line 880.
+
+
+Package xcolor Warning: Incompatible color definition on input line 902.
+
+
+Package xcolor Warning: Incompatible color definition on input line 902.
+
+
+Underfull \vbox (badness 10000) detected at line 902
+ []
+
+
+Package xcolor Warning: Incompatible color definition on input line 902.
+
+[14 <./Lab_6_modified_files/figure-latex/unnamed-chunk-16-1.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 902.
+
+
+Package xcolor Warning: Incompatible color definition on input line 902.
+
+
+Package xcolor Warning: Incompatible color definition on input line 908.
+
+
+Package xcolor Warning: Incompatible color definition on input line 922.
+
+
+Package xcolor Warning: Incompatible color definition on input line 922.
+
+
+Package xcolor Warning: Incompatible color definition on input line 928.
+
+
+Package xcolor Warning: Incompatible color definition on input line 948.
+
+
+Package xcolor Warning: Incompatible color definition on input line 948.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-16-2.pdf, id=263, 469.755pt x 
+325.215pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-16-2.pdf Graphic file (ty
+pe pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-16-2.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-16-2.p
+df  used on input line 950.
+(pdftex.def)             Requested size: 443.57677pt x 307.0916pt.
+
+Package xcolor Warning: Incompatible color definition on input line 952.
+
+[15]
+
+Package xcolor Warning: Incompatible color definition on input line 971.
+
+
+Package xcolor Warning: Incompatible color definition on input line 971.
+
+
+Package xcolor Warning: Incompatible color definition on input line 983.
+
+[16 <./Lab_6_modified_files/figure-latex/unnamed-chunk-16-2.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 988.
+
+
+Package xcolor Warning: Incompatible color definition on input line 988.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-16-3.pdf, id=277, 469.755pt x 
+325.215pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-16-3.pdf Graphic file (ty
+pe pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-16-3.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-16-3.p
+df  used on input line 990.
+(pdftex.def)             Requested size: 443.57677pt x 307.0916pt.
+
+Package xcolor Warning: Incompatible color definition on input line 992.
+
+
+Package xcolor Warning: Incompatible color definition on input line 996.
+
+
+Package xcolor Warning: Incompatible color definition on input line 996.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1002.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1007.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1007.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1013.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1017.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1017.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1023.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1027.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1027.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1033.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1043.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1043.
+
+
+Overfull \vbox (1.54172pt too high) detected at line 1043
+ []
+
+
+Package xcolor Warning: Incompatible color definition on input line 1043.
+
+[17 <./Lab_6_modified_files/figure-latex/unnamed-chunk-16-3.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 1043.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1043.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1049.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1053.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1053.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1074.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1078.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1078.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-16-4.pdf, id=287, 469.755pt x 
+325.215pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-16-4.pdf Graphic file (ty
+pe pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-16-4.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-16-4.p
+df  used on input line 1080.
+(pdftex.def)             Requested size: 443.57677pt x 307.0916pt.
+[18 <./Lab_6_modified_files/figure-latex/unnamed-chunk-16-4.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 1104.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1116.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1116.
+
+[19]
+
+Package xcolor Warning: Incompatible color definition on input line 1134.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1172.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1172.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1172.
+
+[20]
+
+Package xcolor Warning: Incompatible color definition on input line 1172.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1172.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1179--1181
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1181--1183
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1183--1185
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1185--1187
+
+ []
+
+
+Package xcolor Warning: Incompatible color definition on input line 1196.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1203.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1203.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1207.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1211.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1211.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1215.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1220.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1220.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1224.
+
+[21]
+
+Package xcolor Warning: Incompatible color definition on input line 1228.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1228.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1236.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1242.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1242.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-23-1.pdf, id=314, 361.35pt x 2
+52.945pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-23-1.pdf Graphic file (ty
+pe pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-23-1.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-23-1.p
+df  used on input line 1244.
+(pdftex.def)             Requested size: 361.34912pt x 252.94438pt.
+
+Package xcolor Warning: Incompatible color definition on input line 1262.
+
+[22 <./Lab_6_modified_files/figure-latex/unnamed-chunk-23-1.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 1271.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1271.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1275.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1279.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1279.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1287.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1293.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1293.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-26-1.pdf, id=327, 361.35pt x 2
+52.945pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-26-1.pdf Graphic file (ty
+pe pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-26-1.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-26-1.p
+df  used on input line 1295.
+(pdftex.def)             Requested size: 361.34912pt x 252.94438pt.
+
+Package xcolor Warning: Incompatible color definition on input line 1299.
+
+[23 <./Lab_6_modified_files/figure-latex/unnamed-chunk-26-1.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 1303.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1303.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1307.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1313.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1313.
+
+<Lab_6_modified_files/figure-latex/unnamed-chunk-28-1.pdf, id=337, 469.755pt x 
+216.81pt>
+File: Lab_6_modified_files/figure-latex/unnamed-chunk-28-1.pdf Graphic file (ty
+pe pdf)
+<use Lab_6_modified_files/figure-latex/unnamed-chunk-28-1.pdf>
+Package pdftex.def Info: Lab_6_modified_files/figure-latex/unnamed-chunk-28-1.p
+df  used on input line 1315.
+(pdftex.def)             Requested size: 443.57677pt x 204.72772pt.
+
+Package xcolor Warning: Incompatible color definition on input line 1319.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1329.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1329.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1341.
+
+[24 <./Lab_6_modified_files/figure-latex/unnamed-chunk-28-1.pdf>]
+
+Package xcolor Warning: Incompatible color definition on input line 1345.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1345.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1355.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1360.
+
+
+Package xcolor Warning: Incompatible color definition on input line 1360.
+
+[25]
+Overfull \hbox (257.76701pt too wide) in paragraph at lines 1402--1402
+[]\T1/lmtt/m/n/10.95 light response curve. There are a number of options of fun
+ctions to choose from, depending on the level of sophistication:[] 
+ []
+
+
+Overfull \hbox (1068.33844pt too wide) in paragraph at lines 1403--1403
+[]\T1/lmtt/m/n/10.95 $\frac{ax}{(b+x)}$, $a(1-e^{(-bx)})$, $\frac{1}{2\theta}(\
+alpha I+p_{max}-\sqrt(\alpha I+p_{max})^2-4\theta I p_{max})$ see page 98. A pa
+rameter \TS1/lmtt/m/n/10.95 `\T1/lmtt/m/n/10.95 d\TS1/lmtt/m/n/10.95 ` \T1/lmtt
+/m/n/10.95 can be added in all cases to shift the curve up or down. The y repre
+sents net photosynthesis $\mu mol CO_{2}/m^2s$[] 
+ []
+
+
+Overfull \hbox (769.4043pt too wide) in paragraph at lines 1407--1407
+[]\T1/lmtt/m/n/10.95 The dataset describes a functional responses. Bolker menti
+ons four of those $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\fr
+ac{ax^2}{(b+cx+x^2)}$ The y is measured in grams prey eaten per unit time.[] 
+ []
+
+
+Overfull \hbox (177.28474pt too wide) in paragraph at lines 1410--1410
+[]\T1/lmtt/m/n/10.95 Allometric relationships generally have the form $ax^b$. T
+he y represent the total number of cones produced.[] 
+ []
+
+
+Overfull \hbox (516.46002pt too wide) in paragraph at lines 1413--1413
+[]  \T1/lmtt/m/n/10.95 This could be logistic growth $n(t)=\frac{K}{1+(\frac{K}
+{n_0})e^{-rt}}$ or the gompertz function $f(x)=e^{-ae^{-bx}}$. The y represent 
+the population size (numbers).[] 
+ []
+
+
+Overfull \hbox (211.77715pt too wide) in paragraph at lines 1416--1416
+[]  \T1/lmtt/m/n/10.95 What about a negative exponential? $ae{-bx}$ or a power 
+function $ax^b$. The y represent a number per unit area.[] 
+ []
+
+
+Overfull \hbox (987.85617pt too wide) in paragraph at lines 1419--1419
+[]  \T1/lmtt/m/n/10.95 Species reponse curves are curves that describe the prob
+ability of presence as a function of some factor. A good candidate good be a un
+imodel response curve. You could take the equation of the normal distribution w
+ithout the scaling constant: e.g.[] 
+ []
+
+
+Overfull \hbox (142.79234pt too wide) in paragraph at lines 1420--1420
+[]  \T1/lmtt/m/n/10.95 $a e^{\frac{-(x-\mu)^2}{2\sigma^2}}$. The y represent pr
+esence or absence of the species (no units).[] 
+ []
+
+[26] [27]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1449.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1449.
+(Lab_6_modified.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1449.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1449.
+
+Package rerunfilecheck Info: File `Lab_6_modified.out' has not changed.
+(rerunfilecheck)             Checksum: 5541651F8EEBD7329492D0BC7A2918A6;3568.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1449.
  ) 
 Here is how much of TeX's memory you used:
- 38895 strings out of 492945
- 753666 string characters out of 3135504
- 841785 words of memory out of 3000000
- 42147 multiletter control sequences out of 15000+200000
- 580699 words of font info for 98 fonts, out of 3000000 for 9000
+ 39032 strings out of 492945
+ 756317 string characters out of 3135504
+ 845129 words of memory out of 3000000
+ 42192 multiletter control sequences out of 15000+200000
+ 581430 words of font info for 107 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 56i,6n,99p,979b,485s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathsy.enc}{C:/Program Fil
-es/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ec.enc}{C:/Program Files/MiKTeX 2.9/fonts/e
-nc/dvips/lm/lm-ts1.enc}{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-rm.en
-c}{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Program Fil
-es/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathex.enc}<C:/Program Files/MiKTeX 2.9/fon
+ 56i,6n,99p,979b,496s stack positions out of 5000i,500n,10000p,200000b,50000s
+{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathex.enc}{C:/Program Fil
+es/MiKTeX 2.9/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Program Files/MiKTeX 2.9/fon
+ts/enc/dvips/lm/lm-mathsy.enc}{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/l
+m-ec.enc}{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-ts1.enc}{C:/Program
+ Files/MiKTeX 2.9/fonts/enc/dvips/lm/lm-rm.enc}<C:/Program Files/MiKTeX 2.9/fon
 ts/type1/public/lm/lmbx10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/l
 m/lmbx12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmex10.pfb><C:/
 Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmmi10.pfb><C:/Program Files/MiK
@@ -1701,10 +2096,11 @@ es/MiKTeX 2.9/fonts/type1/public/lm/lmri10.pfb><C:/Program Files/MiKTeX 2.9/fon
 ts/type1/public/lm/lmri12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/l
 m/lmsy10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/lm/lmsy8.pfb><C:/P
 rogram Files/MiKTeX 2.9/fonts/type1/public/lm/lmtk10.pfb><C:/Program Files/MiKT
-eX 2.9/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Lab_4_modified.pdf (13 pages, 349215 bytes).
+eX 2.9/fonts/type1/public/lm/lmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
+1/public/lm/lmtti10.pfb>
+Output written on Lab_6_modified.pdf (27 pages, 698524 bytes).
 PDF statistics:
- 287 PDF objects out of 1000 (max. 8388607)
- 52 named destinations out of 1000 (max. 500000)
- 10494 words of extra memory for PDF output out of 12000 (max. 10000000)
+ 453 PDF objects out of 1000 (max. 8388607)
+ 122 named destinations out of 1000 (max. 500000)
+ 10541 words of extra memory for PDF output out of 12000 (max. 10000000)
 

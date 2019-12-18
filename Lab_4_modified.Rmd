@@ -120,7 +120,7 @@ successes.
 
 ``` 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 
 1.
@@ -241,10 +241,6 @@ them to make sure the theoretical
 values end up in the right place.)
 
 
-Doing the equivalent plot for continuous distributions is actually somewhat easier, since you don't have
-to deal with the complications of a discrete distribution: just use `hist(...,prob=TRUE)` to show the
-sampled distribution (possibly with `ylim` adjusted for the maximum of the theoretical density distribution) and `ddist(x,[parameters],add=TRUE)` to add the theoretical curve (e.g.: `curve(dgamma(x,shape=2,scale=1,add=FALSE))`).
-
 ```{block2, type = "exercisebox",latex.options="{4}"}
 Pick 10,000 negative binomial
 deviates with $\mu=2$, $k=0.5$
@@ -258,7 +254,7 @@ the theoretical distribution to the plot.
 
 ``` 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 `mu = 2`
 
@@ -280,7 +276,8 @@ the theoretical distribution to the plot.
 
 `mu * (1 + mu/k)`
 
-# the alternative parameterisation
+The alternative parameterisation:
+  
 `p = 1/(1 + mu/k)`
 
 `n = k`
@@ -293,6 +290,11 @@ the theoretical distribution to the plot.
 
 
 ```
+
+
+Doing the equivalent plot for continuous distributions is actually somewhat easier, since you don't have
+to deal with the complications of a discrete distribution: just use `hist(...,prob=TRUE)` to show the
+sampled distribution (possibly with `ylim` adjusted for the maximum of the theoretical density distribution) and `ddist(x,[parameters])` to add the theoretical curve (e.g.: `curve(dgamma(x,shape=2,scale=1),add=TRUE)`).
 
 # Averaging distributions
 
@@ -326,11 +328,11 @@ However, `mean(prob)` or `mean(tabdat)` is just plain wrong (at least, I can't t
 you would want to calculate this value). 
 
 ```{block2, type = "exercisebox",latex.options="{4}"}
-Figure out what it means that `mean(tabdat)` equals `r mean(tabdat)`.
+Figure out what you do if you calculate `mean(tabdat)` 
 
 ``` 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 `dat = c(5,6,5,7,5,8)`; 
 
@@ -341,6 +343,8 @@ Figure out what it means that `mean(tabdat)` equals `r mean(tabdat)`.
 `tabdat`
 
 `mean(tabdat)`
+
+It is the mean of the frequencies, and so this is not what you want to know.
 
 
 ```
@@ -388,7 +392,7 @@ Use the following pseudo-code:
 
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 1. `rf = runif(10,min=0,max=10)`
 2. `mean(rf)`
@@ -494,7 +498,7 @@ and draw a vertical line showing the mean of the distribution. Vertical lines ca
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 1. Based just on the expressions in the normalization constant $\Gamma(a+b)/(\Gamma(a)\Gamma(b))$ for the standard parameterization,
 $\Gamma(\theta)/(\Gamma(\theta P)\Gamma(\theta(1-P))))$ gives $\theta=a+b$, $P=a/(a+b)$ or conversely $a = \theta P$, $b=\theta(1-P)$.  
@@ -581,7 +585,7 @@ Check graphically that these functions actually work. For instance, you could co
 
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 `rzinbinom = function(n,mu,size,zprob) {`
 
@@ -719,7 +723,7 @@ are.
 
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 
 `mu = 4`
 
@@ -745,7 +749,7 @@ Reload the six datasets and choose for each dataset one or two candidate probabi
 
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=T}
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
 1. Dataset 1
 y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
 

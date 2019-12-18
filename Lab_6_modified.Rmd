@@ -1,5 +1,5 @@
 ---
-title: "Lab 6 Fitting models to data, optimisation and bayesian statistics"
+title: "Lab 6 & 7 Fitting models to data, optimisation and bayesian statistics"
 author: "Ben Bolker, modified at several places by Bob Douma and Alejandro Morales. Bayesian part by Alejandro Morales Sierra."
 date: "11 October 2019"
 output:
@@ -141,35 +141,60 @@ and the method-of-moments estimates as the starting estimates (`par`):
 
 ```
 
-The minimum negative log-likelihood (`round(opt1$value,2)`) is better than either the negative log-likelihood   corresponding to the method-of-moments parameters (`round(nll.mom,2)`) or the true parameters (`round(nll.true,2)`), but all of these are within the LRT cutoff.
 
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+The solution is shown below in a big R chunk
+```
 
-```{r, echo=F,results='hide'}
+```{r, echo=T}
 set.seed(1001)
 mu.true=1
 k.true=0.4
+
 x = rnbinom(50,mu=mu.true,size=k.true)
 
-NLLfun1 <- function(p,dat=x){
-  mu =p[1]
-  k=p[2]
-  -sum(dnbinom(x,mu=mu,size=k,log=TRUE))
+plot(table(factor(x,levels=0:max(x))),
+   ylab="Frequency",xlab="x")
+
+
+NLLfun1 = function(p,dat=x) {
+mu=p[1]
+k=p[2]
+-sum(dnbinom(x,mu=mu,size=k,log=TRUE))
 }
 
-m = mean(x)
-v = var(x)
-mu.mom = mean(x)
-k.mom = m/(v/m-1)
-nll.mom <- NLLfun1(c(mu.mom,k.mom))
-opt1 = optim(fn=NLLfun1,par=c(mu=mu.mom,k=k.mom),hessian=TRUE)
+nll.true=NLLfun1(c(mu=mu.true,k=k.true))
 
+nll.true
+
+NLLfun1(c(mu=10,k=10))
+
+m = mean(x)
+
+v = var(x)
+
+mu.mom = m
+
+k.mom = m/(v/m-1)
+
+nll.mom=NLLfun1(c(mu=mu.mom,k=k.mom))
+
+nll.mom
+
+ldiff=nll.true-nll.mom; ldiff
+
+qchisq(0.95,df=2)/2
+
+opt1 = optim(fn=NLLfun1,par=c(mu=mu.mom,k=k.mom),hessian=TRUE)
+coef(opt1)
 ```
+
+The minimum negative log-likelihood (`round(opt1$value,2)`) is better than either the negative log-likelihood   corresponding to the method-of-moments parameters (`round(nll.mom,2)`) or the true parameters (`round(nll.true,2)`), but all of these are within the LRT cutoff.
 
 ## Likelihood surface
 To find the likelihood surface follow the steps below (background information can be found in Bolker Ch. 6).
+
 ```{block2, type = "exercisebox",latex.options="{6}"}
-
-
 For the likelihood surface:
   
 1. Set up vectors of $\mu$ and $k$ values. Let's try $\mu$ from 0.4 to 3 in steps of 0.05 and $k$ from 0.01 to 0.7 in steps of 0.01.
@@ -186,28 +211,28 @@ columns corresponding to $k$:
 
 ```
 
-```{r,results='hide',echo=F}
-muvec = seq(0.4,3,by=0.05)
-kvec = seq(0.01,0.7,by=0.01)
-``` 
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+`muvec = seq(0.4,3,by=0.05)`
 
-```{r,results='hide',echo=F}
-resmat = matrix(nrow=length(muvec),ncol=length(kvec))
-``` 
+`kvec = seq(0.01,0.7,by=0.01)`
 
-```{r,results='hide',echo=F}
-for (i in 1:length(muvec)) {
-  for (j in 1:length(kvec)) {
-    resmat[i,j] = NLLfun1(c(muvec[i],kvec[j]))
-  }
-}
-``` 
+`resmat = matrix(nrow=length(muvec),ncol=length(kvec))`
 
-```{r,results='hide',echo=F,eval=F}
-contour(muvec,kvec,resmat,xlab=expression(mu),ylab="k")
-contour(muvec,kvec,resmat,nlevels=100,lty=2,add=TRUE)
+`for (i in 1:length(muvec)) {`
+
+  `for (j in 1:length(kvec)) {`
+  
+    `resmat[i,j] = NLLfun1(c(muvec[i],kvec[j]))`
+    
+  `}`
+  
+`}`
+
+`contour(muvec,kvec,resmat,xlab=expression(mu),ylab="k")`
+
+`contour(muvec,kvec,resmat,nlevels=100,lty=2,add=TRUE)`
+
 ```
-
 
 
 # Maximum likelihood and continuous covariates
@@ -231,88 +256,93 @@ Optional and time permitting:
 
 ``` 
 
-```{r,eval=F,echo=F}
-shapes1= read.csv("D:/BobDouma/Education/CSA-34306 Ecological Models and Data in R/tutorials/repos/bolker-labs/shapes1.csv")
-plot(shapes1)
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 
-nll.mle = function(a,b,sd){
-  # this calculates the mean y for a given value of x: the deterministic function
-  mu = a*(1-exp(-b*x))
-  # this calculates the likelihood of the function given the probability 
-  # distribution, the data and mu and sd
-  nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) 
-  return(nll)
-}
+`shapes1= read.csv("shapes1.csv")`
+
+`plot(shapes1)`
+
+`nll.mle = function(a,b,sd){`
+
+  `# this calculates the mean y for a given value of x: the deterministic function`
+  
+  `mu = a*(1-exp(-b*x))`
+  
+  `# this calculates the likelihood of the function given the probability `
+  
+  `# distribution, the data and mu and sd`
+  
+  `nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) `
+  
+  `return(nll)`
+  
+`}`
 
 
-mle2.1 = mle2(nll.mle,start=list(a=25,b=0.0080,sd=1),data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead") 
-summary(mle2.1)
-logLik(mle2.1)
-confint(mle2.1)
-coefficients(mle2.1)
+Do maximum likelihood optimisation with mle2
 
-plot(shapes1)
-curve(coef(mle2.1)[1]*(1-exp(-coef(mle2.1)[2]*x)),add=T)
+`mle2.1 = mle2(nll.mle,start=list(a=25,b=0.0080,sd=1),`
 
-```
+               `data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")` 
 
-```{r,eval=F,echo=F}
-# likelihood surface
-a1 = seq(10,30,length.out = 200)
-b1= seq(0.003,0.02,length.out=200)
 
-nll.grid = expand.grid(a1,b1)
-nll.grid$NLL = NA
-no = 0
-for (i in 1:length(a1)){
-  for (j in 1:length(b1)){
-    no = no + 1
-    nll.grid[no,1] = a1[i]
-    nll.grid[no,2] = b1[j]
-    nll.grid[no,3] = nll.mle(a=a1[i],b=b1[j],sd=2.06)
-  }
-}
-z1 = as.matrix(dcast(nll.grid,Var1~Var2)[,-1])
-contour(b1,a1,z1,nlevels=60)
+Print summary of the optimisation
 
-# profile
-nll.mle1 = function(a,sd){
-  # this calculates the mean y for a given value of x: the deterministic function
-  mu = a*(1-exp(-b*x))
-  # this calculates the likelihood of the function given the probability 
-  # distribution, the data and mu and sd
-  nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) 
-  return(nll)
-}
+`summary(mle2.1)`
 
-nll = numeric(length(b1))
-for (i in 1:length(b1)){
-  b = b1[i]
-  mle.21 = mle2(nll.mle1,start=list(a=25,sd=7.96),data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")   
-  nll[i] = -logLik(mle.21)
-}
-plot(nll~ b1,type="l",xlim=c(0.008,0.012))
-which.min(nll)
+Print maximum loglikelihood of the model
 
-# cutoff
--logLik(mle2.1) + qchisq(0.95, 1)/2
-which(nll < 119.852)
-b1[c(53,95)]
+`logLik(mle2.1)`
 
-plot(nll~ b1,type="l",xlim=c(0.007,0.0110),ylim=c(116,125))
-abline(v=c(0.00744,0.01103),lty=2)
-abline(v=0.008968,lty=1,lwd=2)
-abline(v=c(0.00738,0.01103),lty=2,col="red")
 
-c = mle2.1@details$hessian/2
-b = coef(mle2.1)[2]
-a = -logLik(mle2.1)
+Add the curve with the parameters obtained through maximum likelihood estimates to the plot
 
-se.mu = sqrt(diag(solve(mle2.1@details$hessian))[2])
-b + c(-1,1)*qnorm(0.975) * se.mu
-confint(mle2.1)
 
-abline(v=c(0.007177,0.0107589),col="blue")
+`curve(coef(mle2.1)[1]*(1-exp(-coef(mle2.1)[2]*x)),add=T)`
+
+
+Now make another function with another deterministic model
+
+
+`nll.mle.alt = function(a,b,sd){`
+
+    `# this calculates the mean y for a given value of x: the deterministic function`
+    
+    `mu = a*x/(b+x)`
+    
+    `# this calculates the likelihood of the function given the probability `
+    
+    `# distribution, the data and mu and sd`
+    
+    `nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) `
+    
+    `return(nll)`
+    
+`}`
+
+
+`mle2.2 = mle2(nll.mle.alt,start=list(a=25,b=0.0080,sd=1),`
+
+               `data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")` 
+
+
+`summary(mle2.2)`
+
+
+`logLik(mle2.2)`
+
+
+`AIC(mle2.1,mle2.2)`
+
+
+The second model fits better according to AIC. Let's plot both curves. 
+
+
+`curve(coef(mle2.2)[1]*x/(coef(mle2.1)[2]+x)),add=T,col="red")`
+
+
+
+You see that the difference is rather subtle. Yet, the difference is about three points on the log Likelihood scale. So that implies that the second model makes the data exp(3) $\approx$ 20 times more likely!
 
 ```
 
@@ -354,21 +384,26 @@ opt1 = optim(par=par,fn=nll,dat=dat)
   
 ```
 
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 
+`# test dataset five for differences between groups`
 
-```{r, eval=F, echo=F}
-# test dataset five for differences between groups
-dat = data.frame(x,y,group)
-te = function(par,dat){
-  a = par[1]
-  b = par[2:3]
-  ymean = a*exp(-b[dat$group]*dat$x)
-  nll = -sum(dpois(dat$y,lambda=ymean),log=T)
-  return(nll)
-}
+`dat = data.frame(x,y,group)`
 
-par=c(4,0.2,0.2)
-opt1 = optim(par=par,fn=te,dat=dat)
+`te = function(par,dat){` 
+
+    `a = par[1]`
+    `b = par[2:3]`
+    `ymean = a*exp(-b[dat$group]*dat$x)`
+    `nll = -sum(dpois(dat$y,lambda=ymean),log=T)` 
+    `return(nll)`
+  
+`}`
+
+`par=c(4,0.2,0.2)`
+
+`opt1 = optim(par=par,fn=te,dat=dat)`
+
 ```
 
 
@@ -422,8 +457,12 @@ This exercise has two purposes. First you will learn that an innocent looking fu
           _hint_: If the predictions are stored in a matrix `mat`, you can use `apply(mat,2,quantile,0.975)` to get the upper limit.
   
   
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+The solution is given below in the big chunk of code
 
-```{r,eval=F,echo=F}
+```
+
+```{r,eval=T,echo=T}
 shapes1= read.csv("shapes1.csv")
 plot(shapes1)
 
@@ -461,9 +500,7 @@ coef(best_mle2.1)
 plot(shapes1)
 curve(coef(best_mle2.1)[1]*(1-exp(-coef(best_mle2.1)[2]*x)),add=T)
 curve(coef(mle2.1[[1]])[1]*(1-exp(-coef(mle2.1[[1]])[2]*x)),add=T, col = 2)
-```
 
-```{r,eval=F,echo=F}
 # likelihood surface
 a1 = seq(0,40,length.out = 100)
 b1.1 = seq(0.001,0.03,length.out=100)
@@ -780,11 +817,13 @@ In this section you practice Bayesian parameter estimation on the same dataset a
   
   1. Deterministic functions
 
-    -dataset 1
+    - dataset 1
+    
     light response curve. There are a number of options of functions to choose from, depending on the level of sophistication:
     $\frac{ax}{(b+x)}$, $a(1-e^{(-bx)})$, $\frac{1}{2\theta}(\alpha I+p_{max}-\sqrt(\alpha I+p_{max})^2-4\theta I p_{max})$ see page 98. A parameter `d` can be added in all cases to shift the curve up or down. The y represents net photosynthesis $\mu mol CO_{2}/m^2s$
       
-    -dataset 2
+    - dataset 2
+    
     The dataset describes a functional responses. Bolker mentions four of those $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\frac{ax^2}{(b+cx+x^2)}$ The y is measured in grams prey eaten per unit time. 
       
     -dataset 3

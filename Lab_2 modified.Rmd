@@ -586,7 +586,7 @@ ggplot(data=data,aes(x=frac_taken))+
 ```
 
 
-I'm going to clear the workspace with `rm(list=ls()`. `ls()` lists all the objects in the workspace with `ls()` and then uses `rm()` to remove them. It is recommend to have this code at the top of every script, so every time you start working on the script you are sure the memory is cleared. You can also clear workspace from the menu in Rstudio (the little brush in the topright panel) and read in the measles data, which are space separated and have a header:
+I'm going to clear the workspace with `rm(list=ls())`. `ls()` lists all the objects in the workspace with `ls()` and then uses `rm()` to remove them. It is recommend to have this code at the top of every script, so every time you start working on the script you are sure the memory is cleared. You can also clear workspace from the menu in Rstudio (the little brush in the topright panel) and read in the measles data, which are space separated and have a header:
 ```{r}
 rm(list = ls())
 data = read.table("ewcitmeas.dat", header = TRUE, na.strings = "*")
