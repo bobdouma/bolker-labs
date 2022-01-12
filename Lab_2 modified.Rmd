@@ -108,7 +108,7 @@ R will automatically recognize the type of data of the columns that are read in,
 sapply(data, class)
 ```
 
-Tthis applies the `class()` command, which identifies the type of a variable, to each column in your data. Alternatively, 
+This applies the `class()` command, which identifies the type of a variable, to each column in your data. Alternatively, 
 ```{r,eval=F}
 summary(data)
 ```
@@ -125,7 +125,7 @@ You can specify more than one value with (e.g.) na.strings=c("*","***","bad","-9
 
 ```{block2, type = "exercisebox",latex.options="{2}"}
 Try out `head()`, `summary()` and `str()` on data; make sure
-you understand the results.
+you understand the results. 
 ``` 
 
 ```{block2, type="solutionbox",latex.options="{block-green}{2}",echo=T}
@@ -133,13 +133,15 @@ you understand the results.
 
 `summary()` gives you a summary view of your data.frame, reporting the mean and quantiles of your data, and numbers of NAs.
 
-`str()` shows you the structure and data types that are in the data.frame
+`str()` shows you the structure and data types that are in the data.frame or other `R` objects. `str()` can be convenient to check if the data types are as you want to have them, or to extract information from complex `R` objects such as a model object fitted with `lm`.
 
 ```
 
 
 ## Reshaping data
-It's hard to give an example of reshaping the seed predation data set because we have different numbers of observations for each species - thus, the data won't fit nicely into a rectangular format with (say) all observations from each species on the same line. However, as in the chapter text we can just make up a data frame and reshape it.
+Reshaping a dataframe is an important part of data exploration. For example, for making field recordings it is convenient to have the measurements  of different plots or transects in different columns on your sheet. This is called a wide format. However, for data analysis in R (and other statistical programs) you need to have all measurements in one column, with an additional column indicating which plot a measurement belongs to (so called long format).
+
+Below we create a dataframe in long format and reshape it.
 Here are the commands to generate the data frame I used as an example
 in the text (I use `LETTERS`, a built-in vector of the capitalized letters of the alphabet, and `runif()`, which picks a specified number of random numbers from a uniform distribution between 0 and 1. The command `round(x,3)` rounds `x` to 3 digits after the decimal place.):
 ```{r}
@@ -148,6 +150,7 @@ day = factor(rep(1:2,each=3))
 val = round(runif(6),3)
 d = data.frame(loc,day,val)
 ```
+
 This data set is stored in long format. To go to wide format, we first need to (install and) load the library `reshape2`. In Lab 1 you learned how to install packages. You can load a package by `library()` or `require()`. Thus to use an additional package it must be (i) installed on your machine (with `install.packages())` or through the menu system and (ii) loaded in your current `R` session (with `library()`):
 ```{r}
 library(reshape2)  
@@ -167,7 +170,7 @@ melt(d2, variable.name="day",value.name="val")
 ```
 
 ```{block2, type = "exercisebox",latex.options="{2}"}
-Make a new data.frame similar to the previous data.frame `d`, but with an extra column `month` consisting of two levels. Make sure that `loc` and `day` are nested in month. Next, reshape to wide format and back to long format. The long format is what we commonly use in statistics.
+Make a new data.frame similar to the previous data.frame `d`, but with an extra column `month` consisting of two levels. The value of month should be 1 for the first records and 2 for the second. Next, reshape to wide format and back to long format. The long format is what we commonly use in statistics.
 ``` 
 
 ```{block2, type="solutionbox",latex.options="{block-green}{2}",echo=T}
@@ -177,7 +180,7 @@ Make a new data.frame similar to the previous data.frame `d`, but with an extra 
 
 `day = factor(rep(1:2,each=3))`
 
-`val = round(runif(6),3)`
+`val = round(runif(12),3)`
 
 `d1 = data.frame(loc,month,day,val)`
 
@@ -193,37 +196,9 @@ Make a new data.frame similar to the previous data.frame `d`, but with an extra 
 
 While you can usually get away by coding data in not quite the right way - for example, coding dates as numeric values or categorical variables as strings - `R` tries to "do the right thing" with your data, and it is more likely to do the right thing the more it knows about how your data are structured.
 
-**Strings instead of factors** 
+**Factors instead of strings** 
 
-Sometimes `R`'s default of assigning factors is not what you want: if your strings are unique identifiers (e.g. if you have a code for observations that combines the date and location of sampling, and each location combination is only sampled once on a given date) then R's strategy of coding unique levels as integers and then associating a label with integers will waste space and add confusion. If all of your non-numeric variables should be treated as character strings rather than factors, you can just specify `as.is=TRUE`; if you want specific columns to be left "as is" you can specify them by number or column name. For example, these two commands have the same result:
-```{r,eval=F}
-data2 = read.table("seedpred.dat", header = TRUE, as.is = "Species")
-data2 = read.table("seedpred.dat", header = TRUE, as.is = 1)
-sapply(data2, class)
-```
-
-(use `c()` - e.g. `c("name1","name2")` or `c(1,3)` - to specify more than
-one column). You can also use the `colClasses="character"` argument to
-`read.table()` to specify that a particular column should be converted to type
-character:
-
-```{r,eval=F}
-data2 = read.table("seedpred.dat", header = TRUE, colClasses = c("character",
-+ rep("numeric", 4)))
-```
-
-again has the same results as the commands above. To convert factors back to strings *after* you have read them into `R`, use
-`as.character()`.
-
-```{r,eval=F}
-data2 = read.table("seedpred.dat", header = TRUE)
-sapply(data2, class)
-```
-
-```{r,eval=F}
-data2$species = as.character(data2$species)
-sapply(data2, class)
-```
+Sometimes `R`'s default of assigning characters is not what you want: if your strings are unique identifiers and you want to make it a factor, the default `read.table` will convert this into characters. If all of your non-numeric variables should be treated as factor strings rather than characters, you can just specify `as.is=FALSE`. 
 
 **Factors instead of numeric values** 
 
@@ -243,43 +218,52 @@ f = factor(1:10)
 levels(f)
 ```
 
-but this is not, since we explicitly tell `R` to treat the numbers as characters:
+However, if we create a factor f through:
 ```{r}
 f = factor(as.character(1:10))
 levels(f)
 ```
-
-In a list of numbers from 1 to 10, "10" comes after "1" but before "2" ... You can fix the levels by using the levels argument in `factor()` to tell `R` explicitly what you want it to do, e.g.:
+it will put the `10-th` level as second. You can fix the levels by using the levels argument in `factor()` to tell `R` explicitly what you want it to do, e.g.:
 
 ```{r}
-f = factor(as.character(1:10), levels = 1:10)
-x = c("north", "middle", "south")
-f = factor(x, levels = c("far_north", "north", "middle", "south"))
+f = factor(as.character(1:10), levels = c(1:10))
 ```
-so that the levels come out ordered geographically rather than alphabetically.
-Sometimes your data contain a subset of integer values in a range, but you want to make sure the levels of the factor you construct include all of the values in the range, not just the ones in your data. Use levels again:
+So  the `levels=1:10` argument explicitly states that there are ten levels and that the order of these levels is 1,2,3,4,5,6,7,8,9,10. The levels argument needs a vector of unique numeric values or character strings (`c(1:10)`). 
+
+Additionally, if you create a factor with levels 'north', 'middle' and 'south' they will be sorted by alphabet
+```{r}
+x = c("north", "middle", "south")
+factor(x)
+``` 
+
+
+If you want to sort them geographically instead of alphabetically you again can use  the levels argument. Additionally, you can add levels that were not included in the vector itself:
+```{r}
+f = factor(x, levels = c("far_north", "north", "middle", "south"))
+``` 
+
+Likewise, if your data contain a subset of integer values in a range, but you want to make sure the levels of the factor you construct include all of the values in the range, not just the ones in your data. Use levels again:
 
 ```{r}
 f = factor(c(3, 3, 5, 6, 7, 8, 10), levels = 3:10)
 ```
-Finally, you may want to get rid of levels that were included in a previous factor but are no longer relevant:
 
+Finally, you may want to get rid of levels that were included in a previous factor but are no longer relevant:
 ```{r}
 f = factor(c("a", "b", "c", "d"))
 f2 = f[1:2]
 levels(f2)
 ```
 
+Note that a character vector is returned displaying the different levels in the factor `f`. 
+
 ```{r}
 f2 = factor(as.character(f2))
 levels(f2)
 ```
 
-For more complicated operations with `factor()`, use the `recode()` function
-in the `car` package. 
-
 ```{block2, type = "exercisebox",latex.options="{2}"}
-Illustrate the effects of the levels command by plotting the `factor f=factor(c(3,3,5,6,7,8,10))` as created with and without intermediate levels. For an extra challenge, draw them as two side-by-side subplots. (Use `par(mfrow=c(1,1))` to restore a full plot window.)
+Illustrate the effects of the levels command by plotting the `factor f=factor(c(3,3,5,6,7,8,10))` as created with and without intermediate levels, i.e. with and without levels c(1:10). For an extra challenge, draw them as two side-by-side subplots. (Use `par(mfrow=c(1,1))` to restore a full plot window.)
 ``` 
 
 ```{block2, type="solutionbox",latex.options="{block-green}{2}",echo=T}
@@ -293,9 +277,9 @@ Illustrate the effects of the levels command by plotting the `factor f=factor(c(
 
 ```
 
-**Dates** 
+**Dates** (time permitting)
 
-Dates and times can be tricky in `R`, but you can (and should) handle your dates as type `Date` within `R rather than messing around with Julian days (i.e., days since the beginning of the year) or maintaining separate variables for day/month/year.
+Dates and times can be tricky in `R`, but you can handle your dates as type `Date` within `R` rather than using Julian days 
 
 You can use `colClasses="Date"` within `read.table()` to read in dates directly from a file, but only if your dates are in four-digit-year/month/day (e.g. 2005/08/16 or 2005-08-16) format; otherwise `R` will either butcher your dates or complain
 
@@ -396,7 +380,7 @@ This table needs to changed to a long format in order to be useful for the plott
 t2 = melt(t1,varnames=c("Seeds available","Seeds taken"),
           value.name="val")
 ```
-Now we can make a plot with the size of the bubbles proportional for the number of observations.
+Now we can make a plot with the size of the bubbles proportional for the number of observations. Since the columnnames have a space in the string we should use the quotes. 
 ```{r}
 plot(`Seeds taken` ~ `Seeds available`,data=t2,cex=val)
 ```
@@ -420,8 +404,9 @@ library(ggplot2)
   
 ```
 
-In `ggplot2` you need to specify the dataset the variables come from. You do this throug `data=...`, a specification of type of plot, a point plot can be specified through `geom_point`, a specifcation of the aesthetics (`aes(x...,y...)`) determines what is plotted on the axes of the point plot. If data is specified in the `ggplot` statement, it means that all plotting commands below `ggplot(...)+` use that dataframe as reference. If the size command is put inside the `aes` then size is dependent on some variable, if put outside the `aes` it requires a single value (similarly for e.g. `colour`, `linetype` and `shape`). New commands can be added to the first statement (`ggplot`) by adding a `+` after each line. If a column name contains a space you can refer to it by putting it between backticks: `...` 
+In `ggplot2` you need to specify the dataset the variables come from. You do this through `data=...`. Next you specify the type of plot you want. For example, a point plot can be specified through `geom_point`. Within `geom_point`, you need to specify the aesthetics (`aes(x...,y...)`) which determines what is plotted on the axes of the point plot. For example `aes(x=x,y=y)` put column `x` on the x-axis and column `y` on the y-axis.  
 
+If data is specified in the `ggplot` statement, it means that all plotting commands below `ggplot(...)+` use that dataframe as reference. If the size command is put inside the `aes` then size is dependent on some variable, if put outside the `aes` it requires a single value (similarly for e.g. `colour`, `linetype` and `shape`). New commands can be added to the first statement (`ggplot`) by adding a `+` after each line. If a column name contains a space you can refer to it by putting it between backticks: `...` 
 
 We could add the number of observations to the plot (`plot`) using the command `text`. The function `text` needs at least three arguments, the x position and the y position of the text and the text to be printed at this position. `text` allows vectors for each of those arguments. Therefore we can write: 
 

@@ -22,7 +22,41 @@ opts_chunk$set(tidy.opts=list(width.cutoff=5), tidy = TRUE)
 ```
 
 # Learning goals
-This lab has two goals. First, to make you familiar with the technicalities of stochastic distributions in `R`. In particular, how to generate values from probability distributions and how to make your own probability distribution  (section 2-6). The second part helps you practicing with probability distributions on different types of data. Under time constraints, make sure that you make at least the exercises in section 2, 3 and 7. 
+This lab has two goals. First, helps you practicing with probability distributions on different types of data (section 2). Second, to make you familiar with the technicalities of stochastic distributions in `R`. In particular, how to generate values from probability distributions and how to make your own probability distribution  (section 3-7).  Under time constraints, make sure that you make at least the exercises in section 2, 3 and 4. 
+
+
+# Choosing probability distributions 
+In this exercise we revisit exercise 2.1 of lab 3. In that exercise we had six different datasets each describing a biological phenomenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
+
+```{block2, type = "exercisebox",latex.options="{4}"}
+Reload the six datasets and choose for each dataset one or two candidate probability distributions.
+  _hint_: ask yourself a number of questions: Do I have counts (integer) or continuous (real) values? Do I have positive values only or also negative values? 
+  
+```  
+
+
+
+```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
+1. Dataset 1
+y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
+
+2. dataset 2
+y represents real numbers and only positive numbers occur. The data represents a functional response (intake rate of the predator), and it is likely that you can only measure positive numbers (number of prey items per unit of time).  This implies that we should choose a continuous probability distribution. Within the family of continuous probability distributions, the Gamma and the Lognormal could be taken as candidate distributions because they can only take positive numbers (beware that the Gamma cannot take 0). However, you could try to use a normal as well.
+
+3. Dataset 3
+y seems represents counts (this is the cone dataset that is introduced in ch. 6.). Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
+      
+4. Dataset 4
+      y represents population size over time. From looking at the data, they seems to represent counts. Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.  
+
+5. Dataset 5
+No information is given on y. The data clearly seems to represent counts. Thus the same reasoning applies here as to the two previous datasets.
+      
+6. Dataset 6
+The data (y) represents species occurences (presence/absence). The binomial model would be a good model to predict the probability of presence.  
+
+``` 
+
 
 # Random distributions in `R`
 `R` knows about lots of probability distributions.  For each, it
@@ -409,7 +443,8 @@ Use the following pseudo-code:
 
 A dotted line for the mean of the log transformed values 
 
-`segments(x0=exp(mean(log(rf))),y0=mean(log(rf)),x1=exp(mean(log(rf))),
+`segments(x0=exp(mean(log(rf))),y0=mean(log(rf)),
+          x1=exp(mean(log(rf))),
           y1=min(log(rf)),lty=2)` 
 
 By doing a log transformation first, the higher values are "compressed" and weigh less into the mean.
@@ -735,37 +770,5 @@ are.
 
 `points(0:max(x), dnbinom(0:max(x), mu = mu, size = k), cex = 0.75)`
 
-
-``` 
-
-# Choosing probability distributions 
-In this exercise we revisit exercise 8.1 of lab 3. In that exercise we had six different datasets each describing a biological phenonmenon. The first step to model your data is to choose a deterministic function that describes the mean effect of the predictor variable (x) on the response variable (y). The second step involves the choice of the stochastic distribution which describes how the data varies around the mean. 
-
-```{block2, type = "exercisebox",latex.options="{4}"}
-Reload the six datasets and choose for each dataset one or two candidate probability distributions.
-  _hint_: ask yourself a number of questions: Do I have counts (integer) or continuous (real) values? Do I have positive values only or also negative values? 
-  
-```  
-
-
-
-```{block2, type= "solutionbox", latex.options="{block-green}{4}",echo=F}
-1. Dataset 1
-y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
-
-2. dataset 2
-y represents real numbers and only positive numbers occur. The data represents a functional response (intake rate of the predator), and it is likely that you can only measure positive numbers (number of prey items per unit of time).  This implies that we should choose a continuous probability distribution. Within the family of continuous probability distributions, the Gamma and the Lognormal could be taken as candidate distributions because they can only take positive numbers (beware that the Gamma cannot take 0). However, you could try to use a normal as well.
-
-3. Dataset 3
-y seems represents counts (this is the cone dataset that is introduced in ch. 6.). Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
-      
-4. Dataset 4
-      y represents population size over time. From looking at the data, they seems to represent counts. Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.  
-
-5. Dataset 5
-No information is given on y. The data clearly seems to represent counts. Thus the same reasoning applies here as to the two previous datasets.
-      
-6. Dataset 6
-The data (y) represents species occurences (presence/absence). The binomial model would be a good model to predict the probability of presence.  
 
 ``` 

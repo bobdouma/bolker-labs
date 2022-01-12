@@ -1,7 +1,7 @@
 ---
 title: "Lab 6 & 7 Fitting models to data, optimisation and bayesian statistics"
-author: "Ben Bolker, modified at several places by Bob Douma and Alejandro Morales. Bayesian part by Alejandro Morales Sierra."
-date: "11 October 2019"
+author: "Ben Bolker, modified at several places by Bob Douma and Alejandro Morales. Bayesian part by AM"
+date: "9 November 2021"
 output:
   bookdown::pdf_book:
      includes:
@@ -46,6 +46,7 @@ Fitting a model to data through likelihood requires that you take five steps:
 
 
 For example to calculate the NLL of a linear model and a normal distribution the following function works: 
+
   ```{r}
   nll = function(par,y,x){
     a = par[1]
@@ -61,7 +62,10 @@ For example to calculate the NLL of a linear model and a normal distribution the
   }
   
   ```
-Note that `-sum(`**`log`**`(dnorm(y,mean=mu,sd=sd)))` should not be used as it may lead to underflow (the computer cannot store very very small probabilities) and therefore to optimisation problems. 
+
+Notice that the function takes three arguments: a vector with parameters, a vector with `y` values and a vector with `x` values. Inside the vector par, three values are stored: `a`,`b` and `sd`. Next, the mean given x is calculated with `mu=a+b*x`. The nll returns the Negative LogLikelihood of the data (`y`) given a normal distribution with mean `mu` (vector!) and a standard deviation `sd`. The `log=T` returns the log of the probability densities.  
+
+Note that `-sum(`**`log`**`(dnorm(y,mean=mu,sd=sd)))` should not be used because as it may lead to underflow: the computer cannot store very very small probabilities, or log transform those small varlues, and therefore it will lead to optimisation problems. 
 
 Next we call an optimisation function to find the maximum likelihood estimate
 
@@ -110,34 +114,32 @@ summary(mle2.1)
 
 
 # Fitting parameters of made-up data
-The simplest thing to do to convince yourself that your attempts to estimate parameters are working
-is to simulate the ''data'' yourself and see if you get close to the right answers back. Set the random seed to 1001 so we get identical answers across r sessions. First you will estimate the maximum likelihood (MLE) and then the confidence of the MLE. 
+The simplest thing to do to convince yourself that your attempts to estimate parameters are working is to simulate the ''data'' yourself and see if you get close to the right answers back. Set the random seed to 1001 so we get identical answers across r sessions. 
 
 ## Finding the maximum likelihood estimate of the paramaters
 
 ```{block2, type = "exercisebox",latex.options="{6}"}
 Take the steps below
 
-1. Generate 50 values with $\mu=1$, $k=0.4$. Save the values in variables in case we want to use them again later, or change the parameters and run the code again.
+1. Generate 50 values from a negative binomial (`rnbinom`) with $\mu=1$, $k=0.4$. Save the values in variables in case we want to use them again later.
 
 2. Plot the numbers in a frequency diagram
 
 3. Next, define the negative log-likelihood function for a simple draw from a negative binomial distribution:
-the first parameter, `p`, will be the vector of parameters, and the second parameter,
-`dat`, will be the data vector (in case we want to try this again later with a different
-set of data; by default we'll set it to the 'x' vector we just drew randomly.
+the first parameter, `par`, will be the vector of parameters, and the second parameter, `dat`, will be the vector with simulated values. 
 
-4. Calculate the negative log-likelihood for the values with which you generated the numbers. Combine these parameter values into a vector with  `c()` to pass them to the negative log-likelihood function. Naming the elements in the vector is optional but will help keep things clear as we go along: 
+4. Calculate the negative log-likelihood of the data for the parameter values with which you generated the numbers. Combine these parameter values into the vector `par` with  `c()` to pass them to the negative log-likelihood function. (Naming the elements in the parameter vector is optional but will help keep things clear as we go along. E.g. par=c(mu=1,k=2)) 
   
-5. The NLL of parameter values that are far from the values that were used to generate the data ($\mu=10$, $k=10$)
+5. Calculate the NLL of parameter values that are far from the values that were used to generate the data ($\mu=10$, $k=10$)
 
-6. Now, find the method-of-moments estimates for $\mu$ and $k$
-  Despite the known bias, this estimate is better (lower negative log-likelihood) than the 'true' parameter values.    The Likelihood Ratio Test would say, however, that the difference in likelihoods would have to be greater than $\chi^2_2(0.95)/2$ (two degrees of freedom because we are allowing both $\mu$ and $k$ to change). This can be done through `ldiff=nll.true-nll.mom` and `qchisq(0.95,df=2)/2`. So --- better, but not significantly better at $p=0.05$.
+6. Calculate the maximum likelihood estimate (MLE)?  Use `optim` with the default options (Nelder-Mead simplex method) and the method-of-moments estimates as the starting estimates (`par`):
+  `opt1 = optim(fn=NLLfun1,par=c(mu=mu.mom,k=k.mom),hessian=TRUE)`
+
+7. What is the difference in NLL between the MLE estimates and the NLL derived at 5?
+
+  The Likelihood Ratio Test would say, however, that the difference in likelihoods would have to be greater than $\chi^2_2(0.95)/2$ (two degrees of freedom because we are allowing both $\mu$ and $k$ to change). This can be done through `ldiff=nll.true-nll.mom` and `qchisq(0.95,df=2)/2`. So --- better, but not significantly better at $p=0.05$.
   `pchisq(2*ldiff,df=2,lower.tail=FALSE)` would tell us the exact $p$-value if we wanted to know.)
 
-7. But what is the maximum likelihood estimate (MLE)?  Use `optim` with the default options (Nelder-Mead simplex method)
-and the method-of-moments estimates as the starting estimates (`par`):
-  `opt1 = optim(fn=NLLfun1,par=c(mu=mu.mom,k=k.mom),hessian=TRUE)`
 
 ```
 
@@ -146,7 +148,7 @@ and the method-of-moments estimates as the starting estimates (`par`):
 The solution is shown below in a big R chunk
 ```
 
-```{r, echo=T}
+```{r,eval=T, echo=T}
 set.seed(1001)
 mu.true=1
 k.true=0.4
@@ -156,13 +158,14 @@ x = rnbinom(50,mu=mu.true,size=k.true)
 plot(table(factor(x,levels=0:max(x))),
    ylab="Frequency",xlab="x")
 
-
+# this function calculate the NLL of the data given the set of parameters defined in p
 NLLfun1 = function(p,dat=x) {
 mu=p[1]
 k=p[2]
 -sum(dnbinom(x,mu=mu,size=k,log=TRUE))
 }
 
+# the NLL of the data given the parameter values that were used to generate the data
 nll.true=NLLfun1(c(mu=mu.true,k=k.true))
 
 nll.true
@@ -170,40 +173,218 @@ nll.true
 NLLfun1(c(mu=10,k=10))
 
 m = mean(x)
-
 v = var(x)
-
+# calculate parameters through method of moments
 mu.mom = m
-
 k.mom = m/(v/m-1)
 
-nll.mom=NLLfun1(c(mu=mu.mom,k=k.mom))
-
-nll.mom
-
-ldiff=nll.true-nll.mom; ldiff
-
-qchisq(0.95,df=2)/2
-
+# find MLE estimate of the parameters given the data 
 opt1 = optim(fn=NLLfun1,par=c(mu=mu.mom,k=k.mom),hessian=TRUE)
 coef(opt1)
+
+# NLL at MLE
+opt1$value
+# compare with nll.true
+
+# significantly different?
+ldiff=nll.true-opt1$value; ldiff
+
+# no significant difference (which is what we would expect in 95% the generated datasets)
+pchisq(2*ldiff,df=2,lower.tail=FALSE)
+
+
 ```
 
-The minimum negative log-likelihood (`round(opt1$value,2)`) is better than either the negative log-likelihood   corresponding to the method-of-moments parameters (`round(nll.mom,2)`) or the true parameters (`round(nll.true,2)`), but all of these are within the LRT cutoff.
+The minimum negative log-likelihood (`round(opt1$value,2)`) is better than the NLL of the model with the true parameters (`round(nll.true,2)`), but all of these are within the LRT cutoff, i.e. the negative log likelihoods differ by less than 1.92. Remember that the cut-off is based on the Likelihood Ratio Test that states that twice the difference in the log-likelihood between the simpler and more complex model will follow a $\chi^2$ distribution with n degrees of freedom. $n$ is the number of parameters that are fixed to a specific value. The cut-off value for a $\chi^2$ with 1 degree of freedom is 3.84. The value of 1.92 is derived from 3.84/2 because we evaluate the difference in log Likelihood and not twice the difference. In other words, we could also multiply all the logLikelihood surface by two and find the 3.84 cutoff. 
+
+
+# Maximum likelihood and continuous covariates
+
+The following exercise has the purpose to learn you how to fit a model to data when we have a single covariate. 
+
+```{block2, type = "exercisebox",latex.options="{6}"}
+1. Take the second dataset (shapes2.csv from shapes.xlsx), use a michaelis-menten as deterministic function, and a normal distribution as stochastic model. Tweak the function in the first three grey boxes (above) such that it accomodates the michaelise menten and the normal distribution.
+
+      _hint_: In a previous exercise you have eyeballed the parameter values of the functions, you can use these as starting       values.
+
+      _hint_: In case you get convergence problems, further adapt your starting values, or choose a different optimizer. For       example Nelder-Mead is a robust one, e.g. `method = "Nelder-Mead"`.
+
+2. Change the determinstic function for a possible alternative determinstic function, and fit this new model to the data. Remember that in Lab 3 you have proposed multiple deterministic functions for this dataset.
+3. Compare the likelihoods of the data given both models
+4. Apply model selection criteria and conclude which model fits that data best.
+5. Does the model makes sense from a biological perspective?
+  
+```
+
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+
+`shapes2= read.csv("shapes2.csv")`
+
+`plot(y~x, data= shapes2)`
+
+`nll.mle = function(a,b,sd){`
+
+  `# this calculates the mean y for a given value of x: the deterministic function`
+
+  `mu = (a*x)/(b+x)`
+
+  `# this calculates the likelihood of the function given the probability `
+
+  `# distribution, the data and mu and sd`
+
+  `nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) `
+
+  `return(nll)`
+
+`}`
+
+
+Do maximum likelihood optimisation with mle2
+
+`mle2.1 = mle2(nll.mle,start=list(a=20,b=10,sd=1),`
+
+               `data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")`
+
+
+Print summary of the optimisation
+
+`summary(mle2.1)`
+
+Print maximum loglikelihood of the model
+
+`logLik(mle2.1)`
+
+
+Add the curve with the parameters obtained through maximum likelihood estimates to the plot
+
+
+`curve((coef(mle2.1)[1]*x)/(coef(mle2.1)[2]+x),add=T)`
+
+
+Now make another function with another deterministic model
+
+
+`nll.mle.alt = function(a,b,sd){`
+
+    # this calculates the mean y for a given value of x: the deterministic function`
+
+    mu = (a*x^2)/(b+x^2)
+
+    # this calculates the likelihood of the function given the probability
+
+    # distribution, the data and mu and sd
+
+    nll = -sum(dnorm(y,mean=mu,sd=sd,log=T))
+
+    return(nll)
+
+`}`
+
+
+`mle2.2 = mle2(nll.mle.alt,start=list(a=20,b=270,sd=1),`
+
+               `data=data.frame(x=shapes2$x,y=shapes2$y),method="Nelder-Mead")`
+
+
+`summary(mle2.2)`
+
+
+`logLik(mle2.2)`
+
+
+`AIC(mle2.1,mle2.2)`
+
+
+The first model fits better according to AIC. The difference is about 18 points on the log Likelihood scale. So that implies that the second model makes the data exp(18) $\approx$ 66,000,000 times more likely!
+
+```
+
+
+# Maximum likelihood with continous and categorical predictors
+Sometimes you want to fit the same model to different groups (males/females, treatment/control etc.). The easiest way is to separately fit the model to the subsets, but this makes it very difficult to assess whether the fitted parameters for both groups are comparable. A more elegant method is explained below.
+
+We use the fifth dataset of the six datasets you have worked with earlier on (shapes5.csv or the fifth sheet from shapes.xlsx). Assume that the function was generated by a decreasing exponential function $ae^{(-bx)}$ and you want to the values of $a$ and $b$. The dataset has three columns that are relevant: the independent variable $x$, the dependent variable $y$, and a dummy variable $group$ indicating to which group the observation belongs to. We want to test whether we can justify a different $a$ and $b$ for the two groups.
+
+This is how the NLL function would look like assuming no grouping:
+```{r,eval=F}
+read.csv("shapes5.csv") # and select fifth dataset
+# test dataset five for differences between groups
+nll0 = function(par,dat){
+  a = par[1]
+  b = par[2]
+  ymean = a*exp(-b*dat$x)
+  nll = -sum(dpois(dat$y,lambda=ymean,log=T))
+  return(nll)
+}
+
+par=c(4,0.2)
+opt1 = optim(par=par,fn=nll0,dat=dat)
+
+```
+
+```{block2, type = "exercisebox",latex.options="{6}"}
+
+1. Fit the above model to the data without considering differences between groups in $a$ and $b$.
+
+2. Adjust the likelihood function such that it can accomodate for different values of $b$ depending on the group an observation belong to.
+
+Use the following pseudocode to achieve this and/or check page 305 for in inspiration or go back to Lab 1 section 11.1.2.
+    a. Adapt the likelihood function such that the parameter `b` depends on the group.
+    b. Adjust the starting values so it contains multiple starting values for `b`
+
+3. Estimate the parameters $a$ and $b$ when letting $b$ depend on the group. Compare the negative loglikelihood of this model with the model fitted in question 1. Which has a better fit?
+
+4. Apply model selection techniques (Likelihood ratio test, AIC or BIC) to select the most parsimonious model. Are the models nested? Which model is preferred?
+
+
+```
+
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+
+`# test dataset five for differences between groups`
+
+`dat = data.frame(x,y,group)`
+
+`te = function(par,dat){`
+
+    a = par[1]
+    b = par[2:3]
+    ymean = a*exp(-b[dat$group]*dat$x)
+    nll = -sum(dpois(dat$y,lambda=ymean),log=T)
+    return(nll)
+
+`}`
+
+`par=c(4,0.2,0.2)`
+
+`opt1 = optim(par=par,fn=te,dat=dat)`
+
+```
+
+
+```{block2, type = "exercisebox",latex.options="{6}"}
+To practice model fitting a little bit more, you could repeat the above procedure for the other 4 datasets from shapes.xlsx.
+
+Pick a dataset, go back to the Lab 3 Question 2.1 and Lab 4 Question 2.1 and list the stochastic model and the deterministic function and the eyeballed parameters that you thought were appropriate for this dataset. Next write a negative loglikelihood function, and use mle2 or optim to obtain the maximum likelihood estimates for the parameters.
+
+If you have practised sufficiently, you can move on with the advanced topics below.
+```
+
+# Advanced topics
 
 ## Likelihood surface
-To find the likelihood surface follow the steps below (background information can be found in Bolker Ch. 6).
+To find the likelihood surface follow the steps below (background information can be found in Bolker Ch. 6). This exercise continues on  exercise #3.1 (Lab 3) where you used the negative binomial to generate 50 numbers and fitted back the parameters.
 
 ```{block2, type = "exercisebox",latex.options="{6}"}
 For the likelihood surface:
-  
+
 1. Set up vectors of $\mu$ and $k$ values. Let's try $\mu$ from 0.4 to 3 in steps of 0.05 and $k$ from 0.01 to 0.7 in steps of 0.01.
 
-2. Set up a matrix to hold the results, 
+2. Set up a matrix to hold the results,
 The matrix for the results will have rows corresponding to $\mu$ and
-columns corresponding to $k$: 
+columns corresponding to $k$:
 
-3. Run `for` loops to calculate and store the values. Use a `for` nested in another one 
+3. Run `for` loops to calculate and store the values. Use a `for` nested in another one
 
 4. Drawing a contour using the function 'contour'. Change the argument `nlevels` to 100 to get a better view of the likelihood surface
 
@@ -221,11 +402,11 @@ columns corresponding to $k$:
 `for (i in 1:length(muvec)) {`
 
   `for (j in 1:length(kvec)) {`
-  
-    `resmat[i,j] = NLLfun1(c(muvec[i],kvec[j]))`
-    
+
+    resmat[i,j] = NLLfun1(c(muvec[i],kvec[j]))
+
   `}`
-  
+
 `}`
 
 `contour(muvec,kvec,resmat,xlab=expression(mu),ylab="k")`
@@ -235,204 +416,34 @@ columns corresponding to $k$:
 ```
 
 
-# Maximum likelihood and continuous covariates
 
-The following steps will lead you through the model fitting procedure when we have a covariate. 
+## Optimisation problems and assessing the confidence limits of parameter estimates
 
-```{block2, type = "exercisebox",latex.options="{6}"}
-1. Take the first dataset (or another one from the six that we have been working with before) and tweak the above functions such that it matches with the deterministic and stochastic model that you have chosen. In case you got stuck in the previous exercises where you had to choose a deterministic function and a stochastic function see next page for suggestions. 
+Fitting a model to data requires you to specify a relationship between variables. After specifying this relationship we need to fit parameters of this model that best fits the data. This fitting is done through computer algorithms (optimizers). However, sometimes it may be hard to fit a model to data. After having found the best fitting model, you want to assess how certain you are about the parameter estimates. For assessing the uncertainty of model parameters several methods exist that have pros and cons.
 
-      _hint_: In a previous exercise you have eyeballed the parameter values of the functions, you can use these as starting       values.
-  
-      _hint_: In case you get convergence problems, further adapt your starting values, or choose a different optimizer. For       example Nelder-Mead is a robust one, e.g. `method = "Nelder-Mead"`.
+If you feel comfortable with fitting models to data you are ready for a more challenging exercise. If you do not feel comfortable yet, go back to question 5.2 and practise a bit more.
 
-2. Change the determinstic function for a possible alternative determinstic function
-3. Compare the likelihoods of the data given both models
-4. Apply model selection criteria and conclude which model fits that data best. 
-5. Does the model makes sense from a biological perspective?
-      
-Optional and time permitting:      
-  6. Repeat the above procedure for the other 5 datasets
+This exercise has two purposes. First you will learn that an innocent looking function can be challenging to fit. Second, you will learn to assess the uncertainty in the parameter values. For assessing the uncertainty in the parameter estimates there are two methods: the profiling method and the quadratic approximation. Bolker recommends to use the likelihood profile for assessing the uncertainty in the parameters because this one is more accurate than the approxation based on the Hessian matrix.
 
-``` 
-
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
-
-`shapes1= read.csv("shapes1.csv")`
-
-`plot(shapes1)`
-
-`nll.mle = function(a,b,sd){`
-
-  `# this calculates the mean y for a given value of x: the deterministic function`
-  
-  `mu = a*(1-exp(-b*x))`
-  
-  `# this calculates the likelihood of the function given the probability `
-  
-  `# distribution, the data and mu and sd`
-  
-  `nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) `
-  
-  `return(nll)`
-  
-`}`
-
-
-Do maximum likelihood optimisation with mle2
-
-`mle2.1 = mle2(nll.mle,start=list(a=25,b=0.0080,sd=1),`
-
-               `data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")` 
-
-
-Print summary of the optimisation
-
-`summary(mle2.1)`
-
-Print maximum loglikelihood of the model
-
-`logLik(mle2.1)`
-
-
-Add the curve with the parameters obtained through maximum likelihood estimates to the plot
-
-
-`curve(coef(mle2.1)[1]*(1-exp(-coef(mle2.1)[2]*x)),add=T)`
-
-
-Now make another function with another deterministic model
-
-
-`nll.mle.alt = function(a,b,sd){`
-
-    `# this calculates the mean y for a given value of x: the deterministic function`
-    
-    `mu = a*x/(b+x)`
-    
-    `# this calculates the likelihood of the function given the probability `
-    
-    `# distribution, the data and mu and sd`
-    
-    `nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) `
-    
-    `return(nll)`
-    
-`}`
-
-
-`mle2.2 = mle2(nll.mle.alt,start=list(a=25,b=0.0080,sd=1),`
-
-               `data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")` 
-
-
-`summary(mle2.2)`
-
-
-`logLik(mle2.2)`
-
-
-`AIC(mle2.1,mle2.2)`
-
-
-The second model fits better according to AIC. Let's plot both curves. 
-
-
-`curve(coef(mle2.2)[1]*x/(coef(mle2.1)[2]+x)),add=T,col="red")`
-
-
-
-You see that the difference is rather subtle. Yet, the difference is about three points on the log Likelihood scale. So that implies that the second model makes the data exp(3) $\approx$ 20 times more likely!
-
-```
-
-
-# Maximum likelihood with continous and categorical predictors
-Sometimes you want to fit the same model to different groups (males/females, treatment/control etc.). The easiest way is to separately fit the model to the subsets. A more elegant method is explained below. 
-
-We use the fifth dataset of the six datasets you have worked with earlier on. Assume that the function was generated by a decreasing exponential function $ae^{(-bx)}$ and you want to the values of $a$ and $b$. As you can see from the datasets the observations come from two different groups. Are $a$ and $b$ different for the two groups?
-
-This is how the NLL function would look like assume no grouping
-```{r,eval=F}
-read.csv("shapes.csv") # and select fifth dataset
-# test dataset five for differences between groups
-nll0 = function(par,dat){
-  a = par[1]
-  b = par[2]
-  ymean = a*exp(-b*dat$x)
-  nll = -sum(dpois(dat$y,lambda=ymean),log=T)
-  return(nll)
-}
-
-par=c(4,0.2)
-opt1 = optim(par=par,fn=nll,dat=dat)
-
-``` 
-
-```{block2, type = "exercisebox",latex.options="{6}"}
-
-1. Fit the above model to the data without considering differences between groups in $a$ and $b$.
-
-2. Adjust the likelihood function such that it can accomodate for different values of $b$ depending on the group an observation belong to. The dataset consist of a column `group` with two levels that indicate to which group an observation belongs. Use the following pseudocode to achieve this and/or check page 305 for in inspiration or go back to Lab 1 section 11.1.2.
-    a. Adapt the likelihood function such that the parameter `b` depends on the group. 
-    b. Adjust the starting values so it contains multiple starting values for `b`
-
-3. Estimate the parameters $a$ and $b$ when letting $b$ depend on the group. Compare the negative loglikelihood of this model with the model fitted in question 1. Which has a better fit?
-
-4. Apply model selection techniques (Likelihood ratio test, AIC or BIC) to select the most parsimonious model. Are the models nested? Which model is preferred?
-
-  
-```
-
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
-
-`# test dataset five for differences between groups`
-
-`dat = data.frame(x,y,group)`
-
-`te = function(par,dat){` 
-
-    `a = par[1]`
-    `b = par[2:3]`
-    `ymean = a*exp(-b[dat$group]*dat$x)`
-    `nll = -sum(dpois(dat$y,lambda=ymean),log=T)` 
-    `return(nll)`
-  
-`}`
-
-`par=c(4,0.2,0.2)`
-
-`opt1 = optim(par=par,fn=te,dat=dat)`
-
-```
-
-
-
-# Optimisation problems and assessing the confidence limits of parameter estimates
-
-Fitting a model to data requires you to specify a relationship between variables. After specifying this relationship we need to fit parameters of this model that best fits the data. This fitting is done through computer algorithms (optimizers). However, sometimes it may be hard to fit a model to data. After having found the best fitting model, you want to assess how certain you are about the parameter estimates. For assessing the uncertainty of model parameters several methods exist that have pros and cons. 
-
-This exercise has two purposes. First you will learn that an innocent looking function can be challenging to fit. Second, you will learn to assess the uncertainty in the parameter values. For assessing the uncertainty in the parameter estimates there are two methods: the profiling method and the quadratic approximation. Bolker recommends to use the likelihood profile for assessing the uncertainty in the parameters because this one is more accurate than the one based on the Hessian matrix. 
-
-1. Take the first dataset of the six datasets you have worked with earlier on. Assume that the function was generated by the monomolecular function $a(1-e^{(-bx)}$. Fit this model with normally distributed errors through this data with `mle2` and optim method `Nelder-Mead`. Choose four different starting points of the optimisation: `start_a = c(5,10,20,30)`, `start_b = c(0.001,0.005,0.01,0.1)` and compare the NLL of those four optimisations. Plot the curves into the plot with data and try to understand what happened.   
+1. Take the first dataset of the six datasets you have worked with earlier on. Assume that the function was generated by the monomolecular function $a(1-e^{(-bx)}$. Fit this model with normally distributed errors through this data with `mle2` and optim method `Nelder-Mead`. Choose four different starting points of the optimisation: `start_a = c(5,10,20,30)`, `start_b = c(0.001,0.005,0.01,0.1)` and compare the NLL of those four optimisations. Plot the curves into the plot with data and try to understand what happened. You can set the $\sigma$ to 3.
 
 
 2. To understand the behaviour of the optimisation routine we will plot the likelihood surface over a range of values of $a$ and $b$. For $a$ choose a number of parameter values in the range of 0-40 and for $b$ choose a number of values in the range 0.1-10. Calculate for each combination the NLL and plot the NLL surface using `contour` plot. For more insight into the functioning of what the optimisation method did, you can add the starting points that you gave to mle2 and the best fitting points, use `points()` for this. Do you have a clue why the optimisation did not find the minimum point in the landscape? Now zoom in and choose values for $b$ in the range of 0.001-0.03 and check again the NLL surface.
 
-    _hint_: See Bolker Lab 6 for inspiration on coding. 
-    
+    _hint_: See Bolker Lab 6 for inspiration on coding.
+
     _hint_: You can use a for a double for-loop to run over all parameters
-    
+
     _hint_: Store the NLL results in a matrix (you can make a 100x100 matrix by `matrix(NA,nrow=100,ncol=100)`).
-    
-  
+
+
 3.  Calculate the confidence intervals of the parameters through constructing the likelihood profile. Consult page 106 of Bokler or Lab 6 for how to calculate the confidence intervals based on the likelihood profile. Use the following pseudocode to achieve this:
-    a. Adapt the likelihood function such that one parameter is not optimised but chosen by you, say parameter $a$. 
-    b. Vary $a$ of a range and optimise the other parameteters. 
+    a. Adapt the likelihood function such that one parameter is not optimised but chosen by you, say parameter $a$.
+    b. Vary $a$ of a range and optimise the other parameteters.
     c. Plot the NLL as a function of parameter $a$.
     d. Find the values of $a$ that enclose $-L + \chi^2(1-\alpha)/2$. In `R` this can be done through `qchisq(0.95,1)/2`.
-    e. Compare your results with the results from the `R` function `confint()`. `confint()` uses the profiling method along with interpolation methods. 
-  
+    e. Compare your results with the results from the `R` function `confint()`. `confint()` uses the profiling method along with interpolation methods.
+
 4. *(time permitting)* Calculate the confidence intervals through the quadratic approximation. Take the following steps to achieve this:
     a. Get the standard error of the parameter estimates through `vcov`. Note that `vcov` return the variance/covariance matrix
     b. Calculate the interval based on the fact that the 95% limits are 1.96 (qnorm(0.975,0,1)) standard deviation units away from the mean.
@@ -440,38 +451,38 @@ This exercise has two purposes. First you will learn that an innocent looking fu
 5. *(time permitting)* Plot the confidence limits of the both method and compare the results. Is there a big difference between the methods?
 
 6. To assess the uncertainty in the predictions from the model you can construct population prediction intervals (PPIs, see 7.5.3 Bolker). Population prediction intervals shows the interval in which a new observation will likely fall. To construct the PPI take the following steps
-    a. Simulate a number of parameter values taken the uncertainty in the parameter estimates into account. 
-    
+    a. Simulate a number of parameter values taken the uncertainty in the parameter estimates into account.
+
           _hint_: If the fitted mle object is called `mle2.obj`, then you can extract the variance-covariance matrix by using `vcov(mle2.obj)`. You can extract the mean parameter estimates by using `coef(mle2.obj)`. Now you are ready to simulate 1000 combinations of parameter values through `z = mvrnorm(1000,mu=coef(mle2.obj),Sigma=vcov(mle2.obj))`. `mvrnorm` is a function to randomly draw values from a multivariate normal distribution.
-    
+
     b. Predict the mean response based on the simulated parameter values and the values of $x$
-    
+
           _hint_: make a for-loop and predict for each simulated pair of parameter values the mean for a given x. Thus `mu = z[i,1]*(1-exp(-z[i,2]*x))`
-    
-    c. Draw from a normal distribution with a mean that was predicted in the previous step and the sd that you simulated in step a. 
-    
-          _hint_: `pred = rnorm(length(mu),mean=mu,sd=z[i,3])`. Store pred in a matrix with each simulated dataset in a seperate row. 
-    
+
+    c. Draw from a normal distribution with a mean that was predicted in the previous step and the sd that you simulated in step a.
+
+          _hint_: `pred = rnorm(length(mu),mean=mu,sd=z[i,3])`. Store pred in a matrix with each simulated dataset in a seperate row.
+
     d. Calculate for each value of $x$ the 2.5% and the 97.5% quantiles
-    
+
           _hint_: If the predictions are stored in a matrix `mat`, you can use `apply(mat,2,quantile,0.975)` to get the upper limit.
-  
-  
+
+
 ```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 The solution is given below in the big chunk of code
 
 ```
 
-```{r,eval=T,echo=T}
+```{r,eval=F,echo=T}
 shapes1= read.csv("shapes1.csv")
 plot(shapes1)
 
 nll.mle = function(a,b,sd){
   # this calculates the mean y for a given value of x: the deterministic function
   mu = a*(1-exp(-b*shapes1$x))
-  # this calculates the likelihood of the function given the probability 
+  # this calculates the likelihood of the function given the probability
   # distribution, the data and mu and sd
-  nll = -sum(dnorm(shapes1$y,mean=mu,sd=sd,log=T)) 
+  nll = -sum(dnorm(shapes1$y,mean=mu,sd=sd,log=T))
   return(nll)
 }
 
@@ -482,7 +493,7 @@ mle2.1 = vector("list", 4)
 start_a = c(5,10,20,30)
 start_b = c(0.001,0.005,0.01,0.1)
 for(i in 1:4) {
-  mle2.1[[i]] = mle2(nll.mle,start=list(a=start_a[i],b = start_b[i], sd=1), method="Nelder-Mead") 
+  mle2.1[[i]] = mle2(nll.mle,start=list(a=start_a[i],b = start_b[i], sd=1), method="Nelder-Mead")
 }
 
 # Check the best fit (in this case it is 3rd starting point)
@@ -557,16 +568,16 @@ contour(a1,b1.1,z1.1,levels=120,col=2,add=T)
 nll.mle1 = function(a,sd){
   # this calculates the mean y for a given value of x: the deterministic function
   mu = a*(1-exp(-b*x))
-  # this calculates the likelihood of the function given the probability 
+  # this calculates the likelihood of the function given the probability
   # distribution, the data and mu and sd
-  nll = -sum(dnorm(y,mean=mu,sd=sd,log=T)) 
+  nll = -sum(dnorm(y,mean=mu,sd=sd,log=T))
   return(nll)
 }
 
 nll = numeric(length(b1.1))
 for (i in 1:length(b1.1)){
   b = b1.1[i]
-  mle.21 = mle2(nll.mle1,start=list(a=25,sd=7.96),data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")   
+  mle.21 = mle2(nll.mle1,start=list(a=25,sd=7.96),data=data.frame(x=shapes1$x,y=shapes1$y),method="Nelder-Mead")
   nll[i] = -logLik(mle.21)
 }
 par(mfrow = c(1,1))
@@ -592,23 +603,23 @@ abline(v=c(0.007177,0.0107589),col="blue")
 ```
 
 
-# Bayesian parameter estimation: negative binomial
+## Bayesian parameter estimation: negative binomial
 
-## From Bayes rule to log posterior
+### From Bayes rule to log posterior
 
-The aim of Bayesian is to estimate the parameters of a model conditional on observed data ($P(\theta | D)$, known as *posterior distribution*) given the likelihood ($L(\theta|D) = P(D|\theta)$) and *prior distributions* of the parameters ($P(\theta)$), according to Bayes rule:
+The aim of Bayesian analysis is to estimate the parameters of a model conditional on observed data ($P(\theta | D)$, known as *posterior distribution*) given the likelihood ($L(\theta|D) = P(D|\theta)$) and *prior distributions* of the parameters ($P(\theta)$), according to Bayes rule:
 
 $$
 P(\theta | D) = \frac{P(D|\theta) P(\theta)}{P(D)}
 $$
 
-Details on Bayes rule are given in section 4.3 and 6.2.2 of the book. Note that the only unknown in the right hand side of Bayes rule is $P(D)$. However, we know that $P(D) = \int P(D|\theta)P(\theta)d\theta$. Therefore, in order to calculate the posterior distribution, we need to calculate this integral. Any integration method would work but, in practice, the most popular ones are Markov Chain Monte Carlo (MCMC) algorithms due to their higher performance. These algorithms will provide a random sample from the posterior distribution given a formulation of the problem as:
+Details on Bayes rule are given in section 4.3 and 6.2.2 of the book. Note that the only unknown in the right hand side of Bayes rule is $P(D)$. However, we know that $P(D) = \int P(D|\theta)P(\theta)d\theta$. Therefore, in order to calculate the posterior distribution, we need to calculate this integral. Any integration method would work but, in practice, the most popular ones are Markov Chain Monte Carlo (MCMC) algorithms due to their higher performance compared to other methods. These algorithms will provide a random sample from the posterior distribution given a formulation of the problem as:
 
 $$
 \log(P(\theta | D)) \propto \log(P(D|\theta)) + \log(P(\theta)) = \mathcal{L} + \log(P(\theta))
 $$
 
-Where $\mathcal{L}$ is the positive log-likelihood. The Bayesian algorithms work with logarithms for the same reason as in maximum likelihood estimation. 
+Where $\mathcal{L}$ is the positive log-likelihood. The Bayesian algorithms work with logarithms for the same reason as in maximum likelihood estimation.
 
 The first step is to build a function that calculates the log-posterior for every parameter value. For the negative binomial example we can use the following:
 
@@ -622,17 +633,17 @@ LPfun1 = function(p,dat=x) {
   LL = sum(dnbinom(dat,mu=mu,size=k,log=TRUE))
   LL + lp_mu + lp_k
 }
-``` 
+```
 
 The main difference with `NLLfun1` is that it now calculates the log-prior probabilities of `mu` and `k` (`lp_mu` and `lp_k`, respectively) and that it returns the sum of log-likelihood + log-priors. In this case, I am assuming that we have prior knowledge indicating that `mu` and `k` will be lower than 5 with 99% probability. There are three more subtle issues
 
-- I added `p = exp(p)` at the beginning which means that the function will actually take `log(p)` as input. The reason is because the parameters of the negative binomial must be positive (this did not hurt in the previous exercises, but it can have a bigger impact in Bayesian problems). 
+- I added `p = exp(p)` at the beginning which means that the function will actually take `log(p)` as input. The reason is because the parameters of the negative binomial must be positive (this did not hurt in the previous exercises, but it can have a bigger impact in Bayesian problems).
 
 - `LPfun1` does not actually calculate the log-posterior but a quantity proportional to it. The difference is $P(D)$, but that will be calculated (implictly) by the MCMC algorithm.
 
 - I use a Normal distribution for priors, despite the fact that `mu` and `k` cannot be negative. There are  called *improper* prior distributions because their areas are not 1. But that is not a problem as we can always multiply an improper prior by a constant (to make it proper) and merge that constant with $P(D)$.
 
-## Sampling from posterior: Metropolis-Hastings algorithm
+### Sampling from posterior: Metropolis-Hastings algorithm
 
 Below is a simple version of the Metropolis-Hastings algorithm (section 7.3.1 of the book), with a multivariate Normal proposal distribution (**you need to install package `mvtnorm` first!**):
 
@@ -676,10 +687,10 @@ MH = function(model, init, sigma = diag(init/10), niter = 3e4, burn = 0.5,
 
 The inputs of `MH` are:
 
-- `model`: Function that calculates the non-normalized log-posterior (i.e. `LPfun1`).  
-- `init`: Initial values for the parameters. The closer to the "true" values the faster the MCMC algorithm will converge to the posterior distribution.  
-- `sigma`: Variance-covariance matrix used to calculate jumps in parameter space.  
-- `niter`: Number of iterations the algorithm will run for.  
+- `model`: Function that calculates the non-normalized log-posterior (i.e. `LPfun1`).
+- `init`: Initial values for the parameters. The closer to the "true" values the faster the MCMC algorithm will converge to the posterior distribution.
+- `sigma`: Variance-covariance matrix used to calculate jumps in parameter space.
+- `niter`: Number of iterations the algorithm will run for.
 - `burn`: Fraction of iterations that will be used as burn-in (check section 7.3.2). These iterations will not be used for analysis but are required for convergence of the MCMC algorithm.
 - `seed`: Seed for pseudorandom number generator that allows reproducing results.
 
@@ -692,7 +703,7 @@ set.seed(1001)
 mu.true=1
 k.true=0.4
 x = rnbinom(50,mu=mu.true,size=k.true)
-``` 
+```
 
 Now we can run `MH` with some values. I want to make the point that the proposal distributions matters for an efficient MCMC algorithm. So let's start with a variance-covariance matrix is not reasonable:
 
@@ -734,8 +745,8 @@ Modern MCMC algorithms will automatically *tune* the proposal distribution or ev
 The reason why this works is because points 1 and 2 will often give a good first approximation of the posterior distribution, especially for large data. This means that `MH` will be sampling from a distribution similar to the target distribution. This approach can be implemented as:
 
 ```{r}
-mapfit = optim(fn = LPfun1, par = log(c(1,1)), 
-               hessian = TRUE, method = "BFGS", 
+mapfit = optim(fn = LPfun1, par = log(c(1,1)),
+               hessian = TRUE, method = "BFGS",
                control = list(fnscale = -1), dat = x)
 sigma = solve(-mapfit$hessian)
 init = mapfit$par
@@ -776,13 +787,13 @@ One striking feature is that the distributions are not symmetric, they have a lo
 map = exp(mapfit$par)
 meanp = colMeans(bay2sample)
 medianp = c(median(bay2sample[,1]), median(bay2sample[,2]))
-cbind(map, meanp, medianp, 
-      mom = c(mu.mom, k.mom), 
-      mle = opt1$par, 
+cbind(map, meanp, medianp,
+      mom = c(mu.mom, k.mom),
+      mle = opt1$par,
       true = c(mu.true, k.true))
 ```
 
-For this model, data and priors, all estimates are quite similar to each other and to the estimate from maximum likelihood. The reason is because there is sufficient data (50 points for 2 parameters is quite some data...) such that the priors have a negligible effect. 
+For this model, data and priors, all estimates are quite similar to each other and to the estimate from maximum likelihood. The reason is because there is sufficient data (50 points for 2 parameters is quite some data...) such that the priors have a negligible effect.
 
 The 95% credible intervals (analogous to 95% confidence intervals) can be calculated with the `quantile` function applied directly to the sample from the posterior:
 
@@ -800,13 +811,13 @@ cbind(map - 1.96*se, map + 1.96*se)
 The reason they are so bad is that they miss the asymmetry completely, especially for `k`, where the predict negative values! This is the reason why we always need to run the MCMC algorithm and report probability intervals rather than standard errors.
 
 
-# Bayesian and covariates
+## Bayesian and covariates
 
 In this section you practice Bayesian parameter estimation on the same dataset and model as the one you used in the section *Maximum likelihood and covariates*:
 
 1. Think about what would be reasonable priors for the parameters. Extra information on the datasets is given below. Use this information to define some reasonable priors, considering the scale of measurements and what is known about the type of systems/populations being measured.
 
-2. Use the likelihood function from previous exercise on this dataset, as well as the priors, to estimate the parameters of the model. Follow the approach shown for the negative binomial example (i.e. optimization followed by Metropolis-Hastings). 
+2. Use the likelihood function from previous exercise on this dataset, as well as the priors, to estimate the parameters of the model. Follow the approach shown for the negative binomial example (i.e. optimization followed by Metropolis-Hastings).
 
 3. Calculate mean of posterior and 95% credible intervals. How much to they differ from the maximum likelihood estimates you obtained before?.
 
@@ -814,27 +825,27 @@ In this section you practice Bayesian parameter estimation on the same dataset a
 
 \newpage
 # Hints for choosing deterministic functions and stochastic functions
-  
+
   1. Deterministic functions
 
     - dataset 1
-    
+
     light response curve. There are a number of options of functions to choose from, depending on the level of sophistication:
     $\frac{ax}{(b+x)}$, $a(1-e^{(-bx)})$, $\frac{1}{2\theta}(\alpha I+p_{max}-\sqrt(\alpha I+p_{max})^2-4\theta I p_{max})$ see page 98. A parameter `d` can be added in all cases to shift the curve up or down. The y represents net photosynthesis $\mu mol CO_{2}/m^2s$
-      
+
     - dataset 2
-    
-    The dataset describes a functional responses. Bolker mentions four of those $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\frac{ax^2}{(b+cx+x^2)}$ The y is measured in grams prey eaten per unit time. 
-      
+
+    The dataset describes a functional responses. Bolker mentions four of those $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\frac{ax^2}{(b+cx+x^2)}$ The y is measured in grams prey eaten per unit time.
+
     -dataset 3
     Allometric relationships generally have the form $ax^b$. The y represent the total number of cones produced.
-      
+
     -dataset 4
       This could be logistic growth $n(t)=\frac{K}{1+(\frac{K}{n_0})e^{-rt}}$ or the gompertz function $f(x)=e^{-ae^{-bx}}$. The y represent the population size (numbers).
-      
+
     -dataset 5
-      What about a negative exponential? $ae{-bx}$ or a power function $ax^b$. The y represent a number per unit area. 
-      
+      What about a negative exponential? $ae{-bx}$ or a power function $ax^b$. The y represent a number per unit area.
+
     -dataset 6
       Species reponse curves are curves that describe the probability of presence as a function of some factor. A good candidate good be a unimodel response curve. You could take the equation of the normal distribution without the scaling constant: e.g.
       $a e^{\frac{-(x-\mu)^2}{2\sigma^2}}$. The y represent presence or absence of the species (no units).
@@ -849,14 +860,14 @@ In this section you practice Bayesian parameter estimation on the same dataset a
 
       -dataset 3
       y seems represents counts (this is the cone dataset that is introduced in ch. 6.). Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
-      
+
       -dataset 4
-      y represents population size over time. From looking at the data, they seems to represent counts. Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.  
+      y represents population size over time. From looking at the data, they seems to represent counts. Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
 
       -dataset 5
       No information is given on y. The data clearly seems to represent counts. Thus the same reasoning applies here as to the two previous datasets.
-      
+
       -dataset 6
-      The data (y) represents species occurences (presence/absence). The binomial model would be a good model to predict the probability of presence.  
+      The data (y) represents species occurences (presence/absence). The binomial model would be a good model to predict the probability of presence.
 
 

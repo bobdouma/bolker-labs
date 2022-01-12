@@ -242,8 +242,7 @@ Using editing shortcuts wherever you can, have `R` compute the values of:
   * $1+0.2+0.2^2/2 + \cos(2.3)$
   * $\log(1)$
   * $\exp(0.2)$ 
-3. The standard normal probability density, $\frac{1}{\sqrt(2\pi)}\exp(-x^2/2)$, for values of $x=1$ and $x=2$ (`R`    
-knows $\pi$ as `pi`.). You can check your answers against the built-in function for the normal distribution; `dnorm(1)`  and `dnorm(2)` should give you the values for the standard normal for $x=1$ and $x=2$.
+3. The standard normal probability density, $\frac{1}{\sqrt(2\pi)}\exp(-x^2/2)$, for values of $x=1$ and $x=2$ (`R` knows $\pi$ as `pi`). You can check your answers against the built-in function for the normal distribution; `dnorm(1)`  and `dnorm(2)` should give you the values for the standard normal for $x=1$ and $x=2$.
 
 ```
 
@@ -585,7 +584,7 @@ Use `?par` to read about other plot control parameters that you use `par` to set
 ```
 
 ```{block2,type= "exercisebox",latex.options="{1}"}
-Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with specific functions like `jpeg` or `png`.  Use `?savePlot`, `?jpeg` or `?png` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".` Note further when you use `savePlot` this command should be preceded by `windows()` to open a new window that is saved by `savePlot` 
+Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with specific functions like `jpeg` or `png`.  Use `?jpeg` or `?png` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".` 
 ```
 
 ```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
