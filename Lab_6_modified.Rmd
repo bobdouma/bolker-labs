@@ -1,7 +1,7 @@
 ---
 title: "Lab 6 & 7 Fitting models to data, optimisation and bayesian statistics"
 author: "Ben Bolker, modified at several places by Bob Douma and Alejandro Morales. Bayesian part by AM"
-date: "9 November 2021"
+date: "16 November 2022"
 output:
   bookdown::pdf_book:
      includes:
@@ -38,7 +38,7 @@ In case of time constraints, focus on sections 2-5. If you want something challe
 # Fitting models to data
 Fitting a model to data through likelihood requires that you take five steps: 
 
-1. Specify how the dependent variable depends on the independent variable, i.e. specify a function how the mean of y depends on the value of x.
+1. Specify how the dependent variable depends on the independent variable, i.e. specify a function that describes how the mean of y depends on the value of x.
 2. Specify a probability distribution to describe the deviations of the observations from the mean
 3. Specify a function that calculate the negative log likelihood (NLL) based on the data and the parameter values.
 4. Choose the parameters of the deterministic model and the probability model such that the negative log likelihood is lowest.
@@ -64,8 +64,6 @@ For example to calculate the NLL of a linear model and a normal distribution the
   ```
 
 Notice that the function takes three arguments: a vector with parameters, a vector with `y` values and a vector with `x` values. Inside the vector par, three values are stored: `a`,`b` and `sd`. Next, the mean given x is calculated with `mu=a+b*x`. The nll returns the Negative LogLikelihood of the data (`y`) given a normal distribution with mean `mu` (vector!) and a standard deviation `sd`. The `log=T` returns the log of the probability densities.  
-
-Note that `-sum(`**`log`**`(dnorm(y,mean=mu,sd=sd)))` should not be used because as it may lead to underflow: the computer cannot store very very small probabilities, or log transform those small varlues, and therefore it will lead to optimisation problems. 
 
 Next we call an optimisation function to find the maximum likelihood estimate
 
@@ -128,7 +126,7 @@ Take the steps below
 3. Next, define the negative log-likelihood function for a simple draw from a negative binomial distribution:
 the first parameter, `par`, will be the vector of parameters, and the second parameter, `dat`, will be the vector with simulated values. 
 
-4. Calculate the negative log-likelihood of the data for the parameter values with which you generated the numbers. Combine these parameter values into the vector `par` with  `c()` to pass them to the negative log-likelihood function. (Naming the elements in the parameter vector is optional but will help keep things clear as we go along. E.g. par=c(mu=1,k=2)) 
+4. Calculate the negative log-likelihood of the data for the parameter values with which you generated the numbers. Combine these parameter values into the vector `par` with  `c()` to pass them to the negative log-likelihood function. Naming the elements in the parameter vector is optional but can help avoid mistakes if the number o fparameters is large (e.g. `par = c(mu = 1,k = 2)`). 
   
 5. Calculate the NLL of parameter values that are far from the values that were used to generate the data ($\mu=10$, $k=10$)
 
@@ -144,7 +142,7 @@ the first parameter, `par`, will be the vector of parameters, and the second par
 ```
 
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
 The solution is shown below in a big R chunk
 ```
 
@@ -216,7 +214,7 @@ The following exercise has the purpose to learn you how to fit a model to data w
   
 ```
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
 
 `shapes2= read.csv("shapes2.csv")`
 
@@ -339,7 +337,7 @@ Use the following pseudocode to achieve this and/or check page 305 for in inspir
 
 ```
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
 
 `# test dataset five for differences between groups`
 
@@ -392,7 +390,7 @@ columns corresponding to $k$:
 
 ```
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
 `muvec = seq(0.4,3,by=0.05)`
 
 `kvec = seq(0.01,0.7,by=0.01)`
@@ -468,7 +466,7 @@ This exercise has two purposes. First you will learn that an innocent looking fu
           _hint_: If the predictions are stored in a matrix `mat`, you can use `apply(mat,2,quantile,0.975)` to get the upper limit.
 
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
 The solution is given below in the big chunk of code
 
 ```
@@ -605,6 +603,8 @@ abline(v=c(0.007177,0.0107589),col="blue")
 
 ## Bayesian parameter estimation: negative binomial
 
+In this section we will practice parameter estimation using the Bayesian method on the same negative binomial example as before (Section 6.1). The purpose of this exercise is to gain intuition of how Markov Chain Monte Carlo (MCMC) algorithms work and better understand the differences (and similarities) between maximum likelihood and Bayesian parameter estimation. The MCMC algorithm implemented below can be useful for relatively simple models such as the ones covered in this course. For more complex data analysis we recommend to use dedicated R packages that implement more powerful (and automated) algorithms. A list of such packages can be found in the task view on Bayesian Inference (https://cran.r-project.org/web/views/Bayesian.html).  
+
 ### From Bayes rule to log posterior
 
 The aim of Bayesian analysis is to estimate the parameters of a model conditional on observed data ($P(\theta | D)$, known as *posterior distribution*) given the likelihood ($L(\theta|D) = P(D|\theta)$) and *prior distributions* of the parameters ($P(\theta)$), according to Bayes rule:
@@ -613,71 +613,86 @@ $$
 P(\theta | D) = \frac{P(D|\theta) P(\theta)}{P(D)}
 $$
 
-Details on Bayes rule are given in section 4.3 and 6.2.2 of the book. Note that the only unknown in the right hand side of Bayes rule is $P(D)$. However, we know that $P(D) = \int P(D|\theta)P(\theta)d\theta$. Therefore, in order to calculate the posterior distribution, we need to calculate this integral. Any integration method would work but, in practice, the most popular ones are Markov Chain Monte Carlo (MCMC) algorithms due to their higher performance compared to other methods. These algorithms will provide a random sample from the posterior distribution given a formulation of the problem as:
+Details on Bayes rule are given in section 4.3 and 6.2.2 of the book. Note that the only unknown in the right hand side of Bayes rule is $P(D)$. However, we know that $P(D) = \int P(D|\theta)P(\theta)d\theta$. Therefore, in order to calculate the posterior distribution, we could calculate this integral. Any integration method would work, but integration will not be feasible for a large number of parameters. In practice, a more popular approach is to generate samples from the posterior distribution, while avoiding the integral. This is achieved by so-called Markov Chain Monte Carlo (MCMC) algorithms. These algorithms will provide a random sample from the posterior distribution given a formulation of the problem as:
 
 $$
 \log(P(\theta | D)) \propto \log(P(D|\theta)) + \log(P(\theta)) = \mathcal{L} + \log(P(\theta))
 $$
 
-Where $\mathcal{L}$ is the positive log-likelihood. The Bayesian algorithms work with logarithms for the same reason as in maximum likelihood estimation.
+Where $\mathcal{L}$ is the positive log-likelihood and $\propto$ means "proportional to". These algorithms work with logarithms for the same reason as in maximum likelihood estimation (i.e., to avoid numerical instability due to very large or very small numbers that would result from multiplication).
 
-The first step is to build a function that calculates the log-posterior for every parameter value. For the negative binomial example we can use the following:
+The first step of Bayesian parameter estimation is to build a function that calculates the log-posterior density for every parameter value. We will use the example of the negative binomial from section 6.1. This example fits a negative binomial distribution parameterized by its mean (`mu`) and size (`k`) both of which have to be positive.
+
+In a Bayesian approach, we need to assign prior probabilities to each of the parameters, which means choosing a distribution and its parameters, based on prior knowledge. Of course, without a context, it is not possible to specify meaningful prior distributions (and this is arguably the hardest step in any Bayesian analysis), but for the sake of this exercise let's assume that we can represent our prior beliefs with Normal distributions centered around 0 and with a standard deviation of 2 (in practice only half of these prior distributions are being used as `mu` and `k` are positive, but that is fine). This essentially means that were are 99% certain that `mu` and `k` will be lower than 4.6, prior to seeing any data. 
+
+We have to construct a function that can return the sum of the log-likelihood and log-prior densities for a given combination of `mu` and `k` in order to use MCMC (remember, this is not the exact log-posterior because of the unknown normalizing constant):
 
 ```{r,results='hide'}
-LPfun1 = function(p,dat=x) {
-  p = exp(p)
-  mu=p[1]
-  lp_mu = dnorm(mu, 0, 1.9, log = TRUE)
-  k=p[2]
-  lp_k = dnorm(k, 0, 1.9, log = TRUE)
+LPfun1 = function(p, dat = x) {
+  # Mean and size of the negative binomial (use exp to force them to be positive)
+  mu = exp(p[1])
+  k  = exp(p[2])
+  # Logarithm of the prior distributions on mu and k 
+  # (0 and 2 are parameters chosen by the user, they represent prior beliefs)
+  lp_mu = dnorm(mu, 0, 2, log = TRUE)
+  lp_k = dnorm(k, 0, 2, log = TRUE)
+  log_prior = lp_mu + lp_k
+  # Log-likelihood of the data under the model
   LL = sum(dnbinom(dat,mu=mu,size=k,log=TRUE))
-  LL + lp_mu + lp_k
+  # Sum of the log-likelihood and the log-prior
+  LL + log_prior
 }
 ```
 
-The main difference with `NLLfun1` is that it now calculates the log-prior probabilities of `mu` and `k` (`lp_mu` and `lp_k`, respectively) and that it returns the sum of log-likelihood + log-priors. In this case, I am assuming that we have prior knowledge indicating that `mu` and `k` will be lower than 5 with 99% probability. There are three more subtle issues
-
-- I added `p = exp(p)` at the beginning which means that the function will actually take `log(p)` as input. The reason is because the parameters of the negative binomial must be positive (this did not hurt in the previous exercises, but it can have a bigger impact in Bayesian problems).
-
-- `LPfun1` does not actually calculate the log-posterior but a quantity proportional to it. The difference is $P(D)$, but that will be calculated (implictly) by the MCMC algorithm.
-
-- I use a Normal distribution for priors, despite the fact that `mu` and `k` cannot be negative. There are  called *improper* prior distributions because their areas are not 1. But that is not a problem as we can always multiply an improper prior by a constant (to make it proper) and merge that constant with $P(D)$.
+The main difference between `LPfun1` and `NLLfun1` created in section 6.1 is that the new function includes the log-prior densities of `mu` and `k` (`lp_mu` and `lp_k`, respectively) and that it returns the sum of log-likelihood + log-prior densities.
 
 ### Sampling from posterior: Metropolis-Hastings algorithm
 
-Below is a simple version of the Metropolis-Hastings algorithm (section 7.3.1 of the book), with a multivariate Normal proposal distribution (**you need to install package `mvtnorm` first!**):
+Below is a simple version of the Metropolis-Hastings algorithm (section 7.3.1 of the book), with a multivariate Normal proposal distribution (**you need to install package `mvtnorm` first!**). Note that this function is written in a generic fashion, that is, it will work with any user-defined function that is assigned to the first argument (`model`) and any data required by said function is passed through the `...` argument (this is the strategy is used in many R functions, including `optim`).
+
+The inputs of the `MH` function (see below for code) are:
+
+- `model`: Function that calculates the non-normalized log-posterior (i.e. `LPfun1`).
+- `init`: Initial values for the parameters. The closer to the "true" values the faster the MCMC algorithm will converge to the posterior distribution.
+- `sigma`: Variance-covariance matrix of the proposal distribution used to calculate jumps in parameter space.
+- `niter`: Number of iterations the algorithm will run for.
+- `burn`: Fraction of iterations that will be used as burn-in (check section 7.3.2). These iterations will not be used for analysis but are required for convergence of the MCMC algorithm.
+- `seed`: Seed for pseudo-random number generator that allows reproducing results.
+
+The algorithm keeps track of all the parameter values it visits and stores them in the variable `chain`. Each iteration, it proposes new values for each parameter (`proposal`) sampled from a multivariate Normal distribution centered at the current values. The probability of accepting the proposal is equal to the exponent of the difference in log posterior densities (`paccept`, see Equation 7.3.2 in the book, taking into account that the proposal distribution is symmetric). If the proposal is accepted, then it is added to the `chain` and becomes the new `current` values (i.e., the algorithm "moves" to that location). After the run is finished, the values in `chain` are split between the burn-in samples and after burn-in. The variable `acceptance` calculates the fraction of jumps that were accepted (do not confuse with the probability of accepting an individual jump!). The higher this number is, the more efficient the algorithm is in exploring the posterior distribution.
 
 ```{r}
 library(mvtnorm)
-MH = function(model, init, sigma = diag(init/10), niter = 3e4, burn = 0.5,
+MH = function(model, init, Sigma = diag(init/10), niter = 3e4, burn = 0.5,
                       seed = 1134, ...) {
   # To make results reproducible you should set a seed (change among chains!!!)
   set.seed(seed)
-  # Preallocate chain of values
+  # Pre-allocate chain of values
   chain = matrix(NA, ncol = length(init), nrow = niter)
   # Chain starts at init
   current = init
   lp_current = model(current, ...)
   # Iterate niter times and update chain
   for(iter in 1:niter) {
-    # Generate a candidate value from multivariate Normal distribution
-    candidate = rmvnorm(1, mean = current, sigma = sigma)
+    # Generate proposal values from multivariate Normal distribution
+    proposal = rmvnorm(1, mean = current, sigma = Sigma)
     # Calculate probability of acceptance (proposal distribution is symmetric)
-    lp_candidate = model(candidate, ...)
-    paccept = min(1, exp(lp_candidate - lp_current))
-    # Accept the candidate...or not!
+    lp_proposal = model(proposal, ...)
+    paccept = min(1, exp(lp_proposal - lp_current))
+    # Accept the proposal... or not!
     # If accept, update the current and lp_current values
     accept = runif(1) < paccept
     if(accept) {
-      chain[iter,] = candidate
-      lp_current = lp_candidate
+      chain[iter,] = proposal
+      lp_current = lp_proposal
       current = chain[iter,]
     } else {
       chain[iter,] = current
     }
   }
-  # Calculate acceptance probability after burn-in and the length of burn-in
+  # Calculate the length of burn-in
   nburn = floor(niter*burn)
+  # Calculate final acceptance probability after burn-in (fraction of proposals accepted)
   acceptance = 1 - mean(duplicated(chain[-(1:nburn),]))
   # Package the results
   list(burnin = chain[1:nburn,], sample = chain[-(1:nburn),],
@@ -685,18 +700,7 @@ MH = function(model, init, sigma = diag(init/10), niter = 3e4, burn = 0.5,
 }
 ```
 
-The inputs of `MH` are:
-
-- `model`: Function that calculates the non-normalized log-posterior (i.e. `LPfun1`).
-- `init`: Initial values for the parameters. The closer to the "true" values the faster the MCMC algorithm will converge to the posterior distribution.
-- `sigma`: Variance-covariance matrix used to calculate jumps in parameter space.
-- `niter`: Number of iterations the algorithm will run for.
-- `burn`: Fraction of iterations that will be used as burn-in (check section 7.3.2). These iterations will not be used for analysis but are required for convergence of the MCMC algorithm.
-- `seed`: Seed for pseudorandom number generator that allows reproducing results.
-
-The algorithm keeps track of all the parameter values it visits and stores them in `chain`. Each iteration, it proposes a new candidate value (`candidate`) from a multivariate Normal distribution centered at the current value. The probability of accepting the candidate is equal to the difference in log posterior densities (`paccept`, see Equation 7.3.2 in the book, taking into account that the proposal distribution is symmetric). If the candidate value is accepted, then it is added to the `chain` and becomes the new `current` value (i.e. the algorithm "moves" to that location). After the run is finished, the values in `chain` are split according to burn-in and after burn-in. The variable `acceptance` calculates the fraction of jumps that were accepted. The higher this number, the more efficient the algorithm is in exploring the posterior distribution.
-
-So let's tackle the negative binomial problem. First, let's regenerate the data just to be sure...
+So let's tackle the negative binomial problem with the algorithm above. First, let's regenerate the data that was used in the previous section:
 
 ```{r,results='hide'}
 set.seed(1001)
@@ -705,69 +709,77 @@ k.true=0.4
 x = rnbinom(50,mu=mu.true,size=k.true)
 ```
 
-Now we can run `MH` with some values. I want to make the point that the proposal distributions matters for an efficient MCMC algorithm. So let's start with a variance-covariance matrix is not reasonable:
+Now we can run `MH` with some values. I want to make the point that choosing a good proposal distribution matters for an efficient MCMC algorithm. So let's start with a variance-covariance matrix that is not reasonable (because it is too wide):
 
 ```{r}
-sigma = diag(c(10,10))
+Sigma = diag(c(10,10))
 ```
 
-Now we can run `MH`:
+Now we can run `MH` combined with the `LPfun1` function and some initial values:
 
 ```{r}
 init = log(c(1,1))
-bay1 = MH(LPfun1, init, sigma, burn = 0.3, dat = x)
+bay1 = MH(LPfun1, init, Sigma, burn = 0.3, dat = x)
 ```
 
-The first parameter you want to check is the acceptance probability:
+The first result you want to check is the acceptance probability to see how succesful proposals were:
 
 ```{r}
 bay1$acceptance
 ```
 
-This terrible! 98% of the candidate were rejected so it would take really long to get a representative sample from the posterior. The next step is usually to take a look at the traces of the values sampled by the MCMC:
+This is terrible! 98% of the proposed values were rejected so it would take really long to get a representative sample from the posterior distribution. The next step is usually to take a look at the traces of the values sampled by the MCMC (noticed that the sampling was done on the log transformation of the parameters as they are positive):
 
 ```{r, fig.height=3.5, fig.width=5, fig.align='c'}
 par(mfrow = c(2,1), mar = c(4,4,0.5,0.5), las = 1)
-plot(bay1$sample[,1], t = "l", ylab = "Trace of mu")
-plot(bay1$sample[,2], t = "l", ylab = "Trace of k")
+plot(bay1$sample[,1], t = "l", ylab = "Trace of log(mu)")
+plot(bay1$sample[,2], t = "l", ylab = "Trace of log(k)")
 ```
 
-The low probability of acceptance means that the traces look like "squiggly lines", getting stuck at different values for hundres of iterations. This slows down the effective sampling and can introduce biases in the estimates (unless the algorithm runs for very, very long).
+The low probability of acceptance means that the traces look like "squiggly lines", getting stuck at different values for hundreds of iterations (i.e., horizontal sections in the traces). This slows down the effective sampling and can introduce biases in the estimates (unless the algorithm runs for very long).
 
-Modern MCMC algorithms will automatically *tune* the proposal distribution or even used alternatives methods to calculate candidate values that are more robust. However a poor man's tuned MCMC may suffice for this introduction and it works as follows:
+Note that more modern MCMC algorithms (that R packages specialized on Bayesian statistics will use internally) will automatically *tune* the proposal distribution or even use alternatives methods to propose values that are more robust. However a poor man's tuned MCMC may suffice for this introduction (and for simple models with few parameters) and it works as follows:
 
-1. Calculate the value that maximizes the posterior distribution (*a.k.a* MAP estimate).
+1. Calculate the value that maximizes the posterior distribution using `optim` (*a.k.a* Maximum A Posteriori estimate or MAP for short).
 
-2. Estimate the variance-covariance matrix of the posterior distribution using the Hessian matrix.
+2. Estimate the variance-covariance matrix of the posterior distribution using the Hessian matrix returned by `optim` (analogous to what we do for maximum likelihood estimation).
 
-3. Run `MH` using the above as values `init` and `sigma`, respectively.
+3. Run `MH` using the above results as the values for `init` and `sigma`, respectively.
 
-The reason why this works is because points 1 and 2 will often give a good first approximation of the posterior distribution, especially for large data. This means that `MH` will be sampling from a distribution similar to the target distribution. This approach can be implemented as:
+The reason why this works better is because points 1 and 2 will often give a good first approximation of the posterior distribution, especially for large data (in which case the posterior distribution approaches a Normal distribution). This means that `MH` will be sampling from a distribution similar to the target distribution and hence a higher proportion of proposals will be accepted (intuitively, fewer values that are far in the tails of the posterior distribution will be proposed). This approach can be implemented as:
 
 ```{r}
 mapfit = optim(fn = LPfun1, par = log(c(1,1)),
                hessian = TRUE, method = "BFGS",
                control = list(fnscale = -1), dat = x)
-sigma = solve(-mapfit$hessian)
+Sigma = solve(-mapfit$hessian)
 init = mapfit$par
-bay2 = MH(LPfun1, init, sigma, burn = 0.3)
+bay2 = MH(LPfun1, init, Sigma, burn = 0.3)
 ```
 
-Notice that I used `control = list(fnscale = -1)` because I want to maximize the posterior probability, not minimize it. The new run has a higher acceptance probability:
+Notice that we should use `control = list(fnscale = -1)` because we want to maximize the posterior probability, not minimize it. That is also the reason why I add a negative sign in front of the Hessian as in `solve(-mapfit$hessian)` (in previous examples we were minimizing the negative log likelihood and we did not include the negative sign in front of the Hessian).
+
+We can see that the matrix `Sigma` obtained from the Hessian around the MAP estimate is different from the one assumed in the first MH run (specifically, the variances are much smaller):
+
+```{r}
+Sigma
+```
+
+These lower variances mean that the Markov chain does not wonder far into the tails of the posterior distribution but rather remains in the area of high probability. Thus, the new run has a higher acceptance probability:
 
 ```{r}
 bay2$acceptance
 ```
 
-Now this is the good. 56% of the time the candidates will be accepted, ensuring that the chain samples efficiently from the posterior. The traces will approach white noise (they look like "fuzzy catterpillars"):
+Now this is the good. 56% of the time the candidates will be accepted, ensuring that the chain samples efficiently from the posterior. The traces will approach white noise (these are often called "fuzzy caterpillars" in the community):
 
 ```{r, fig.height=3.5, fig.width=5, fig.align='c'}
 par(mfrow = c(2,1), mar = c(4,4,0.5,0.5), las = 1)
-plot(bay2$sample[,1], t = "l", ylab = "Trace of mu")
-plot(bay2$sample[,2], t = "l", ylab = "Trace of k")
+plot(bay2$sample[,1], t = "l", ylab = "Trace of log(mu)")
+plot(bay2$sample[,2], t = "l", ylab = "Trace of log(k)")
 ```
 
-At this point you would normally calculate more diagnostics to build up more confidence on the results of the MCMC chains, but we will keep it simple in this introduction. The object `bay2$sample` contains a random sample from the posterior from which you can calculate several properties. First, remember that we took the logarithm of the parameters to avoid negative values, so we need to undo the transformation:
+At this point we would normally calculate more diagnostics to build up more confidence on the results of the MCMC chains, but we will keep it simple in this introduction. The object `bay2$sample` contains a random sample from the posterior from which we can calculate several properties. First, remember that we took the logarithm of the parameters to avoid negative values, so we need to undo this transformation in the result:
 
 ```{r}
 bay2sample = exp(bay2$sample)
@@ -781,7 +793,7 @@ hist(bay2sample[,1], main = "Density of mu", freq = F, xlim = c(0,4))
 hist(bay2sample[,2], main = "Density of k", freq = F, xlim = c(0,1))
 ```
 
-One striking feature is that the distributions are not symmetric, they have a longer tail to the right. This is typical of positive parameters that are close to 0. A consequence of this is that the mean, median and mode of the distributions will differ (though in in this case not so much). Let's compare all the estimates we have so far:
+One striking feature is that the distributions are not symmetric, they have a longer tail to the right. This is typical of positive parameters that are close to 0. A consequence of this is that the mean, median and mode of the distributions will differ (though in in this case not so much). Let's compare all the estimates we have so far for the negative binomial fitted to these data:
 
 ```{r}
 map = exp(mapfit$par)
@@ -793,35 +805,13 @@ cbind(map, meanp, medianp,
       true = c(mu.true, k.true))
 ```
 
-For this model, data and priors, all estimates are quite similar to each other and to the estimate from maximum likelihood. The reason is because there is sufficient data (50 points for 2 parameters is quite some data...) such that the priors have a negligible effect.
+For this model, data and priors, all estimates are quite similar to each other across different methods of estimation. The reason is because there is sufficient data (50 points for 2 parameters is quite some data...) such that the priors have a negligible effect.
 
 The 95% credible intervals (analogous to 95% confidence intervals) can be calculated with the `quantile` function applied directly to the sample from the posterior:
 
 ```{r}
 t(apply(bay2sample, 2, quantile, probs = c(0.025, 0.975)))
 ```
-
-The normal approximation could also be used (just like in maximum likelihood) but in this case these estimates are quite bad:
-
-```{r}
-se = sqrt(diag(sigma))
-cbind(map - 1.96*se, map + 1.96*se)
-```
-
-The reason they are so bad is that they miss the asymmetry completely, especially for `k`, where the predict negative values! This is the reason why we always need to run the MCMC algorithm and report probability intervals rather than standard errors.
-
-
-## Bayesian and covariates
-
-In this section you practice Bayesian parameter estimation on the same dataset and model as the one you used in the section *Maximum likelihood and covariates*:
-
-1. Think about what would be reasonable priors for the parameters. Extra information on the datasets is given below. Use this information to define some reasonable priors, considering the scale of measurements and what is known about the type of systems/populations being measured.
-
-2. Use the likelihood function from previous exercise on this dataset, as well as the priors, to estimate the parameters of the model. Follow the approach shown for the negative binomial example (i.e. optimization followed by Metropolis-Hastings).
-
-3. Calculate mean of posterior and 95% credible intervals. How much to they differ from the maximum likelihood estimates you obtained before?.
-
-4. Repeat points 2 and 3 but making the priors wider to check how much they affect the posterior.
 
 \newpage
 # Hints for choosing deterministic functions and stochastic functions
@@ -831,43 +821,48 @@ In this section you practice Bayesian parameter estimation on the same dataset a
     - dataset 1
 
     light response curve. There are a number of options of functions to choose from, depending on the level of sophistication:
-    $\frac{ax}{(b+x)}$, $a(1-e^{(-bx)})$, $\frac{1}{2\theta}(\alpha I+p_{max}-\sqrt(\alpha I+p_{max})^2-4\theta I p_{max})$ see page 98. A parameter `d` can be added in all cases to shift the curve up or down. The y represents net photosynthesis $\mu mol CO_{2}/m^2s$
+    
+  $\frac{ax}{(b+x)}$, $a(1-e^{(-bx)})$, $\frac{1}{2\theta}(\alpha I+p_{max}-\sqrt(\alpha I+p_{max})^2-4\theta I p_{max})$ see page 98. A parameter `d` can be added in all cases to shift the curve up or down. The y represents net photosynthesis $\mu mol CO_{2}/m^2s$
 
     - dataset 2
 
-    The dataset describes a functional responses. Bolker mentions four of those $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\frac{ax^2}{(b+cx+x^2)}$ The y is measured in grams prey eaten per unit time.
+  The dataset describes a functional responses. Bolker mentions four of those 
+    
+  $min(ax,s)$ $\frac{ax}{(b+x)}$, $\frac{ax^2}{(b^2+x^2)}$,$\frac{ax^2}{(b+cx+x^2)}$ 
+    
+  The y is measured in grams prey eaten per unit time.
 
     -dataset 3
-    Allometric relationships generally have the form $ax^b$. The y represent the total number of cones produced.
+  Allometric relationships generally have the form $ax^b$. The y represent the total number of cones produced.
 
     -dataset 4
-      This could be logistic growth $n(t)=\frac{K}{1+(\frac{K}{n_0})e^{-rt}}$ or the gompertz function $f(x)=e^{-ae^{-bx}}$. The y represent the population size (numbers).
+  This could be logistic growth $n(t)=\frac{K}{1+(\frac{K}{n_0})e^{-rt}}$ or the gompertz function $f(x)=e^{-ae^{-bx}}$. The y represent the population size (numbers).
 
     -dataset 5
-      What about a negative exponential? $ae{-bx}$ or a power function $ax^b$. The y represent a number per unit area.
+  What about a negative exponential? $ae{-bx}$ or a power function $ax^b$. The y represent a number per unit area.
 
     -dataset 6
-      Species reponse curves are curves that describe the probability of presence as a function of some factor. A good candidate good be a unimodel response curve. You could take the equation of the normal distribution without the scaling constant: e.g.
-      $a e^{\frac{-(x-\mu)^2}{2\sigma^2}}$. The y represent presence or absence of the species (no units).
+  Species reponse curves are curves that describe the probability of presence as a function of some factor. A good candidate good be a unimodel response curve. You could take the equation of the normal distribution without the scaling constant: e.g.
+  $a e^{\frac{-(x-\mu)^2}{2\sigma^2}}$. The y represent presence or absence of the species (no units).
 
   2. Stochastic functions/Probability distributions
 
       -dataset 1
-      y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
+  y represents real numbers and both positive and negative numbers occur. This implies that we should choose a continuous probability distribution. In addition, the numbers seems unbound. Within the family of continuous probability distributions, the normal seems a good candidate distribution because this one runs from -$\inf$ to +$\inf$. In contrast the Gamma and the Lognormal only can take positive numbers, so these distributions cannot handle the negative numbers. In addition, the beta distribution is not a good candidate because it runs from 0-1.
 
       -dataset 2
-      y represents real numbers and only positive numbers occur. The data represents a functional response (intake rate of the predator), and it is likely that you can only measure positive numbers (number of prey items per unit of time).  This implies that we should choose a continuous probability distribution. Within the family of continuous probability distributions, the Gamma and the Lognormal could be taken as candidate distributions because they can only take positive numbers (beware that the Gamma cannot take 0). However, you could try to use a normal as well.
+  y represents real numbers and only positive numbers occur. The data represents a functional response (intake rate of the predator), and it is likely that you can only measure positive numbers (number of prey items per unit of time).  This implies that we should choose a continuous probability distribution. Within the family of continuous probability distributions, the Gamma and the Lognormal could be taken as candidate distributions because they can only take positive numbers (beware that the Gamma cannot take 0). However, you could try to use a normal as well.
 
       -dataset 3
-      y seems represents counts (this is the cone dataset that is introduced in ch. 6.). Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
+  y seems represents counts (this is the cone dataset that is introduced in ch. 6.). Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
 
       -dataset 4
-      y represents population size over time. From looking at the data, they seems to represent counts. Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
+  y represents population size over time. From looking at the data, they seems to represent counts. Given that it contains counts we can pick a distribution from the family of discrete distributions. The Poisson and the Negative Binomial could be good candidates to describe this type of data.
 
       -dataset 5
-      No information is given on y. The data clearly seems to represent counts. Thus the same reasoning applies here as to the two previous datasets.
+  No information is given on y. The data clearly seems to represent counts. Thus the same reasoning applies here as to the two previous datasets.
 
       -dataset 6
-      The data (y) represents species occurences (presence/absence). The binomial model would be a good model to predict the probability of presence.
+  The data (y) represents species occurences (presence/absence). The binomial model would be a good model to predict the probability of presence.
 
 

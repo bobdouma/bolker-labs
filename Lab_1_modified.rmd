@@ -1,19 +1,15 @@
 ---
 title: "An introduction to `R` for ecological modeling (lab 1)"
-author: Stephen Ellner, modified by Ben Bolker & Bob Douma. Adapted to R Markdown
-  by Alejandro Morales. 
-date: "October 1, 2019"
+author:
+- Stephen Ellner, modified by Ben Bolker & Bob Douma.
+- Adapted to R Markdown by Alejandro Morales.
+date: "October 31, 2022"
 output:
   bookdown::pdf_book:
-     includes:
-        in_header: 'preamble1.tex'
-  #  includes:
-  #      in_header: 'preamble.tex'
-  #pdf_document:
-  #  fig_caption: yes
-  #  fig_width: 5
-  #  number_sections: yes
+    includes:
+      in_header: preamble1.tex
   word_document: default
+  pdf_document: default
   html_document:
     fig_caption: yes
     fig_height: 4.5
@@ -246,7 +242,8 @@ Using editing shortcuts wherever you can, have `R` compute the values of:
 
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
+
 
 1
 `(2^7)/(2^7-1)`
@@ -470,7 +467,7 @@ Make a copy of `Intro2.R` under a new name, and modify the copy so that it does 
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 
 `X=read.table("ChlorellaGrowth.txt",header=TRUE)`
 
@@ -524,7 +521,7 @@ par(op)
 Run `Intro2.R`, then enter the command `plot(fit)` in the console and follow the directions in the console. Figure out what just happened.
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 By entering `?plot.lm` R brings up the Help page for the function `plot.lm` that carries out a `plot` command for an object produced by `lm`. This is one example of how R uses the fact that statistical analyses are stored as model objects. `fit` "knows" what kind of object it is (in this case an object of type `lm`, and so `plot(fit)` invokes a function that produces plots suitable  for an `lm` object.
 ```
 
@@ -543,7 +540,7 @@ Create a plot of growth rate versus light intensity with the $x$-axis running fr
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `plot(Light,rmax,xlim=c(0,120),ylim=c(1,4))`
 
 ``` 
@@ -557,11 +554,11 @@ par(mfrow=c(2,3))
 
 divides the plotting area into 2 rows and 3 columns. As  `R` draws a series of graphs, it places them along the top row from left to right, then along the next row, and so on. `mfcol=c(2,3)` has the same effect except that `R` draws successive graphs down the first column, then down the second column, and so on.
 
-```{block2, type="exercisebox",latex.options="{1}"}
+```{block2, type="exercisebox",latex.options="{1}",echo=T}
 Modify the script as follows. Use `mfcol=c(2,1)` to create graphs of growth rate as a  function of `Light`, and of `log(growth rate)` as a function of `log(Light)` in the same figure. Do the same again, using `mfcol=c(1,2)`.
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `mfcol=c(2,1)`
 `plot(rmax ~ Light)`
 `plot(rmax ~ logLight)`
@@ -572,7 +569,7 @@ Modify the script as follows. Use `mfcol=c(2,1)` to create graphs of growth rate
 Use `?par` to read about other plot control parameters that you use `par` to set (you should definitely skim --- this is one of the longest help files in the whole R system!).  Then draw a $2 \times 2$ set of plots, each showing the line $y=5x+3$ with $x$ running from 3 to 8, but with 4 different line styles and 4 different line colors.
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `par(mfrow=c(2,2))`
 `x = c(3:8)`
 `y = 5*x+3`
@@ -587,7 +584,7 @@ Use `?par` to read about other plot control parameters that you use `par` to set
 Modify one of your scripts so that at the very end it saves the plot to disk. In Windows you can do this with specific functions like `jpeg` or `png`.  Use `?jpeg` or `?png` to read about these functions.  Note that the argument `filename` can include the path to a folder; for example, in Windows you can use `filename="c:/temp/Intro2Figure".` 
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `png("test.png")`
 `par(mfrow=c(2,2))`
 `x = c(3:8)`
@@ -609,7 +606,7 @@ Use google to see how to:
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 Google "rotate axis label plot r" and you will get a hit that shows you how to do it: i.e. set las=2
 You can change the background color by setting par(bg="grey")
 
@@ -665,7 +662,7 @@ whether `from` or `to` is larger. The third form creates a vector with the desir
 Use `seq` to create the vector `v=(1 5 9 13)`, and to create a vector going from 1 to 5 in increments of 0.2.
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `seq(1,13,4)`
 `seq(1,5,0.2)`
 
@@ -745,7 +742,7 @@ try `z[1,3,5]` ?)
 Write a *one-line* command to extract a vector consisting of the second, first, and third elements of `z` *in that order*.
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `z=c(1,3,5,7,9,11)`
 `z[c(2,1,3)]`
 
@@ -760,7 +757,7 @@ with the points plotted and connected by a line
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `x = c(1:10)`
 `y = (x-1)/(x+1)`
 `plot(y~x,type="b")`
@@ -776,7 +773,7 @@ Set the values $r=0.5$ and $n=10$, and then write a *one-line* command that crea
 Repeat for  $n=50$. (*Note* that comparing very similar numeric values can be tricky: rounding can happen, and some numbers cannot be represented exactly in binary (computer) notation. By default `R` displays 7~significant digits (`options("digits")`).
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `r = 0.5`
 `n =10`
 `sum(r^c(1:n))`
@@ -847,7 +844,7 @@ a==b
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 You overwrote a by b in the command `a=b` and so the last statement confirms that they are identical
 
 ```
@@ -903,7 +900,7 @@ Try it with some temporary variables --- set `Light2=Light` and `rmax2=rmax` and
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `Light[Light<50 & rmax <= 2.0]`
 `rmax[Light<50 & rmax <= 2.0]`
 
@@ -922,7 +919,7 @@ is less than the mean. (If you want your answers to match mine exactly, use `set
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `a = runif(20)`
 `a[a < mean(a)]`
 
@@ -934,7 +931,7 @@ Find the *positions*  of the elements that are less than the mean of the vector 
 
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `which(a < mean(a))`
 
 ```
@@ -956,7 +953,7 @@ Specify two ways to take only the elements in the odd positions (first, third, .
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `n = 20`
 `a = c(1:n)`
 `a1 = a[seq(1,n,2)]`
@@ -991,7 +988,7 @@ Use a command of the form `X=matrix(v,nrow=2,ncol=4)` where `v` is a data vector
 ```
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `matrix(rep(1:2,4),nrow=2)`
 
 ```
@@ -1009,7 +1006,7 @@ Use `rnorm` (which is like `runif`, but generates Gaussian (normally distributed
 
 
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `set.seed(273)`
 `matrix(rnorm(35,0,2),5,7)`
 
@@ -1060,7 +1057,7 @@ treats them as rows. Now we have two matrices that can be combined.
 Verify that `rbind(C,D)` works, `cbind(C,C)` works, but `cbind(C,D)` doesn't. Why not?
 ```
 
-```{block2, type= "solutionbox", latex.options="{block-green}{1}",echo=F}
+```{block2, type= "solutionbox", latex.options="{1}",echo=T}
 `C=cbind(1:3,4:6,5:7)`
 `D=rbind(1:3,4:6)`
 

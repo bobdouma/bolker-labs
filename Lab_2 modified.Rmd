@@ -22,7 +22,7 @@ geometry: margin=3cm
 fontsize: 11pt
 ---
 ```{r,echo=F}
-setwd("C:/Users/douma002/OneDrive - WageningenUR/Education/CSA-34306 Ecological Models and Data in R/2019-2020/labs/bolker-labs/")
+setwd("C:/Users/douma002/OneDrive - WageningenUR/Education/CSA-34306 Ecological Models and Data in R/2019-2020/labs/bolker-labs")
 ```
 
 ```{r setup, include=FALSE}
@@ -422,12 +422,16 @@ Change the size of the printed numbers and remove the zeros from the graph.
 
 ```{block2, type="solutionbox",latex.options="{block-green}{2}",echo=T}
 
-`plot(`Seeds taken` ~ `Seeds available`,data=t2,cex=log(val)*2,
-        xlim = c(0.3,5.8),ylim=c(-0.5,5.5))`
-
 this removes zeroes and puts it in a new dataframe:
   
   `t3 <- t2[t2$val>0,]` 
+
+plotting this new dataframe:
+
+  `plot(`Seeds taken` ~ `Seeds available`,data=t3,cex=log(val)*2, 
+    xlim = c(0.3,5.8),ylim=c(-0.5,5.5))`
+
+
 
 cex changes the text size:
   
@@ -443,7 +447,7 @@ Change the color of the points and the symbols. Consult Lab 1 how to do this
 ```{block2, type="solutionbox",latex.options="{block-green}{2}",echo=T}
 
 `plot(`Seeds taken` ~ `Seeds available`,data=t2,cex=log(val)*2,
-        xlim = c(0.3,5.8),ylim=c(-0.5,5.5),col="blue".pch=2)`
+        xlim = c(0.3,5.8),ylim=c(-0.5,5.5),col="blue",pch=2)`
 
 ```
 
