@@ -142,7 +142,7 @@ the first parameter, `par`, will be the vector of parameters, and the second par
 ```
 
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 The solution is shown below in a big R chunk
 ```
 
@@ -214,7 +214,7 @@ The following exercise has the purpose to learn you how to fit a model to data w
   
 ```
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 
 `shapes2= read.csv("shapes2.csv")`
 
@@ -337,7 +337,7 @@ Use the following pseudocode to achieve this and/or check page 305 for in inspir
 
 ```
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 
 `# test dataset five for differences between groups`
 
@@ -348,7 +348,7 @@ Use the following pseudocode to achieve this and/or check page 305 for in inspir
     a = par[1]
     b = par[2:3]
     ymean = a*exp(-b[dat$group]*dat$x)
-    nll = -sum(dpois(dat$y,lambda=ymean),log=T)
+    nll = -sum(dpois(dat$y,lambda=ymean,log=T))
     return(nll)
 
 `}`
@@ -390,7 +390,7 @@ columns corresponding to $k$:
 
 ```
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 `muvec = seq(0.4,3,by=0.05)`
 
 `kvec = seq(0.01,0.7,by=0.01)`
@@ -466,7 +466,7 @@ This exercise has two purposes. First you will learn that an innocent looking fu
           _hint_: If the predictions are stored in a matrix `mat`, you can use `apply(mat,2,quantile,0.975)` to get the upper limit.
 
 
-```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=F}
+```{block2, type='solutionbox', latex.options="{block-green}{6}",echo=T}
 The solution is given below in the big chunk of code
 
 ```

@@ -2,7 +2,10 @@
 title: "Lab 9 + GLS and Mixed effect MOdels"
 author: "Bob Douma"
 date: "3 December 2018"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -21,23 +24,25 @@ You will learn how to:
 #  Fitting models containing  categorical predictors
 
 # Fitting models with the heterogenous variance 
-It is common to observe in your data that the variance of your data is not constant along $x$. In the above example we observed a decreasing variance with increasing $x$. In case of the Poisson distribution, the relationship between the mean and the variance is fixed through $\lambda$. For other probability distributions with $\geq2$ parameters the variance can be modelled (somewhat) independent of each other. A classic example is the normal distribution with $mu$ equal to the mean of the distribution and $\sigma$ to the square root of the variance. Traditionally, when the variance increases with $x$ log transformations are applied. However, the variance can also be modelled explictly. The purpose of this excercise is to show you give you insight how this can done (by showing a simple but wrong approach), followed by the correct, but canned approach `gls` in `R`.
+It is common to observe that the variance of your data is not constant along your predictor $x$. In case of the Poisson distribution, the relationship between the mean and the variance is fixed through $\lambda$. For other probability distributions with $\geq2$ parameters the variance can be modelled (somewhat) independent of the mean. A classic example is the normal distribution with $mu$ equal to the mean of the distribution and $\sigma$ to the square root of the variance. Traditionally, when the variance increases with $x$ log transformations are applied. However, the variance can also be modelled explicitly. The purpose of this exercise is to give you insight how this can done (by showing a simple but wrong approach), followed by the correct, but canned approach `gls` in `R`.
 
-To illustrate the principle, we generate data from scratch first with constant variance, then we heterogenous variance:
-```{r,eval=F}
+To illustrate the principle, we generate data from scratch first with constant variance:
+```{r}
 x = seq(1,100,length.out = 100)
 y = 2 + 2 * x + rnorm(100,0,20)
 plot(y~x)
 ```
 
-```{r,echo=F}
+Now we let the variance increase linearly with $x$. Note that the `rnorm` takes the standard deviation, hence the $\sqrt(20x)$ 
+
+```{r}
 x = seq(1,100,length.out = 100)
 y = 2 + 2 * x + rnorm(100,0,sqrt(20*x^1))
 plot(y~x)
 dat = data.frame(x,y)
 ```
 
-1. Estimate the paramaters of the model through applying the Bolker approach. Make two models, one with constant variance and another one with the variance as a function of $x$
+1. Estimate the paramaters of the model through applying the Bolker approach. Make two models, one with constant variance and another one with the variance as a function of $x$.
 
 ```{r,eval=F,echo=F}
 
